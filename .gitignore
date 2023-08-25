@@ -1,0 +1,79 @@
+# Build results
+[Dd]ebug/
+[Dd]ebugPublic/
+[Rr]elease/
+[Rr]eleases/
+x64/
+x86/
+[Ww][Ii][Nn]32/
+[Aa][Rr][Mm]/
+[Aa][Rr][Mm]64/
+bld/
+[Bb]in/
+[Oo]bj/
+[Ll]og/
+[Ll]ogs/
+
+# Visual Studio cache/options
+.vs/
+.vscode/
+
+# User-specific files
+*.rsuser
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+# Visual Studio Code
+.vscode/
+*.code-workspace
+
+# Rider
+.idea/
+*.sln.iml
+*.DotSettings.user
+*.swp
+*.swo
+
+# Test Results
+TestResults/
+coverage/
+*.trx
+
+# NuGet
+*.nupkg
+*.snupkg
+.nuget/
+packages/
+
+# Yarn
+node_modules/
+dist/
+
+# Environment files
+.env
+.env.local
+.env.*.local
+appsettings.Development.json
+
+# Compiled TypeScript
+*.js
+*.map
+
+# Output
+out/
+dist/
+
+# IDE
+.DS_Store
+Thumbs.db
+
+# Build outputs
+artifacts/
+publish/
+
+# Miscellaneous
+*.tmp
+*.temp
+.cache/
