@@ -1,0 +1,320 @@
+@* =============================================================================
+ * Author: Vladyslav Zaiets | https://sarmkadan.com
+ * CTO & Software Architect
+ * =============================================================================
+ *
+ * Form Validation Example
+ * Demonstrates: Form creation, field validation, and error handling
+ *@
+
+@page "/examples/form-validation"
+@using System.ComponentModel.DataAnnotations
+@using BlazorComponentLibrary.Models
+@using BlazorComponentLibrary.Services
+@inject FormService FormService
+@inject NavigationManager NavigationManager
+
+<PageTitle>Form Validation Example</PageTitle>
+
+<div class="form-container">
+    <h1>Form Validation Example</h1>
+
+    <p class="example-description">
+        This example shows how to create forms with validation using the Blazor Component Library.
+    </p>
+
+    @if (submitSuccess)
+    {
+        <div class="alert alert-success">
+            <strong>Success!</strong> Form submitted successfully.
+            <br />
+            Name: @submittedData.Name
+            <br />
+            Email: @submittedData.Email
+        </div>
+    }
+
+    <EditForm Model="@formModel" OnValidSubmit="@HandleValidSubmit">
+        <DataAnnotationsValidator />
+
+        <div class="form-group">
+            <label for="name">Name *</label>
+            <InputText
+                id="name"
+                @bind-Value="formModel.Name"
+                class="form-control"
+                placeholder="Enter your full name" />
+            <ValidationMessage For="@(() => formModel.Name)" />
+        </div>
+
+        <div class="form-group">
+            <label for="email">Email Address *</label>
+            <InputText
+                id="email"
+                @bind-Value="formModel.Email"
+                class="form-control"
+                type="email"
+                placeholder="Enter your email" />
+            <ValidationMessage For="@(() => formModel.Email)" />
+        </div>
+
+        <div class="form-group">
+            <label for="phone">Phone Number</label>
+            <InputText
+                id="phone"
+                @bind-Value="formModel.Phone"
+                class="form-control"
+                placeholder="Enter your phone number" />
+            <ValidationMessage For="@(() => formModel.Phone)" />
+        </div>
+
+        <div class="form-group">
+            <label for="department">Department *</label>
+            <InputSelect id="department" @bind-Value="formModel.Department" class="form-control">
+                <option value="">-- Select Department --</option>
+                <option value="Engineering">Engineering</option>
+                <option value="Marketing">Marketing</option>
+                <option value="Sales">Sales</option>
+                <option value="HR">Human Resources</option>
+            </InputSelect>
+            <ValidationMessage For="@(() => formModel.Department)" />
+        </div>
+
+        <div class="form-group">
+            <label for="message">Message *</label>
+            <InputTextArea
+                id="message"
+                @bind-Value="formModel.Message"
+                class="form-control"
+                rows="4"
+                placeholder="Enter your message here..."></InputTextArea>
+            <ValidationMessage For="@(() => formModel.Message)" />
+        </div>
+
+        <div class="form-group checkbox">
+            <InputCheckbox id="terms" @bind-Value="formModel.AgreeToTerms" />
+            <label for="terms">I agree to the terms and conditions *</label>
+            <ValidationMessage For="@(() => formModel.AgreeToTerms)" />
+        </div>
+
+        <div class="form-actions">
+            <button type="submit" class="btn btn-primary">Submit Form</button>
+            <button type="reset" class="btn btn-secondary" @onclick="ResetForm">Clear Form</button>
+            <button type="button" class="btn btn-info" @onclick="GoHome">← Back to Home</button>
+        </div>
+    </EditForm>
+</div>
+
+@code {
+    public class ContactFormModel
+    {
+        [Required(ErrorMessage = "Name is required")]
+        [StringLength(100, MinimumLength = 2, ErrorMessage = "Name must be between 2 and 100 characters")]
+        public string Name { get; set; } = "";
+
+        [Required(ErrorMessage = "Email address is required")]
+        [EmailAddress(ErrorMessage = "Please enter a valid email address")]
+        public string Email { get; set; } = "";
+
+        [Phone(ErrorMessage = "Please enter a valid phone number")]
+        public string Phone { get; set; } = "";
+
+        [Required(ErrorMessage = "Please select a department")]
+        public string Department { get; set; } = "";
+
+        [Required(ErrorMessage = "Message is required")]
+        [StringLength(500, MinimumLength = 10, ErrorMessage = "Message must be between 10 and 500 characters")]
+        public string Message { get; set; } = "";
+
+        [Required(ErrorMessage = "You must agree to the terms and conditions")]
+        public bool AgreeToTerms { get; set; } = false;
+    }
+
+    private ContactFormModel formModel = new();
+    private bool submitSuccess = false;
+    private ContactFormModel submittedData = new();
+
+    private async Task HandleValidSubmit()
+    {
+        try
+        {
+            submittedData = new ContactFormModel
+            {
+                Name = formModel.Name,
+                Email = formModel.Email,
+                Phone = formModel.Phone,
+                Department = formModel.Department,
+                Message = formModel.Message,
+                AgreeToTerms = formModel.AgreeToTerms
+            };
+
+            // Create form field in library
+            var field = new FormField
+            {
+                Name = "contact_form",
+                Label = "Contact Form",
+                FieldType = FormFieldType.Text,
+                IsRequired = true,
+                Placeholder = "Contact form submission"
+            };
+
+            await FormService.CreateFieldAsync(field);
+
+            submitSuccess = true;
+
+            // Reset form after 3 seconds
+            await Task.Delay(3000);
+            submitSuccess = false;
+            formModel = new();
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error: {ex.Message}");
+        }
+    }
+
+    private void ResetForm()
+    {
+        formModel = new();
+        submitSuccess = false;
+    }
+
+    private void GoHome()
+    {
+        NavigationManager.NavigateTo("/");
+    }
+}
+
+<style>
+    .form-container {
+        max-width: 600px;
+        margin: 20px auto;
+        padding: 30px;
+        background-color: #fff;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    h1 {
+        color: #333;
+        margin-bottom: 10px;
+    }
+
+    .example-description {
+        color: #666;
+        font-size: 14px;
+        margin-bottom: 20px;
+    }
+
+    .alert {
+        padding: 15px;
+        margin-bottom: 20px;
+        border-radius: 4px;
+        border-left: 4px solid #28a745;
+    }
+
+    .alert-success {
+        background-color: #d4edda;
+        color: #155724;
+    }
+
+    .form-group {
+        margin-bottom: 20px;
+    }
+
+    .form-group label {
+        display: block;
+        margin-bottom: 8px;
+        font-weight: 500;
+        color: #333;
+    }
+
+    .form-control {
+        width: 100%;
+        padding: 10px 12px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        font-size: 14px;
+        font-family: inherit;
+        transition: border-color 0.3s;
+    }
+
+    .form-control:focus {
+        outline: none;
+        border-color: #007bff;
+        box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.25);
+    }
+
+    textarea.form-control {
+        resize: vertical;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    .form-group.checkbox {
+        display: flex;
+        align-items: center;
+    }
+
+    .form-group.checkbox input[type="checkbox"] {
+        width: auto;
+        margin-right: 10px;
+        margin-top: 0;
+    }
+
+    .form-group.checkbox label {
+        margin-bottom: 0;
+        flex: 1;
+    }
+
+    .form-group :deep(.validation-message) {
+        color: #dc3545;
+        font-size: 13px;
+        margin-top: 5px;
+        display: block;
+    }
+
+    .form-actions {
+        display: flex;
+        gap: 10px;
+        margin-top: 30px;
+    }
+
+    .btn {
+        padding: 10px 20px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 14px;
+        font-weight: 500;
+        transition: background-color 0.3s;
+        flex: 1;
+    }
+
+    .btn-primary {
+        background-color: #007bff;
+        color: white;
+    }
+
+    .btn-primary:hover {
+        background-color: #0056b3;
+    }
+
+    .btn-secondary {
+        background-color: #6c757d;
+        color: white;
+    }
+
+    .btn-secondary:hover {
+        background-color: #545b62;
+    }
+
+    .btn-info {
+        background-color: #17a2b8;
+        color: white;
+        flex: 0.5;
+    }
+
+    .btn-info:hover {
+        background-color: #117a8b;
+    }
+</style>

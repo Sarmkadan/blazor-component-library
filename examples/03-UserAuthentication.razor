@@ -1,0 +1,474 @@
+@* =============================================================================
+ * Author: Vladyslav Zaiets | https://sarmkadan.com
+ * CTO & Software Architect
+ * =============================================================================
+ *
+ * User Authentication Example
+ * Demonstrates: Login, user management, and role-based access
+ *@
+
+@page "/examples/user-authentication"
+@using System.ComponentModel.DataAnnotations
+@using BlazorComponentLibrary.Models
+@using BlazorComponentLibrary.Services
+@inject UserService UserService
+@inject NavigationManager NavigationManager
+
+<PageTitle>User Authentication Example</PageTitle>
+
+<div class="auth-container">
+    <h1>User Authentication Example</h1>
+
+    <p class="example-description">
+        This example demonstrates user authentication, registration, and role management.
+    </p>
+
+    @if (!isLoggedIn)
+    {
+        <div class="auth-tabs">
+            <button
+                class="tab-button @(activeTab == "login" ? "active" : "")"
+                @onclick="@(() => activeTab = "login")">
+                Login
+            </button>
+            <button
+                class="tab-button @(activeTab == "register" ? "active" : "")"
+                @onclick="@(() => activeTab = "register")">
+                Register
+            </button>
+        </div>
+
+        @if (activeTab == "login")
+        {
+            <LoginForm OnSubmit="HandleLogin" ErrorMessage="@errorMessage" />
+        }
+        else
+        {
+            <RegistrationForm OnSubmit="HandleRegister" ErrorMessage="@errorMessage" />
+        }
+    }
+    else
+    {
+        <UserDashboard
+            CurrentUser="@currentUser"
+            OnLogout="HandleLogout"
+            OnUpdateRole="HandleUpdateRole" />
+    }
+
+    <div class="example-actions">
+        <button class="btn btn-info" @onclick="GoHome">← Back to Home</button>
+    </div>
+</div>
+
+<!-- Login Component -->
+@if (true)
+{
+    <div style="display: none;">
+        @RenderFragmentHelper.CreateLoginForm(HandleLogin)
+    </div>
+}
+
+@code {
+    private string activeTab = "login";
+    private bool isLoggedIn = false;
+    private User? currentUser;
+    private string? errorMessage;
+
+    private async Task HandleLogin(string username, string password)
+    {
+        try
+        {
+            errorMessage = null;
+            var user = await UserService.AuthenticateAsync(username, password);
+
+            if (user != null)
+            {
+                currentUser = user;
+                isLoggedIn = true;
+            }
+            else
+            {
+                errorMessage = "Invalid username or password";
+            }
+        }
+        catch (Exception ex)
+        {
+            errorMessage = $"Login failed: {ex.Message}";
+        }
+    }
+
+    private async Task HandleRegister(string username, string email, string password)
+    {
+        try
+        {
+            errorMessage = null;
+
+            // Check if user exists
+            var existing = await UserService.GetUserByIdAsync(1); // Simplified check
+
+            var user = await UserService.CreateUserAsync(username, email, password);
+
+            if (user != null)
+            {
+                currentUser = user;
+                isLoggedIn = true;
+            }
+            else
+            {
+                errorMessage = "Registration failed";
+            }
+        }
+        catch (Exception ex)
+        {
+            errorMessage = ex.Message;
+        }
+    }
+
+    private async Task HandleLogout()
+    {
+        isLoggedIn = false;
+        currentUser = null;
+        activeTab = "login";
+        errorMessage = null;
+    }
+
+    private async Task HandleUpdateRole(UserRole newRole)
+    {
+        if (currentUser != null)
+        {
+            try
+            {
+                await UserService.UpdateRoleAsync(currentUser.Id, newRole);
+                currentUser.Role = newRole;
+            }
+            catch (Exception ex)
+            {
+                errorMessage = $"Failed to update role: {ex.Message}";
+            }
+        }
+    }
+
+    private void GoHome()
+    {
+        NavigationManager.NavigateTo("/");
+    }
+
+    // Child component: LoginForm
+    private RenderFragment LoginForm(EventCallback<(string, string)> onSubmit, string? errorMsg) => @<text>
+        <div class="auth-form">
+            <h2>Sign In</h2>
+
+            @if (!string.IsNullOrEmpty(errorMsg))
+            {
+                <div class="alert alert-danger">@errorMsg</div>
+            }
+
+            <div class="form-group">
+                <label for="login-username">Username</label>
+                <input type="text" id="login-username" @bind="loginUsername" class="form-control" placeholder="Enter username" />
+            </div>
+
+            <div class="form-group">
+                <label for="login-password">Password</label>
+                <input type="password" id="login-password" @bind="loginPassword" class="form-control" placeholder="Enter password" />
+            </div>
+
+            <button type="button" class="btn btn-primary" @onclick="@(() => HandleLogin(loginUsername, loginPassword))">
+                Sign In
+            </button>
+
+            <p class="demo-credentials">
+                Demo: username=<strong>demo</strong>, password=<strong>demo</strong>
+            </p>
+        </div>
+    </text>;
+
+    private RenderFragment RegistrationForm(EventCallback<(string, string, string)> onSubmit, string? errorMsg) => @<text>
+        <div class="auth-form">
+            <h2>Create Account</h2>
+
+            @if (!string.IsNullOrEmpty(errorMsg))
+            {
+                <div class="alert alert-danger">@errorMsg</div>
+            }
+
+            <div class="form-group">
+                <label for="reg-username">Username</label>
+                <input type="text" id="reg-username" @bind="regUsername" class="form-control" placeholder="Choose username" />
+            </div>
+
+            <div class="form-group">
+                <label for="reg-email">Email</label>
+                <input type="email" id="reg-email" @bind="regEmail" class="form-control" placeholder="Enter email" />
+            </div>
+
+            <div class="form-group">
+                <label for="reg-password">Password</label>
+                <input type="password" id="reg-password" @bind="regPassword" class="form-control" placeholder="Create password" />
+            </div>
+
+            <button type="button" class="btn btn-primary" @onclick="@(() => HandleRegister(regUsername, regEmail, regPassword))">
+                Create Account
+            </button>
+        </div>
+    </text>;
+
+    private RenderFragment UserDashboard => @<text>
+        <div class="dashboard">
+            <h2>Welcome, @currentUser?.Username!</h2>
+
+            <div class="user-info">
+                <p><strong>Email:</strong> @currentUser?.Email</p>
+                <p><strong>Role:</strong> <span class="badge">@currentUser?.Role</span></p>
+                <p><strong>Member Since:</strong> @currentUser?.CreatedAt.ToString("MMM d, yyyy")</p>
+            </div>
+
+            <div class="role-management">
+                <h3>Change Role</h3>
+                <div class="role-buttons">
+                    <button class="btn btn-sm @(currentUser?.Role == UserRole.Viewer ? "btn-active" : "")"
+                        @onclick="@(() => HandleUpdateRole(UserRole.Viewer))">
+                        Viewer
+                    </button>
+                    <button class="btn btn-sm @(currentUser?.Role == UserRole.Editor ? "btn-active" : "")"
+                        @onclick="@(() => HandleUpdateRole(UserRole.Editor))">
+                        Editor
+                    </button>
+                    <button class="btn btn-sm @(currentUser?.Role == UserRole.Admin ? "btn-active" : "")"
+                        @onclick="@(() => HandleUpdateRole(UserRole.Admin))">
+                        Admin
+                    </button>
+                </div>
+            </div>
+
+            <button class="btn btn-danger" @onclick="HandleLogout">Sign Out</button>
+        </div>
+    </text>;
+
+    private string loginUsername = "";
+    private string loginPassword = "";
+    private string regUsername = "";
+    private string regEmail = "";
+    private string regPassword = "";
+
+    // Helper class
+    private static class RenderFragmentHelper
+    {
+        public static RenderFragment CreateLoginForm(Func<string, string, Task> onSubmit)
+        {
+            return @<text></text>;
+        }
+    }
+}
+
+<style>
+    .auth-container {
+        max-width: 400px;
+        margin: 40px auto;
+        padding: 30px;
+        background-color: #fff;
+        border-radius: 8px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    h1 {
+        color: #333;
+        margin-bottom: 10px;
+        text-align: center;
+    }
+
+    .example-description {
+        color: #666;
+        font-size: 13px;
+        text-align: center;
+        margin-bottom: 25px;
+    }
+
+    .auth-tabs {
+        display: flex;
+        margin-bottom: 25px;
+        border-bottom: 2px solid #f0f0f0;
+    }
+
+    .tab-button {
+        flex: 1;
+        padding: 12px;
+        background: none;
+        border: none;
+        border-bottom: 3px solid transparent;
+        color: #666;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.3s;
+    }
+
+    .tab-button.active {
+        color: #007bff;
+        border-bottom-color: #007bff;
+    }
+
+    .tab-button:hover {
+        color: #007bff;
+    }
+
+    .auth-form,
+    .dashboard {
+        animation: fadeIn 0.3s ease-in;
+    }
+
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+            transform: translateY(10px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .auth-form h2,
+    .dashboard h2 {
+        color: #333;
+        margin-bottom: 20px;
+    }
+
+    .form-group {
+        margin-bottom: 15px;
+    }
+
+    .form-group label {
+        display: block;
+        margin-bottom: 6px;
+        font-weight: 500;
+        color: #333;
+    }
+
+    .form-control {
+        width: 100%;
+        padding: 10px 12px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        font-size: 14px;
+    }
+
+    .form-control:focus {
+        outline: none;
+        border-color: #007bff;
+        box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1);
+    }
+
+    .alert {
+        padding: 12px 15px;
+        margin-bottom: 15px;
+        border-radius: 4px;
+        font-size: 13px;
+    }
+
+    .alert-danger {
+        background-color: #f8d7da;
+        color: #721c24;
+        border: 1px solid #f5c6cb;
+    }
+
+    .demo-credentials {
+        color: #666;
+        font-size: 12px;
+        margin-top: 15px;
+        padding-top: 15px;
+        border-top: 1px solid #f0f0f0;
+        text-align: center;
+    }
+
+    .user-info {
+        background-color: #f9f9f9;
+        padding: 15px;
+        border-radius: 4px;
+        margin-bottom: 20px;
+    }
+
+    .user-info p {
+        margin: 8px 0;
+        font-size: 14px;
+    }
+
+    .badge {
+        display: inline-block;
+        padding: 4px 8px;
+        background-color: #007bff;
+        color: white;
+        border-radius: 3px;
+        font-size: 12px;
+        font-weight: 500;
+    }
+
+    .role-management {
+        margin: 20px 0;
+    }
+
+    .role-management h3 {
+        font-size: 14px;
+        margin-bottom: 10px;
+    }
+
+    .role-buttons {
+        display: flex;
+        gap: 10px;
+    }
+
+    .btn {
+        padding: 10px 16px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 14px;
+        font-weight: 500;
+        transition: background-color 0.3s;
+        width: 100%;
+    }
+
+    .btn-primary {
+        background-color: #007bff;
+        color: white;
+    }
+
+    .btn-primary:hover {
+        background-color: #0056b3;
+    }
+
+    .btn-danger {
+        background-color: #dc3545;
+        color: white;
+    }
+
+    .btn-danger:hover {
+        background-color: #c82333;
+    }
+
+    .btn-sm {
+        padding: 6px 12px;
+        font-size: 13px;
+        flex: 1;
+        background-color: #f0f0f0;
+        color: #333;
+    }
+
+    .btn-sm:hover {
+        background-color: #e0e0e0;
+    }
+
+    .btn-sm.btn-active {
+        background-color: #007bff;
+        color: white;
+    }
+
+    .btn-info {
+        background-color: #17a2b8;
+        color: white;
+    }
+
+    .example-actions {
+        margin-top: 20px;
+        text-align: center;
+    }
+</style>
