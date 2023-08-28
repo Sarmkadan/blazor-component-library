@@ -41,7 +41,8 @@ public class DataService
     public async Task<DataTableRow?> GetRowByIdAsync(int id)
     {
         if (id <= 0)
-            throw new ArgumentException("ID must be greater than 0", nameof(id));
+            // Fix: Replaced generic ArgumentException with specific ArgumentOutOfRangeException including parameter values
+            throw new ArgumentOutOfRangeException(nameof(id), id, "ID must be greater than 0");
 
         return await _dataRepository.GetRowByIdAsync(id);
     }
@@ -52,13 +53,16 @@ public class DataService
     public async Task<PagedResult<DataTableRow>> GetRowsAsync(int tableId, int pageNumber = 1, int pageSize = 25)
     {
         if (tableId <= 0)
-            throw new ArgumentException("Table ID must be greater than 0", nameof(tableId));
+            // Fix: Replaced generic ArgumentException with specific ArgumentOutOfRangeException including parameter values
+            throw new ArgumentOutOfRangeException(nameof(tableId), tableId, "Table ID must be greater than 0");
 
         if (pageNumber < 1)
-            throw new ArgumentException("Page number must be 1 or greater", nameof(pageNumber));
+            // Fix: Replaced generic ArgumentException with specific ArgumentOutOfRangeException including parameter values
+            throw new ArgumentOutOfRangeException(nameof(pageNumber), pageNumber, "Page number must be 1 or greater");
 
         if (pageSize < 1 || pageSize > 1000)
-            throw new ArgumentException("Page size must be between 1 and 1000", nameof(pageSize));
+            // Fix: Replaced generic ArgumentException with specific ArgumentOutOfRangeException including parameter values
+            throw new ArgumentOutOfRangeException(nameof(pageSize), pageSize, "Page size must be between 1 and 1000");
 
         var rows = await _dataRepository.GetRowsByTableIdAsync(tableId);
         var totalCount = rows.Count();
@@ -94,7 +98,8 @@ public class DataService
     public async Task<ChartDataset?> GetChartDatasetByIdAsync(int id)
     {
         if (id <= 0)
-            throw new ArgumentException("ID must be greater than 0", nameof(id));
+            // Fix: Replaced generic ArgumentException with specific ArgumentOutOfRangeException including parameter values
+            throw new ArgumentOutOfRangeException(nameof(id), id, "ID must be greater than 0");
 
         return await _dataRepository.GetChartDatasetByIdAsync(id);
     }
@@ -105,7 +110,8 @@ public class DataService
     public async Task<ChartDataset> UpdateChartDatasetAsync(int id, ChartDataset dataset)
     {
         if (id <= 0)
-            throw new ArgumentException("ID must be greater than 0", nameof(id));
+            // Fix: Replaced generic ArgumentException with specific ArgumentOutOfRangeException including parameter values
+            throw new ArgumentOutOfRangeException(nameof(id), id, "ID must be greater than 0");
 
         if (dataset == null)
             throw new ArgumentNullException(nameof(dataset));
