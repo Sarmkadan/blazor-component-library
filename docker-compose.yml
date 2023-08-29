@@ -1,5 +1,4 @@
 version: '3.8'
-
 services:
   blazor-component-library:
     build:
@@ -18,7 +17,9 @@ services:
       retries: 3
       start_period: 5s
     restart: unless-stopped
+    networks:
+      - blazor-network
 
 networks:
-  default:
+  blazor-network:
     name: blazor-network
