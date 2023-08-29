@@ -3,6 +3,7 @@
 // CTO & Software Architect
 // =============================================================================
 
+using System.Buffers;
 using System.Reflection;
 using System.Text;
 
@@ -17,6 +18,9 @@ public class CsvFormatter
 {
     private const char DefaultDelimiter = ',';
     private const char DefaultQuote = '"';
+
+    // SearchValues enables a single SIMD-accelerated scan instead of four sequential Contains calls.
+    private static readonly SearchValues<char> _csvSpecialChars = SearchValues.Create(",\"\n\r");
 
     /// <summary>
     /// Converts collection of objects to CSV string.
@@ -167,12 +171,27 @@ public class CsvFormatter
         if (string.IsNullOrEmpty(field))
             return string.Empty;
 
-        if (field.Contains(DefaultDelimiter) || field.Contains(DefaultQuote) || field.Contains("\n") || field.Contains("\r"))
-        {
-            return DefaultQuote + field.Replace(DefaultQuote.ToString(), DefaultQuote.ToString() + DefaultQuote.ToString()) + DefaultQuote;
-        }
+        // Single SIMD-vectorized scan replaces four sequential Contains calls.
+        var span = field.AsSpan();
+        if (span.IndexOfAny(_csvSpecialChars) < 0)
+            return field;
 
-        return field;
+        // Count embedded quotes so string.Create can pre-size the buffer exactly.
+        var quoteCount = span.Count(DefaultQuote);
+
+        return string.Create(field.Length + quoteCount + 2, (field, quoteCount), static (dest, state) =>
+        {
+            var (src, _) = state;
+            dest[0] = DefaultQuote;
+            var pos = 1;
+            foreach (var ch in src)
+            {
+                dest[pos++] = ch;
+                if (ch == DefaultQuote)
+                    dest[pos++] = DefaultQuote;
+            }
+            dest[pos] = DefaultQuote;
+        });
     }
 
     /// <summary>
@@ -182,37 +201,47 @@ public class CsvFormatter
     private static List<string> ParseCsvLine(string line, char delimiter)
     {
         var fields = new List<string>();
-        var currentField = new StringBuilder();
+        // Rent a char buffer from the shared pool — avoids a heap allocation per field.
+        var buffer = ArrayPool<char>.Shared.Rent(line.Length);
+        var bufferPos = 0;
         var inQuotes = false;
 
-        for (int i = 0; i < line.Length; i++)
+        try
         {
-            var ch = line[i];
-
-            if (ch == DefaultQuote)
+            for (int i = 0; i < line.Length; i++)
             {
-                if (inQuotes && i + 1 < line.Length && line[i + 1] == DefaultQuote)
+                var ch = line[i];
+
+                if (ch == DefaultQuote)
                 {
-                    currentField.Append(DefaultQuote);
-                    i++;
+                    if (inQuotes && i + 1 < line.Length && line[i + 1] == DefaultQuote)
+                    {
+                        buffer[bufferPos++] = DefaultQuote;
+                        i++;
+                    }
+                    else
+                    {
+                        inQuotes = !inQuotes;
+                    }
+                }
+                else if (ch == delimiter && !inQuotes)
+                {
+                    fields.Add(new string(buffer, 0, bufferPos));
+                    bufferPos = 0;
                 }
                 else
                 {
-                    inQuotes = !inQuotes;
+                    buffer[bufferPos++] = ch;
                 }
             }
-            else if (ch == delimiter && !inQuotes)
-            {
-                fields.Add(currentField.ToString());
-                currentField.Clear();
-            }
-            else
-            {
-                currentField.Append(ch);
-            }
+
+            fields.Add(new string(buffer, 0, bufferPos));
+        }
+        finally
+        {
+            ArrayPool<char>.Shared.Return(buffer);
         }
 
-        fields.Add(currentField.ToString());
         return fields;
     }
 }

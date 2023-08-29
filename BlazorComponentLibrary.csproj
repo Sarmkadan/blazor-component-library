@@ -31,4 +31,10 @@
     <None Include="README.md" Pack="true" PackagePath="\" />
   </ItemGroup>
 
+  <ItemGroup>
+    <!-- Exclude benchmark and test projects — they have their own .csproj files -->
+    <Compile Remove="benchmarks/**" />
+    <Compile Remove="tests/**" />
+  </ItemGroup>
+
 </Project>

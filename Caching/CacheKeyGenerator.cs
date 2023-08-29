@@ -5,6 +5,7 @@
 
 using System.Security.Cryptography;
 using System.Text;
+using System.Text.Json;
 
 namespace BlazorComponentLibrary.Caching;
 
@@ -111,7 +112,7 @@ public static class CacheKeyGenerator
 
         if (queryParams != null)
         {
-            var json = JsonConvert.SerializeObject(queryParams);
+            var json = JsonSerializer.Serialize(queryParams);
             var hash = GenerateHash(json);
             key += $"{Separator}{hash}";
         }
@@ -199,11 +200,10 @@ public static class CacheKeyGenerator
         if (string.IsNullOrEmpty(input))
             return "empty";
 
-        using (var sha = SHA256.Create())
-        {
-            var hash = sha.ComputeHash(Encoding.UTF8.GetBytes(input));
-            return Convert.ToHexString(hash).ToLower().Substring(0, 8);
-        }
+        // SHA256.HashData uses a framework-pooled instance — no allocation, no Dispose needed.
+        Span<byte> hashBytes = stackalloc byte[32];
+        SHA256.HashData(Encoding.UTF8.GetBytes(input), hashBytes);
+        return Convert.ToHexString(hashBytes[..4]).ToLower();
     }
 
     /// <summary>

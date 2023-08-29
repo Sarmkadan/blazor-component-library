@@ -3,6 +3,7 @@
 // CTO & Software Architect
 // =============================================================================
 
+using System.Collections.Frozen;
 using System.Text.RegularExpressions;
 
 namespace BlazorComponentLibrary.Utilities;
@@ -13,6 +14,26 @@ namespace BlazorComponentLibrary.Utilities;
 /// </summary>
 public static class ValidationHelper
 {
+    // Compiled once — eliminates per-call Regex construction and JIT overhead.
+    private static readonly Regex _identifierRegex = new(@"^[a-zA-Z_][a-zA-Z0-9_]*$", RegexOptions.Compiled);
+    private static readonly Regex _hexColorRegex = new(@"^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$", RegexOptions.Compiled);
+    private static readonly Regex _cssClassNameRegex = new(@"^[a-zA-Z_-][a-zA-Z0-9_-]*$", RegexOptions.Compiled);
+    private static readonly Regex _sanitizeRegex = new(@"[<>&""']", RegexOptions.Compiled);
+
+    // FrozenDictionary is immutable after construction; its internal layout is optimised for
+    // read-heavy workloads and avoids the overhead of a mutable Dictionary bucket scan.
+    private static readonly FrozenDictionary<string, string> _validationMessageSuffixes =
+        new Dictionary<string, string>
+        {
+            ["required"]  = "is required",
+            ["email"]     = "must be a valid email address",
+            ["url"]       = "must be a valid URL",
+            ["minLength"] = "is too short",
+            ["maxLength"] = "is too long",
+            ["pattern"]   = "format is invalid",
+            ["range"]     = "is out of range",
+        }.ToFrozenDictionary();
+
     /// <summary>
     /// Validates an email address format.
     /// </summary>
@@ -51,7 +72,7 @@ public static class ValidationHelper
         if (string.IsNullOrWhiteSpace(identifier))
             return false;
 
-        return Regex.IsMatch(identifier, @"^[a-zA-Z_][a-zA-Z0-9_]*$");
+        return _identifierRegex.IsMatch(identifier);
     }
 
     /// <summary>
@@ -91,7 +112,7 @@ public static class ValidationHelper
         if (string.IsNullOrWhiteSpace(color))
             return false;
 
-        return Regex.IsMatch(color, @"^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$");
+        return _hexColorRegex.IsMatch(color);
     }
 
     /// <summary>
@@ -102,7 +123,7 @@ public static class ValidationHelper
         if (string.IsNullOrWhiteSpace(className))
             return false;
 
-        return Regex.IsMatch(className, @"^[a-zA-Z_-][a-zA-Z0-9_-]*$");
+        return _cssClassNameRegex.IsMatch(className);
     }
 
     /// <summary>
@@ -137,14 +158,14 @@ public static class ValidationHelper
         if (string.IsNullOrWhiteSpace(input))
             return string.Empty;
 
-        return Regex.Replace(input, @"[<>&""']", match => match.Value switch
+        return _sanitizeRegex.Replace(input, static match => match.Value switch
         {
-            "<" => "&lt;",
-            ">" => "&gt;",
-            "&" => "&amp;",
+            "<"  => "&lt;",
+            ">"  => "&gt;",
+            "&"  => "&amp;",
             "\"" => "&quot;",
-            "'" => "&#39;",
-            _ => match.Value
+            "'"  => "&#39;",
+            _    => match.Value
         });
     }
 
@@ -172,17 +193,9 @@ public static class ValidationHelper
     /// </summary>
     public static string GetValidationMessage(string fieldName, string rule)
     {
-        return rule switch
-        {
-            "required" => $"{fieldName} is required",
-            "email" => $"{fieldName} must be a valid email address",
-            "url" => $"{fieldName} must be a valid URL",
-            "minLength" => $"{fieldName} is too short",
-            "maxLength" => $"{fieldName} is too long",
-            "pattern" => $"{fieldName} format is invalid",
-            "range" => $"{fieldName} is out of range",
-            _ => $"{fieldName} validation failed"
-        };
+        return _validationMessageSuffixes.TryGetValue(rule, out var suffix)
+            ? $"{fieldName} {suffix}"
+            : $"{fieldName} validation failed";
     }
 }
 

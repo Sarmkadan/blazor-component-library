@@ -3,6 +3,7 @@
 // CTO & Software Architect
 // =============================================================================
 
+using System.Buffers;
 using System.Text;
 using System.Text.RegularExpressions;
 
@@ -14,6 +15,17 @@ namespace BlazorComponentLibrary.Utilities;
 /// </summary>
 public static class StringHelper
 {
+    // Compiled once at class load; reused across all calls — avoids per-call Regex allocation and JIT compilation.
+    private static readonly Regex _camelCaseSeparatorRegex = new(@"([a-z0-9])([A-Z])", RegexOptions.Compiled);
+    private static readonly Regex _nonWordCharsRegex = new(@"[^\w\s-]", RegexOptions.Compiled);
+    private static readonly Regex _whitespaceRegex = new(@"\s+", RegexOptions.Compiled);
+    private static readonly Regex _multipleDashesRegex = new(@"-+", RegexOptions.Compiled);
+    private static readonly Regex _emailRegex = new(@"^[^\s@]+@[^\s@]+\.[^\s@]+$", RegexOptions.Compiled);
+    private static readonly Regex _removeWhitespaceRegex = new(@"\s+", RegexOptions.Compiled);
+
+    // SearchValues enables SIMD-accelerated single-pass scan for dangerous HTML chars.
+    private static readonly SearchValues<char> _dangerousChars = SearchValues.Create("<>\"'&");
+
     /// <summary>
     /// Converts PascalCase to kebab-case (e.g., MyComponent -> my-component).
     /// Used for CSS class naming and URL slugs.
@@ -23,7 +35,7 @@ public static class StringHelper
         if (string.IsNullOrEmpty(input))
             return input;
 
-        return Regex.Replace(input, "([a-z0-9])([A-Z])", "$1-$2").ToLower();
+        return _camelCaseSeparatorRegex.Replace(input, "$1-$2").ToLower();
     }
 
     /// <summary>
@@ -35,7 +47,7 @@ public static class StringHelper
         if (string.IsNullOrEmpty(input))
             return input;
 
-        return Regex.Replace(input, "([a-z0-9])([A-Z])", "$1_$2").ToLower();
+        return _camelCaseSeparatorRegex.Replace(input, "$1_$2").ToLower();
     }
 
     /// <summary>
@@ -48,11 +60,14 @@ public static class StringHelper
             return input;
 
         var words = input.Split(new[] { '_', '-' }, StringSplitOptions.RemoveEmptyEntries);
-        var sb = new StringBuilder();
+        var sb = new StringBuilder(input.Length);
 
         foreach (var word in words)
         {
-            sb.Append(char.ToUpper(word[0]) + word.Substring(1).ToLower());
+            sb.Append(char.ToUpper(word[0]));
+            // AsSpan avoids the two intermediate string allocations from Substring(1) + ToLower()
+            foreach (var ch in word.AsSpan(1))
+                sb.Append(char.ToLower(ch));
         }
 
         return sb.ToString();
@@ -67,8 +82,7 @@ public static class StringHelper
         if (string.IsNullOrWhiteSpace(email))
             return false;
 
-        var emailPattern = @"^[^\s@]+@[^\s@]+\.[^\s@]+$";
-        return Regex.IsMatch(email, emailPattern);
+        return _emailRegex.IsMatch(email);
     }
 
     /// <summary>
@@ -109,9 +123,9 @@ public static class StringHelper
             return string.Empty;
 
         var slug = input.ToLower();
-        slug = Regex.Replace(slug, @"[^\w\s-]", "");
-        slug = Regex.Replace(slug, @"\s+", "-");
-        slug = Regex.Replace(slug, @"-+", "-");
+        slug = _nonWordCharsRegex.Replace(slug, "");
+        slug = _whitespaceRegex.Replace(slug, "-");
+        slug = _multipleDashesRegex.Replace(slug, "-");
         return slug.Trim('-');
     }
 
@@ -124,15 +138,27 @@ public static class StringHelper
         if (string.IsNullOrEmpty(input))
             return string.Empty;
 
-        var dangerousChars = new[] { '<', '>', '"', '\'', '&' };
-        var sb = new StringBuilder(input);
+        // Fast path: SIMD scan — skip allocation entirely when nothing to remove.
+        if (input.AsSpan().IndexOfAny(_dangerousChars) < 0)
+            return input;
 
-        foreach (var ch in dangerousChars)
+        // Count chars to remove so we can pre-size the result with string.Create.
+        var removeCount = 0;
+        foreach (var ch in input)
         {
-            sb.Replace(ch.ToString(), string.Empty);
+            if (ch is '<' or '>' or '"' or '\'' or '&')
+                removeCount++;
         }
 
-        return sb.ToString();
+        return string.Create(input.Length - removeCount, input, static (span, src) =>
+        {
+            var pos = 0;
+            foreach (var ch in src)
+            {
+                if (ch is not ('<' or '>' or '"' or '\'' or '&'))
+                    span[pos++] = ch;
+            }
+        });
     }
 
     /// <summary>
@@ -188,7 +214,7 @@ public static class StringHelper
         if (string.IsNullOrEmpty(input))
             return string.Empty;
 
-        return Regex.Replace(input, @"\s+", "");
+        return _removeWhitespaceRegex.Replace(input, "");
     }
 
     /// <summary>
@@ -199,6 +225,11 @@ public static class StringHelper
         if (string.IsNullOrEmpty(input))
             return input ?? string.Empty;
 
-        return new string(input.Reverse().ToArray());
+        // string.Create + Span.Reverse avoids the LINQ ToArray() heap allocation.
+        return string.Create(input.Length, input, static (span, src) =>
+        {
+            src.AsSpan().CopyTo(span);
+            span.Reverse();
+        });
     }
 }
