@@ -132,8 +132,10 @@ public class WebhookHandler
             client.DefaultRequestHeaders.Add("X-Webhook-Id", subscription.Id);
 
             var json = JsonConvert.SerializeObject(payload);
-            var content = new StringContent(json, System.Text.Encoding.UTF8, "application/json");
-            var response = await client.PostAsync(subscription.CallbackUrl, content);
+            // Fix: Added using statement to properly dispose StringContent
+            using var content = new StringContent(json, System.Text.Encoding.UTF8, "application/json");
+            // Fix: Added using statement to properly dispose HttpResponseMessage and prevent connection leaks
+            using var response = await client.PostAsync(subscription.CallbackUrl, content);
 
             if (response.IsSuccessStatusCode)
             {

@@ -109,7 +109,8 @@ public class HttpClientFactory
         try
         {
             _logger.LogInformation("GET request to {Endpoint}", endpoint);
-            var response = await client.GetAsync(endpoint);
+            // Fix: Added using statement to properly dispose HttpResponseMessage and prevent connection leaks
+            using var response = await client.GetAsync(endpoint);
             response.EnsureSuccessStatusCode();
 
             var content = await response.Content.ReadAsStringAsync();
@@ -136,8 +137,10 @@ public class HttpClientFactory
         {
             _logger.LogInformation("POST request to {Endpoint}", endpoint);
             var json = JsonConvert.SerializeObject(request);
-            var content = new StringContent(json, System.Text.Encoding.UTF8, "application/json");
-            var response = await client.PostAsync(endpoint, content);
+            // Fix: Added using statement to properly dispose StringContent
+            using var requestContent = new StringContent(json, System.Text.Encoding.UTF8, "application/json");
+            // Fix: Added using statement to properly dispose HttpResponseMessage and prevent connection leaks
+            using var response = await client.PostAsync(endpoint, requestContent);
             response.EnsureSuccessStatusCode();
 
             var responseContent = await response.Content.ReadAsStringAsync();
@@ -163,8 +166,10 @@ public class HttpClientFactory
         {
             _logger.LogInformation("PUT request to {Endpoint}", endpoint);
             var json = JsonConvert.SerializeObject(request);
-            var content = new StringContent(json, System.Text.Encoding.UTF8, "application/json");
-            var response = await client.PutAsync(endpoint, content);
+            // Fix: Added using statement to properly dispose StringContent
+            using var requestContent = new StringContent(json, System.Text.Encoding.UTF8, "application/json");
+            // Fix: Added using statement to properly dispose HttpResponseMessage and prevent connection leaks
+            using var response = await client.PutAsync(endpoint, requestContent);
             response.EnsureSuccessStatusCode();
 
             var responseContent = await response.Content.ReadAsStringAsync();
@@ -187,7 +192,8 @@ public class HttpClientFactory
         try
         {
             _logger.LogInformation("DELETE request to {Endpoint}", endpoint);
-            var response = await client.DeleteAsync(endpoint);
+            // Fix: Added using statement to properly dispose HttpResponseMessage and prevent connection leaks
+            using var response = await client.DeleteAsync(endpoint);
             response.EnsureSuccessStatusCode();
             return true;
         }

@@ -3,6 +3,8 @@
 // CTO & Software Architect
 // =============================================================================
 
+using System.Runtime.CompilerServices;
+
 namespace BlazorComponentLibrary.Utilities;
 
 /// <summary>
@@ -15,6 +17,7 @@ public static class CollectionHelper
     /// Checks if collection is null or empty.
     /// Null-safe operation for defensive programming.
     /// </summary>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static bool IsNullOrEmpty<T>(this IEnumerable<T>? collection)
     {
         return collection?.Any() != true;
@@ -24,6 +27,7 @@ public static class CollectionHelper
     /// Checks if collection has any items.
     /// Opposite of IsNullOrEmpty, useful for clarity in conditions.
     /// </summary>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static bool HasItems<T>(this IEnumerable<T>? collection)
     {
         return collection?.Any() == true;
@@ -229,6 +233,10 @@ public static class CollectionHelper
     /// </summary>
     public static decimal SafeSum<T>(this IEnumerable<T>? collection, Func<T, decimal> selector)
     {
+        // Fix: Added missing input validation for selector to prevent ArgumentNullException inside LINQ methods
+        if (selector == null)
+            throw new ArgumentNullException(nameof(selector), "Selector cannot be null");
+
         return collection?.Sum(selector) ?? 0m;
     }
 
@@ -238,6 +246,10 @@ public static class CollectionHelper
     /// </summary>
     public static decimal SafeAverage<T>(this IEnumerable<T>? collection, Func<T, decimal> selector)
     {
+        // Fix: Added missing input validation for selector to prevent ArgumentNullException inside LINQ methods
+        if (selector == null)
+            throw new ArgumentNullException(nameof(selector), "Selector cannot be null");
+
         return collection?.Any() == true ? collection.Average(selector) : 0m;
     }
 }
