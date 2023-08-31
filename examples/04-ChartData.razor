@@ -1,0 +1,392 @@
+@* =============================================================================
+ * Author: Vladyslav Zaiets | https://sarmkadan.com
+ * CTO & Software Architect
+ * =============================================================================
+ *
+ * Chart Data Example
+ * Demonstrates: Creating datasets, chart types, and data visualization
+ *@
+
+@page "/examples/chart-data"
+@using BlazorComponentLibrary.Models
+@using BlazorComponentLibrary.Services
+@inject DataService DataService
+@inject NavigationManager NavigationManager
+
+<PageTitle>Chart Data Example</PageTitle>
+
+<div class="chart-example-container">
+    <h1>Chart Data Example</h1>
+
+    <p class="example-description">
+        This example demonstrates how to work with chart datasets and different chart types.
+    </p>
+
+    <div class="chart-selection">
+        <h3>Select Chart Type:</h3>
+        <div class="chart-buttons">
+            @foreach (var type in chartTypes)
+            {
+                <button
+                    class="chart-btn @(selectedChartType == type ? "active" : "")"
+                    @onclick="@(() => selectedChartType = type)">
+                    @type.ToString()
+                </button>
+            }
+        </div>
+    </div>
+
+    <div class="chart-display">
+        <h2>@selectedChartType Chart</h2>
+
+        @if (datasets.Count > 0)
+        {
+            <div class="chart-info">
+                <div class="dataset-info">
+                    <h4>Dataset: @datasets[0].Label</h4>
+                    <p><strong>Type:</strong> @datasets[0].ChartType</p>
+                    <p><strong>Data Points:</strong> @datasets[0].Data.Count</p>
+                    <p><strong>Total Value:</strong> @datasets[0].Data.Sum():C</p>
+                </div>
+
+                <div class="data-visualization">
+                    <h4>Data Points:</h4>
+                    <ul>
+                        @foreach (var value in datasets[0].Data)
+                        {
+                            <li>
+                                <span class="data-bar" style="width: @((value / datasets[0].Data.Max()) * 300)px"></span>
+                                @value.ToString("C")
+                            </li>
+                        }
+                    </ul>
+                </div>
+
+                <div class="colors">
+                    <p>
+                        <strong>Background Color:</strong>
+                        <span class="color-swatch" style="background-color: @datasets[0].BackgroundColor"></span>
+                        @datasets[0].BackgroundColor
+                    </p>
+                    <p>
+                        <strong>Border Color:</strong>
+                        <span class="color-swatch" style="background-color: @datasets[0].BorderColor"></span>
+                        @datasets[0].BorderColor
+                    </p>
+                </div>
+            </div>
+        }
+
+        <div class="actions">
+            <button class="btn btn-primary" @onclick="GenerateNewData">Generate New Data</button>
+            <button class="btn btn-secondary" @onclick="ExportChartData">Export Data</button>
+        </div>
+    </div>
+
+    <div class="example-actions">
+        <button class="btn btn-info" @onclick="GoHome">← Back to Home</button>
+    </div>
+</div>
+
+@code {
+    private List<ChartDataset> datasets = new();
+    private List<ChartType> chartTypes = new();
+    private ChartType selectedChartType = ChartType.Line;
+
+    protected override void OnInitialized()
+    {
+        chartTypes = Enum.GetValues(typeof(ChartType))
+            .Cast<ChartType>()
+            .ToList();
+
+        GenerateNewData();
+    }
+
+    private void GenerateNewData()
+    {
+        datasets.Clear();
+
+        var random = new Random();
+        var dataPoints = new List<decimal>();
+
+        // Generate 6 random data points
+        for (int i = 0; i < 6; i++)
+        {
+            dataPoints.Add(random.Next(1000, 5000));
+        }
+
+        var dataset = new ChartDataset
+        {
+            Label = $"{selectedChartType} Sales Data",
+            Data = dataPoints,
+            ChartType = selectedChartType,
+            BackgroundColor = selectedChartType switch
+            {
+                ChartType.Line => "rgba(75, 192, 192, 0.2)",
+                ChartType.Bar => "rgba(54, 162, 235, 0.6)",
+                ChartType.Pie => "rgba(255, 99, 132, 0.6)",
+                ChartType.Doughnut => "rgba(75, 192, 192, 0.6)",
+                ChartType.Area => "rgba(153, 102, 255, 0.2)",
+                ChartType.Scatter => "rgba(255, 159, 64, 0.6)",
+                ChartType.Bubble => "rgba(75, 192, 192, 0.6)",
+                ChartType.Radar => "rgba(255, 193, 7, 0.2)",
+                _ => "rgba(200, 200, 200, 0.6)"
+            },
+            BorderColor = selectedChartType switch
+            {
+                ChartType.Line => "rgba(75, 192, 192, 1)",
+                ChartType.Bar => "rgba(54, 162, 235, 1)",
+                ChartType.Pie => "rgba(255, 99, 132, 1)",
+                ChartType.Doughnut => "rgba(75, 192, 192, 1)",
+                ChartType.Area => "rgba(153, 102, 255, 1)",
+                ChartType.Scatter => "rgba(255, 159, 64, 1)",
+                ChartType.Bubble => "rgba(75, 192, 192, 1)",
+                ChartType.Radar => "rgba(255, 193, 7, 1)",
+                _ => "rgba(100, 100, 100, 1)"
+            },
+            BorderWidth = 2
+        };
+
+        datasets.Add(dataset);
+    }
+
+    private async Task ExportChartData()
+    {
+        if (datasets.Count == 0)
+        {
+            Console.WriteLine("No chart data to export");
+            return;
+        }
+
+        var dataset = datasets[0];
+        var lines = new List<string>
+        {
+            "Chart Export",
+            $"Type: {dataset.ChartType}",
+            $"Label: {dataset.Label}",
+            "",
+            "Data Points:"
+        };
+
+        for (int i = 0; i < dataset.Data.Count; i++)
+        {
+            lines.Add($"Month {i + 1}: {dataset.Data[i]:C}");
+        }
+
+        var csv = string.Join(Environment.NewLine, lines);
+        Console.WriteLine(csv);
+    }
+
+    private void GoHome()
+    {
+        NavigationManager.NavigateTo("/");
+    }
+}
+
+<style>
+    .chart-example-container {
+        max-width: 900px;
+        margin: 20px auto;
+        padding: 20px;
+    }
+
+    h1 {
+        color: #333;
+        margin-bottom: 10px;
+    }
+
+    .example-description {
+        color: #666;
+        font-size: 14px;
+        margin-bottom: 25px;
+    }
+
+    .chart-selection {
+        background-color: #f9f9f9;
+        padding: 20px;
+        border-radius: 8px;
+        margin-bottom: 25px;
+    }
+
+    .chart-selection h3 {
+        margin-top: 0;
+        margin-bottom: 15px;
+        color: #333;
+    }
+
+    .chart-buttons {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+    }
+
+    .chart-btn {
+        padding: 8px 16px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        background-color: white;
+        color: #333;
+        cursor: pointer;
+        font-size: 13px;
+        font-weight: 500;
+        transition: all 0.3s;
+    }
+
+    .chart-btn:hover {
+        border-color: #007bff;
+        color: #007bff;
+    }
+
+    .chart-btn.active {
+        background-color: #007bff;
+        color: white;
+        border-color: #007bff;
+    }
+
+    .chart-display {
+        background-color: white;
+        padding: 25px;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        margin-bottom: 25px;
+    }
+
+    .chart-display h2 {
+        color: #333;
+        margin-top: 0;
+        margin-bottom: 20px;
+    }
+
+    .chart-info {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 20px;
+        margin-bottom: 20px;
+    }
+
+    .dataset-info {
+        background-color: #f9f9f9;
+        padding: 15px;
+        border-radius: 4px;
+    }
+
+    .dataset-info h4,
+    .data-visualization h4,
+    .colors {
+        margin-top: 0;
+        margin-bottom: 10px;
+        color: #333;
+        font-size: 14px;
+    }
+
+    .dataset-info p {
+        margin: 6px 0;
+        font-size: 13px;
+        color: #666;
+    }
+
+    .data-visualization {
+        background-color: #f9f9f9;
+        padding: 15px;
+        border-radius: 4px;
+    }
+
+    .data-visualization ul {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+
+    .data-visualization li {
+        display: flex;
+        align-items: center;
+        margin-bottom: 8px;
+        font-size: 13px;
+    }
+
+    .data-bar {
+        display: inline-block;
+        height: 20px;
+        background: linear-gradient(90deg, #007bff, #0056b3);
+        margin-right: 10px;
+        border-radius: 2px;
+    }
+
+    .colors {
+        background-color: #f9f9f9;
+        padding: 15px;
+        border-radius: 4px;
+    }
+
+    .colors p {
+        margin: 8px 0;
+        font-size: 13px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .color-swatch {
+        display: inline-block;
+        width: 24px;
+        height: 24px;
+        border-radius: 3px;
+        border: 1px solid #ddd;
+    }
+
+    .actions {
+        display: flex;
+        gap: 10px;
+        margin-top: 20px;
+    }
+
+    .btn {
+        padding: 10px 16px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 14px;
+        font-weight: 500;
+        transition: background-color 0.3s;
+    }
+
+    .btn-primary {
+        background-color: #007bff;
+        color: white;
+        flex: 1;
+    }
+
+    .btn-primary:hover {
+        background-color: #0056b3;
+    }
+
+    .btn-secondary {
+        background-color: #6c757d;
+        color: white;
+        flex: 1;
+    }
+
+    .btn-secondary:hover {
+        background-color: #545b62;
+    }
+
+    .btn-info {
+        background-color: #17a2b8;
+        color: white;
+    }
+
+    .btn-info:hover {
+        background-color: #117a8b;
+    }
+
+    .example-actions {
+        text-align: center;
+        margin-top: 20px;
+    }
+
+    @media (max-width: 768px) {
+        .chart-info {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>

@@ -1,0 +1,610 @@
+@* =============================================================================
+ * Author: Vladyslav Zaiets | https://sarmkadan.com
+ * CTO & Software Architect
+ * =============================================================================
+ *
+ * Advanced Data Operations Example
+ * Demonstrates: Pagination, filtering, sorting, and data aggregation
+ *@
+
+@page "/examples/advanced-data"
+@using BlazorComponentLibrary.Models
+@using BlazorComponentLibrary.Services
+@inject DataService DataService
+@inject NavigationManager NavigationManager
+
+<PageTitle>Advanced Data Operations Example</PageTitle>
+
+<div class="data-ops-container">
+    <h1>Advanced Data Operations Example</h1>
+
+    <p class="example-description">
+        This example shows pagination, filtering, sorting, and data aggregation.
+    </p>
+
+    <div class="controls-panel">
+        <div class="filter-section">
+            <h3>Filters & Search</h3>
+
+            <div class="filter-group">
+                <label>Search:</label>
+                <input type="text" @bind="searchQuery" class="form-control" placeholder="Search employees..." />
+            </div>
+
+            <div class="filter-group">
+                <label>Department:</label>
+                <select @bind="selectedDepartment" class="form-control">
+                    <option value="">-- All Departments --</option>
+                    <option value="Engineering">Engineering</option>
+                    <option value="Marketing">Marketing</option>
+                    <option value="Sales">Sales</option>
+                    <option value="HR">HR</option>
+                </select>
+            </div>
+
+            <div class="filter-group">
+                <label>Salary Range:</label>
+                <div class="range-inputs">
+                    <input type="number" @bind="minSalary" class="form-control" placeholder="Min" />
+                    <span>to</span>
+                    <input type="number" @bind="maxSalary" class="form-control" placeholder="Max" />
+                </div>
+            </div>
+
+            <button class="btn btn-primary" @onclick="ApplyFilters">Apply Filters</button>
+            <button class="btn btn-secondary" @onclick="ClearFilters">Clear All</button>
+        </div>
+
+        <div class="pagination-section">
+            <h3>Pagination</h3>
+
+            <div class="pagination-controls">
+                <button class="btn btn-sm" @onclick="FirstPage" disabled="@(currentPage == 1)">
+                    « First
+                </button>
+                <button class="btn btn-sm" @onclick="PreviousPage" disabled="@(currentPage == 1)">
+                    ‹ Previous
+                </button>
+
+                <div class="page-info">
+                    Page <input type="number" @bind="currentPage" min="1" max="@totalPages" class="page-input" />
+                    of @totalPages
+                </div>
+
+                <button class="btn btn-sm" @onclick="NextPage" disabled="@(currentPage >= totalPages)">
+                    Next ›
+                </button>
+                <button class="btn btn-sm" @onclick="LastPage" disabled="@(currentPage >= totalPages)">
+                    Last »
+                </button>
+            </div>
+
+            <div class="page-size">
+                <label>Items per page:</label>
+                <select @bind="pageSize" class="form-control small">
+                    <option value="10">10</option>
+                    <option value="25">25</option>
+                    <option value="50">50</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="sorting-section">
+            <h3>Sorting</h3>
+
+            <div class="sort-controls">
+                <label>Sort by:</label>
+                <select @bind="sortBy" class="form-control">
+                    <option value="name">Name</option>
+                    <option value="department">Department</option>
+                    <option value="salary">Salary</option>
+                    <option value="hiredate">Hire Date</option>
+                </select>
+
+                <label>Order:</label>
+                <select @bind="sortOrder" class="form-control">
+                    <option value="asc">Ascending</option>
+                    <option value="desc">Descending</option>
+                </select>
+
+                <button class="btn btn-primary" @onclick="ApplySorting">Apply Sort</button>
+            </div>
+        </div>
+    </div>
+
+    @if (displayedRows.Count > 0)
+    {
+        <div class="results-section">
+            <h2>Results</h2>
+
+            <div class="results-info">
+                <p>
+                    Showing <strong>@((currentPage - 1) * pageSize + 1)</strong> to
+                    <strong>@Math.Min(currentPage * pageSize, totalRecords)</strong>
+                    of <strong>@totalRecords</strong> employees
+                </p>
+            </div>
+
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Department</th>
+                        <th>Salary</th>
+                        <th>Hire Date</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var row in displayedRows)
+                    {
+                        <tr>
+                            <td>@row.Values["Name"]</td>
+                            <td>@row.Values["Department"]</td>
+                            <td>@((decimal)row.Values["Salary"]):C</td>
+                            <td>@((DateTime)row.Values["HireDate"]):yyyy-MM-dd</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+
+            <div class="statistics">
+                <h3>Statistics</h3>
+                <div class="stat-grid">
+                    <div class="stat-box">
+                        <p class="stat-label">Total Records</p>
+                        <p class="stat-value">@totalRecords</p>
+                    </div>
+                    <div class="stat-box">
+                        <p class="stat-label">Average Salary</p>
+                        <p class="stat-value">@(displayedRows.Count > 0 ? (displayedRows.Sum(r => (decimal)r.Values["Salary"]) / displayedRows.Count).ToString("C") : "N/A")</p>
+                    </div>
+                    <div class="stat-box">
+                        <p class="stat-label">Avg Records/Page</p>
+                        <p class="stat-value">@pageSize</p>
+                    </div>
+                    <div class="stat-box">
+                        <p class="stat-label">Total Pages</p>
+                        <p class="stat-value">@totalPages</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+
+    <div class="example-actions">
+        <button class="btn btn-info" @onclick="GoHome">← Back to Home</button>
+    </div>
+</div>
+
+@code {
+    private List<DataTableRow> allRows = new();
+    private List<DataTableRow> displayedRows = new();
+
+    private int currentPage = 1;
+    private int pageSize = 25;
+    private int totalRecords = 0;
+    private int totalPages = 0;
+
+    private string searchQuery = "";
+    private string selectedDepartment = "";
+    private int minSalary = 0;
+    private int maxSalary = 500000;
+
+    private string sortBy = "name";
+    private string sortOrder = "asc";
+
+    protected override Task OnInitializedAsync()
+    {
+        GenerateSampleData();
+        ApplyFilters();
+        return Task.CompletedTask;
+    }
+
+    private void GenerateSampleData()
+    {
+        var sampleData = new[]
+        {
+            new { Name = "Alice Johnson", Department = "Engineering", Salary = 120000, HireDate = new DateTime(2020, 1, 15) },
+            new { Name = "Bob Smith", Department = "Sales", Salary = 85000, HireDate = new DateTime(2019, 6, 1) },
+            new { Name = "Carol Williams", Department = "Engineering", Salary = 130000, HireDate = new DateTime(2021, 3, 10) },
+            new { Name = "David Brown", Department = "Marketing", Salary = 95000, HireDate = new DateTime(2020, 8, 20) },
+            new { Name = "Eve Davis", Department = "HR", Salary = 80000, HireDate = new DateTime(2019, 2, 5) },
+            new { Name = "Frank Miller", Department = "Engineering", Salary = 125000, HireDate = new DateTime(2021, 1, 12) },
+            new { Name = "Grace Lee", Department = "Sales", Salary = 90000, HireDate = new DateTime(2020, 5, 18) },
+            new { Name = "Henry Wilson", Department = "Marketing", Salary = 100000, HireDate = new DateTime(2019, 11, 3) },
+            new { Name = "Ivy Martinez", Department = "Engineering", Salary = 135000, HireDate = new DateTime(2020, 9, 7) },
+            new { Name = "Jack Anderson", Department = "Sales", Salary = 88000, HireDate = new DateTime(2021, 2, 14) },
+            new { Name = "Karen Thomas", Department = "Engineering", Salary = 128000, HireDate = new DateTime(2019, 7, 22) },
+            new { Name = "Leo Jackson", Department = "HR", Salary = 82000, HireDate = new DateTime(2020, 4, 9) },
+        };
+
+        allRows.Clear();
+        foreach (var item in sampleData)
+        {
+            allRows.Add(new DataTableRow
+            {
+                Values = new Dictionary<string, object>
+                {
+                    { "Name", item.Name },
+                    { "Department", item.Department },
+                    { "Salary", item.Salary },
+                    { "HireDate", item.HireDate }
+                }
+            });
+        }
+    }
+
+    private void ApplyFilters()
+    {
+        var filtered = allRows.AsEnumerable();
+
+        // Search filter
+        if (!string.IsNullOrWhiteSpace(searchQuery))
+        {
+            filtered = filtered.Where(r =>
+                r.Values["Name"].ToString()?.Contains(searchQuery, StringComparison.OrdinalIgnoreCase) ?? false
+            );
+        }
+
+        // Department filter
+        if (!string.IsNullOrWhiteSpace(selectedDepartment))
+        {
+            filtered = filtered.Where(r =>
+                r.Values["Department"].ToString() == selectedDepartment
+            );
+        }
+
+        // Salary range filter
+        filtered = filtered.Where(r =>
+            (int)r.Values["Salary"] >= minSalary && (int)r.Values["Salary"] <= maxSalary
+        );
+
+        // Apply sorting
+        filtered = sortOrder == "asc"
+            ? filtered.OrderBy(r => r.Values[sortBy])
+            : filtered.OrderByDescending(r => r.Values[sortBy]);
+
+        var sorted = filtered.ToList();
+        totalRecords = sorted.Count;
+        totalPages = (int)Math.Ceiling((double)totalRecords / pageSize);
+
+        // Apply pagination
+        displayedRows = sorted
+            .Skip((currentPage - 1) * pageSize)
+            .Take(pageSize)
+            .ToList();
+    }
+
+    private void ApplySorting()
+    {
+        ApplyFilters();
+    }
+
+    private void ClearFilters()
+    {
+        searchQuery = "";
+        selectedDepartment = "";
+        minSalary = 0;
+        maxSalary = 500000;
+        currentPage = 1;
+        ApplyFilters();
+    }
+
+    private void FirstPage()
+    {
+        currentPage = 1;
+        ApplyFilters();
+    }
+
+    private void PreviousPage()
+    {
+        if (currentPage > 1)
+        {
+            currentPage--;
+            ApplyFilters();
+        }
+    }
+
+    private void NextPage()
+    {
+        if (currentPage < totalPages)
+        {
+            currentPage++;
+            ApplyFilters();
+        }
+    }
+
+    private void LastPage()
+    {
+        currentPage = totalPages;
+        ApplyFilters();
+    }
+
+    private void GoHome()
+    {
+        NavigationManager.NavigateTo("/");
+    }
+}
+
+<style>
+    .data-ops-container {
+        max-width: 1200px;
+        margin: 20px auto;
+        padding: 20px;
+    }
+
+    h1 {
+        color: #333;
+        margin-bottom: 10px;
+    }
+
+    .example-description {
+        color: #666;
+        font-size: 14px;
+        margin-bottom: 25px;
+    }
+
+    .controls-panel {
+        background-color: #f9f9f9;
+        padding: 20px;
+        border-radius: 8px;
+        margin-bottom: 30px;
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 25px;
+    }
+
+    .filter-section,
+    .pagination-section,
+    .sorting-section {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .filter-section h3,
+    .pagination-section h3,
+    .sorting-section h3 {
+        margin-top: 0;
+        color: #333;
+    }
+
+    .filter-group {
+        margin-bottom: 15px;
+    }
+
+    .filter-group label,
+    .sort-controls label {
+        display: block;
+        margin-bottom: 5px;
+        font-weight: 500;
+        font-size: 13px;
+    }
+
+    .form-control {
+        width: 100%;
+        padding: 8px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        font-size: 14px;
+    }
+
+    .range-inputs {
+        display: flex;
+        gap: 8px;
+        align-items: center;
+    }
+
+    .range-inputs .form-control {
+        flex: 1;
+    }
+
+    .range-inputs span {
+        color: #666;
+        font-size: 13px;
+    }
+
+    .btn {
+        padding: 8px 12px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 13px;
+        font-weight: 500;
+        transition: background-color 0.3s;
+    }
+
+    .btn-sm {
+        padding: 6px 10px;
+        font-size: 12px;
+    }
+
+    .btn-primary {
+        background-color: #007bff;
+        color: white;
+        width: 100%;
+    }
+
+    .btn-primary:hover:not(:disabled) {
+        background-color: #0056b3;
+    }
+
+    .btn-secondary {
+        background-color: #6c757d;
+        color: white;
+        width: 100%;
+        margin-top: 8px;
+    }
+
+    .btn-secondary:hover {
+        background-color: #545b62;
+    }
+
+    .btn:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+    }
+
+    .pagination-controls {
+        display: flex;
+        gap: 8px;
+        align-items: center;
+        margin-bottom: 15px;
+        flex-wrap: wrap;
+    }
+
+    .page-info {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        white-space: nowrap;
+    }
+
+    .page-input {
+        width: 50px;
+        padding: 6px;
+        border: 1px solid #ccc;
+        border-radius: 3px;
+        text-align: center;
+    }
+
+    .page-size {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .page-size label {
+        margin-bottom: 5px;
+        font-size: 13px;
+        font-weight: 500;
+    }
+
+    .page-size .form-control.small {
+        font-size: 13px;
+        padding: 6px;
+    }
+
+    .sort-controls {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+    }
+
+    .sort-controls select {
+        margin-bottom: 8px;
+    }
+
+    .results-section {
+        background-color: white;
+        padding: 20px;
+        border-radius: 8px;
+        margin-bottom: 20px;
+    }
+
+    .results-section h2 {
+        color: #333;
+        margin-top: 0;
+    }
+
+    .results-info {
+        background-color: #f0f8ff;
+        padding: 12px;
+        border-left: 4px solid #007bff;
+        margin-bottom: 15px;
+    }
+
+    .results-info p {
+        margin: 0;
+        font-size: 14px;
+    }
+
+    .data-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-bottom: 20px;
+    }
+
+    .data-table thead {
+        background-color: #f5f5f5;
+    }
+
+    .data-table th,
+    .data-table td {
+        padding: 12px;
+        text-align: left;
+        border-bottom: 1px solid #ddd;
+        font-size: 14px;
+    }
+
+    .data-table tbody tr:hover {
+        background-color: #f9f9f9;
+    }
+
+    .statistics {
+        background-color: #f9f9f9;
+        padding: 20px;
+        border-radius: 8px;
+    }
+
+    .statistics h3 {
+        margin-top: 0;
+        color: #333;
+    }
+
+    .stat-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+        gap: 15px;
+    }
+
+    .stat-box {
+        background-color: white;
+        padding: 15px;
+        border-radius: 4px;
+        border-left: 4px solid #007bff;
+        text-align: center;
+    }
+
+    .stat-label {
+        margin: 0 0 8px 0;
+        font-size: 12px;
+        color: #666;
+        font-weight: 500;
+    }
+
+    .stat-value {
+        margin: 0;
+        font-size: 18px;
+        color: #007bff;
+        font-weight: bold;
+    }
+
+    .example-actions {
+        text-align: center;
+        margin-top: 20px;
+    }
+
+    .btn-info {
+        background-color: #17a2b8;
+        color: white;
+        display: inline-block;
+    }
+
+    .btn-info:hover {
+        background-color: #117a8b;
+    }
+
+    @media (max-width: 768px) {
+        .controls-panel {
+            grid-template-columns: 1fr;
+        }
+
+        .pagination-controls {
+            flex-direction: column;
+            align-items: stretch;
+        }
+
+        .page-info {
+            justify-content: center;
+        }
+    }
+</style>

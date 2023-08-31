@@ -1,0 +1,324 @@
+@* =============================================================================
+ * Author: Vladyslav Zaiets | https://sarmkadan.com
+ * CTO & Software Architect
+ * =============================================================================
+ *
+ * Basic Data Table Example
+ * Demonstrates: Creating a table, loading data, pagination, and export
+ *@
+
+@page "/examples/basic-data-table"
+@using BlazorComponentLibrary.Models
+@using BlazorComponentLibrary.Services
+@inject DataService DataService
+@inject ComponentService ComponentService
+@inject NavigationManager NavigationManager
+
+<PageTitle>Basic Data Table Example</PageTitle>
+
+<div class="example-container">
+    <h1>Basic Data Table Example</h1>
+
+    <p class="example-description">
+        This example demonstrates how to create and populate a data table with the Blazor Component Library.
+    </p>
+
+    @if (errorMessage != null)
+    {
+        <div class="alert alert-danger">
+            <strong>Error:</strong> @errorMessage
+        </div>
+    }
+
+    <div class="controls">
+        <button class="btn btn-primary" @onclick="LoadData">Load Sample Data</button>
+        <button class="btn btn-secondary" @onclick="ExportToCsv">Export to CSV</button>
+        <button class="btn btn-secondary" @onclick="ExportToJson">Export to JSON</button>
+        <button class="btn btn-info" @onclick="GoHome">← Back to Home</button>
+    </div>
+
+    @if (rows != null && rows.Count > 0)
+    {
+        <div class="table-container">
+            <h2>Users Table</h2>
+
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Department</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var row in rows)
+                    {
+                        <tr>
+                            <td>@row.Values["Id"]</td>
+                            <td>@row.Values["Name"]</td>
+                            <td>@row.Values["Email"]</td>
+                            <td>@row.Values["Department"]</td>
+                            <td>
+                                <span class="badge badge-@(row.Values["Status"].ToString() == "Active" ? "success" : "warning")">
+                                    @row.Values["Status"]
+                                </span>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+
+            <p class="table-info">
+                <strong>Total Rows:</strong> @rows.Count
+            </p>
+        </div>
+    }
+    else if (isLoading)
+    {
+        <div class="spinner">Loading data...</div>
+    }
+    else
+    {
+        <p class="no-data">Click "Load Sample Data" to populate the table.</p>
+    }
+</div>
+
+@code {
+    private List<DataTableRow> rows = new();
+    private bool isLoading = false;
+    private string? errorMessage;
+
+    private async Task LoadData()
+    {
+        try
+        {
+            isLoading = true;
+            errorMessage = null;
+
+            // Create component configuration
+            var config = new ComponentConfig
+            {
+                Name = "SampleUserTable",
+                ComponentType = "DataTable",
+                Description = "Sample user data table for examples"
+            };
+
+            await ComponentService.CreateComponentAsync(config);
+
+            // Add sample data
+            var sampleUsers = new[]
+            {
+                new { Id = 1, Name = "Alice Johnson", Email = "alice@example.com", Department = "Engineering", Status = "Active" },
+                new { Id = 2, Name = "Bob Smith", Email = "bob@example.com", Department = "Marketing", Status = "Active" },
+                new { Id = 3, Name = "Carol Williams", Email = "carol@example.com", Department = "Sales", Status = "Inactive" },
+                new { Id = 4, Name = "David Brown", Email = "david@example.com", Department = "Engineering", Status = "Active" },
+                new { Id = 5, Name = "Eve Davis", Email = "eve@example.com", Department = "HR", Status = "Active" }
+            };
+
+            rows.Clear();
+            foreach (var user in sampleUsers)
+            {
+                var row = new DataTableRow
+                {
+                    Id = user.Id,
+                    Values = new Dictionary<string, object>
+                    {
+                        { "Id", user.Id },
+                        { "Name", user.Name },
+                        { "Email", user.Email },
+                        { "Department", user.Department },
+                        { "Status", user.Status }
+                    }
+                };
+
+                await DataService.AddRowAsync("users", row);
+                rows.Add(row);
+            }
+        }
+        catch (Exception ex)
+        {
+            errorMessage = $"Failed to load data: {ex.Message}";
+        }
+        finally
+        {
+            isLoading = false;
+        }
+    }
+
+    private async Task ExportToCsv()
+    {
+        try
+        {
+            if (rows.Count == 0)
+            {
+                errorMessage = "No data to export. Load data first.";
+                return;
+            }
+
+            var csv = await DataService.ExportToFormatAsync("users", ExportFormat.Csv);
+            Console.WriteLine("CSV Export:");
+            Console.WriteLine(csv);
+            // In a real app, you'd download this file
+        }
+        catch (Exception ex)
+        {
+            errorMessage = $"Export failed: {ex.Message}";
+        }
+    }
+
+    private async Task ExportToJson()
+    {
+        try
+        {
+            if (rows.Count == 0)
+            {
+                errorMessage = "No data to export. Load data first.";
+                return;
+            }
+
+            var json = await DataService.ExportToFormatAsync("users", ExportFormat.Json);
+            Console.WriteLine("JSON Export:");
+            Console.WriteLine(json);
+            // In a real app, you'd download this file
+        }
+        catch (Exception ex)
+        {
+            errorMessage = $"Export failed: {ex.Message}";
+        }
+    }
+
+    private void GoHome()
+    {
+        NavigationManager.NavigateTo("/");
+    }
+}
+
+<style>
+    .example-container {
+        max-width: 1000px;
+        margin: 20px auto;
+        padding: 20px;
+    }
+
+    .example-description {
+        color: #666;
+        font-size: 14px;
+        margin-bottom: 20px;
+    }
+
+    .controls {
+        margin-bottom: 20px;
+    }
+
+    .controls button {
+        margin-right: 10px;
+        margin-bottom: 10px;
+    }
+
+    .table-container {
+        margin-top: 20px;
+    }
+
+    .data-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 15px;
+    }
+
+    .data-table thead {
+        background-color: #f5f5f5;
+    }
+
+    .data-table th,
+    .data-table td {
+        padding: 12px;
+        text-align: left;
+        border-bottom: 1px solid #ddd;
+    }
+
+    .data-table tbody tr:hover {
+        background-color: #f9f9f9;
+    }
+
+    .badge {
+        padding: 5px 10px;
+        border-radius: 3px;
+        font-size: 12px;
+    }
+
+    .badge-success {
+        background-color: #28a745;
+        color: white;
+    }
+
+    .badge-warning {
+        background-color: #ffc107;
+        color: black;
+    }
+
+    .table-info {
+        margin-top: 15px;
+        color: #666;
+    }
+
+    .spinner {
+        text-align: center;
+        padding: 20px;
+        color: #666;
+    }
+
+    .no-data {
+        text-align: center;
+        padding: 40px;
+        color: #999;
+    }
+
+    .alert {
+        padding: 15px;
+        margin-bottom: 20px;
+        border-radius: 4px;
+    }
+
+    .alert-danger {
+        background-color: #f8d7da;
+        color: #721c24;
+        border: 1px solid #f5c6cb;
+    }
+
+    .btn {
+        padding: 8px 16px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 14px;
+    }
+
+    .btn-primary {
+        background-color: #007bff;
+        color: white;
+    }
+
+    .btn-primary:hover {
+        background-color: #0056b3;
+    }
+
+    .btn-secondary {
+        background-color: #6c757d;
+        color: white;
+    }
+
+    .btn-secondary:hover {
+        background-color: #545b62;
+    }
+
+    .btn-info {
+        background-color: #17a2b8;
+        color: white;
+    }
+
+    .btn-info:hover {
+        background-color: #117a8b;
+    }
+</style>
