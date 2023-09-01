@@ -3,7 +3,7 @@
 // CTO & Software Architect
 // =============================================================================
 
-using Newtonsoft.Json;
+using System.Text.Json.Serialization;
 
 namespace BlazorComponentLibrary.Models;
 
@@ -13,19 +13,19 @@ namespace BlazorComponentLibrary.Models;
 /// </summary>
 public class Result<T>
 {
-    [JsonProperty("success")]
+    [JsonPropertyName("success")]
     public bool Success { get; set; }
 
-    [JsonProperty("data")]
+    [JsonPropertyName("data")]
     public T? Data { get; set; }
 
-    [JsonProperty("message")]
+    [JsonPropertyName("message")]
     public string? Message { get; set; }
 
-    [JsonProperty("errors")]
+    [JsonPropertyName("errors")]
     public Dictionary<string, string>? Errors { get; set; }
 
-    [JsonProperty("timestamp")]
+    [JsonPropertyName("timestamp")]
     public DateTime Timestamp { get; set; } = DateTime.UtcNow;
 
     public static Result<T> SuccessResult(T data, string? message = null)
@@ -57,16 +57,16 @@ public class Result<T>
 /// </summary>
 public class Result
 {
-    [JsonProperty("success")]
+    [JsonPropertyName("success")]
     public bool Success { get; set; }
 
-    [JsonProperty("message")]
+    [JsonPropertyName("message")]
     public string? Message { get; set; }
 
-    [JsonProperty("errors")]
+    [JsonPropertyName("errors")]
     public Dictionary<string, string>? Errors { get; set; }
 
-    [JsonProperty("timestamp")]
+    [JsonPropertyName("timestamp")]
     public DateTime Timestamp { get; set; } = DateTime.UtcNow;
 
     public static Result SuccessResult(string? message = null)
@@ -96,25 +96,25 @@ public class Result
 /// </summary>
 public class BatchResult<T>
 {
-    [JsonProperty("success")]
+    [JsonPropertyName("success")]
     public bool Success { get; set; }
 
-    [JsonProperty("items")]
+    [JsonPropertyName("items")]
     public List<T> Items { get; set; } = new();
 
-    [JsonProperty("total")]
+    [JsonPropertyName("total")]
     public int Total { get; set; }
 
-    [JsonProperty("succeeded")]
+    [JsonPropertyName("succeeded")]
     public int SucceededCount { get; set; }
 
-    [JsonProperty("failed")]
+    [JsonPropertyName("failed")]
     public int FailedCount { get; set; }
 
-    [JsonProperty("errors")]
+    [JsonPropertyName("errors")]
     public List<BatchError>? Errors { get; set; }
 
-    [JsonProperty("timestamp")]
+    [JsonPropertyName("timestamp")]
     public DateTime Timestamp { get; set; } = DateTime.UtcNow;
 
     public static BatchResult<T> SuccessResult(List<T> items)
@@ -147,12 +147,12 @@ public class BatchResult<T>
 
 public class BatchError
 {
-    [JsonProperty("index")]
+    [JsonPropertyName("index")]
     public int Index { get; set; }
 
-    [JsonProperty("message")]
+    [JsonPropertyName("message")]
     public string Message { get; set; } = string.Empty;
 
-    [JsonProperty("code")]
+    [JsonPropertyName("code")]
     public string? Code { get; set; }
 }

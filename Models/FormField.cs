@@ -4,7 +4,7 @@
 // =============================================================================
 
 using System.ComponentModel.DataAnnotations;
-using Newtonsoft.Json;
+using System.Text.Json.Serialization;
 
 namespace BlazorComponentLibrary.Models;
 
@@ -19,48 +19,48 @@ public class FormField
 
     [Required]
     [StringLength(100, MinimumLength = 1)]
-    [JsonProperty("name")]
+    [JsonPropertyName("name")]
     public string Name { get; set; } = string.Empty;
 
     [Required]
     [StringLength(150)]
-    [JsonProperty("label")]
+    [JsonPropertyName("label")]
     public string Label { get; set; } = string.Empty;
 
-    [JsonProperty("fieldType")]
+    [JsonPropertyName("fieldType")]
     public FormFieldType FieldType { get; set; } = FormFieldType.Text;
 
-    [JsonProperty("isRequired")]
+    [JsonPropertyName("isRequired")]
     public bool IsRequired { get; set; } = false;
 
-    [JsonProperty("isReadOnly")]
+    [JsonPropertyName("isReadOnly")]
     public bool IsReadOnly { get; set; } = false;
 
-    [JsonProperty("placeholder")]
+    [JsonPropertyName("placeholder")]
     public string? Placeholder { get; set; }
 
-    [JsonProperty("defaultValue")]
+    [JsonPropertyName("defaultValue")]
     public string? DefaultValue { get; set; }
 
-    [JsonProperty("minLength")]
+    [JsonPropertyName("minLength")]
     public int? MinLength { get; set; }
 
-    [JsonProperty("maxLength")]
+    [JsonPropertyName("maxLength")]
     public int? MaxLength { get; set; }
 
-    [JsonProperty("pattern")]
+    [JsonPropertyName("pattern")]
     public string? Pattern { get; set; }
 
-    [JsonProperty("helpText")]
+    [JsonPropertyName("helpText")]
     public string? HelpText { get; set; }
 
-    [JsonProperty("options")]
+    [JsonPropertyName("options")]
     public List<FormFieldOption>? Options { get; set; }
 
-    [JsonProperty("order")]
+    [JsonPropertyName("order")]
     public int Order { get; set; } = 0;
 
-    [JsonProperty("cssClass")]
+    [JsonPropertyName("cssClass")]
     public string? CssClass { get; set; }
 
     /// <summary>
@@ -153,10 +153,10 @@ public class FormField
 
 public class FormFieldOption
 {
-    [JsonProperty("value")]
+    [JsonPropertyName("value")]
     public string Value { get; set; } = string.Empty;
 
-    [JsonProperty("label")]
+    [JsonPropertyName("label")]
     public string Label { get; set; } = string.Empty;
 }
 

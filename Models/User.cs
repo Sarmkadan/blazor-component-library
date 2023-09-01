@@ -4,7 +4,7 @@
 // =============================================================================
 
 using System.ComponentModel.DataAnnotations;
-using Newtonsoft.Json;
+using System.Text.Json.Serialization;
 
 namespace BlazorComponentLibrary.Models;
 
@@ -19,44 +19,44 @@ public class User
 
     [Required]
     [StringLength(100, MinimumLength = 3)]
-    [JsonProperty("username")]
+    [JsonPropertyName("username")]
     public string Username { get; set; } = string.Empty;
 
     [Required]
     [EmailAddress]
     [StringLength(254)]
-    [JsonProperty("email")]
+    [JsonPropertyName("email")]
     public string Email { get; set; } = string.Empty;
 
     [Required]
     [StringLength(500)]
-    [JsonProperty("passwordHash")]
+    [JsonPropertyName("passwordHash")]
     public string PasswordHash { get; set; } = string.Empty;
 
     [StringLength(100)]
-    [JsonProperty("firstName")]
+    [JsonPropertyName("firstName")]
     public string? FirstName { get; set; }
 
     [StringLength(100)]
-    [JsonProperty("lastName")]
+    [JsonPropertyName("lastName")]
     public string? LastName { get; set; }
 
-    [JsonProperty("role")]
+    [JsonPropertyName("role")]
     public UserRole Role { get; set; } = UserRole.User;
 
-    [JsonProperty("isActive")]
+    [JsonPropertyName("isActive")]
     public bool IsActive { get; set; } = true;
 
-    [JsonProperty("preferences")]
+    [JsonPropertyName("preferences")]
     public UserPreferences Preferences { get; set; } = new();
 
-    [JsonProperty("createdAt")]
+    [JsonPropertyName("createdAt")]
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
-    [JsonProperty("lastLogin")]
+    [JsonPropertyName("lastLogin")]
     public DateTime? LastLogin { get; set; }
 
-    [JsonProperty("lastModified")]
+    [JsonPropertyName("lastModified")]
     public DateTime LastModified { get; set; } = DateTime.UtcNow;
 
     /// <summary>
@@ -141,46 +141,46 @@ public class User
 
 public class UserPreferences
 {
-    [JsonProperty("themeId")]
+    [JsonPropertyName("themeId")]
     public int? ThemeId { get; set; }
 
-    [JsonProperty("locale")]
+    [JsonPropertyName("locale")]
     public string Locale { get; set; } = "en-US";
 
-    [JsonProperty("itemsPerPage")]
+    [JsonPropertyName("itemsPerPage")]
     public int ItemsPerPage { get; set; } = 25;
 
-    [JsonProperty("enableNotifications")]
+    [JsonPropertyName("enableNotifications")]
     public bool EnableNotifications { get; set; } = true;
 
-    [JsonProperty("enableEmailNotifications")]
+    [JsonPropertyName("enableEmailNotifications")]
     public bool EnableEmailNotifications { get; set; } = true;
 
-    [JsonProperty("timezone")]
+    [JsonPropertyName("timezone")]
     public string Timezone { get; set; } = "UTC";
 
-    [JsonProperty("defaultView")]
+    [JsonPropertyName("defaultView")]
     public string DefaultView { get; set; } = "grid";
 }
 
 public class UserSummary
 {
-    [JsonProperty("id")]
+    [JsonPropertyName("id")]
     public int Id { get; set; }
 
-    [JsonProperty("username")]
+    [JsonPropertyName("username")]
     public string Username { get; set; } = string.Empty;
 
-    [JsonProperty("email")]
+    [JsonPropertyName("email")]
     public string Email { get; set; } = string.Empty;
 
-    [JsonProperty("fullName")]
+    [JsonPropertyName("fullName")]
     public string FullName { get; set; } = string.Empty;
 
-    [JsonProperty("role")]
+    [JsonPropertyName("role")]
     public UserRole Role { get; set; }
 
-    [JsonProperty("isActive")]
+    [JsonPropertyName("isActive")]
     public bool IsActive { get; set; }
 }
 

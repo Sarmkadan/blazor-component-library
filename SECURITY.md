@@ -215,7 +215,7 @@ https://github.com/sarmkadan/blazor-component-library/releases
 - Microsoft.AspNetCore.Components.Web
 - Microsoft.Extensions.DependencyInjection
 - Microsoft.Extensions.Configuration
-- Newtonsoft.Json
+- System.Text.Json (built-in .NET)
 
 **Security Practices:**
 - Monitor for known vulnerabilities

@@ -4,7 +4,7 @@
 // =============================================================================
 
 using System.ComponentModel.DataAnnotations;
-using Newtonsoft.Json;
+using System.Text.Json.Serialization;
 
 namespace BlazorComponentLibrary.Models;
 
@@ -19,38 +19,38 @@ public class ComponentConfig
 
     [Required]
     [StringLength(100, MinimumLength = 3)]
-    [JsonProperty("name")]
+    [JsonPropertyName("name")]
     public string Name { get; set; } = string.Empty;
 
     [Required]
     [StringLength(500)]
-    [JsonProperty("description")]
+    [JsonPropertyName("description")]
     public string Description { get; set; } = string.Empty;
 
     [Required]
-    [JsonProperty("componentType")]
+    [JsonPropertyName("componentType")]
     public string ComponentType { get; set; } = string.Empty;
 
-    [JsonProperty("isActive")]
+    [JsonPropertyName("isActive")]
     public bool IsActive { get; set; } = true;
 
-    [JsonProperty("version")]
+    [JsonPropertyName("version")]
     public string Version { get; set; } = "1.0.0";
 
-    [JsonProperty("cssClass")]
+    [JsonPropertyName("cssClass")]
     public string? CssClass { get; set; }
 
-    [JsonProperty("attributes")]
+    [JsonPropertyName("attributes")]
     public Dictionary<string, string>? Attributes { get; set; } = new();
 
-    [JsonProperty("createdAt")]
+    [JsonPropertyName("createdAt")]
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
-    [JsonProperty("modifiedAt")]
+    [JsonPropertyName("modifiedAt")]
     public DateTime? ModifiedAt { get; set; }
 
     [Range(0, 1000)]
-    [JsonProperty("displayOrder")]
+    [JsonPropertyName("displayOrder")]
     public int DisplayOrder { get; set; } = 0;
 
     /// <summary>

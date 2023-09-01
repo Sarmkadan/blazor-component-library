@@ -4,7 +4,7 @@
 // =============================================================================
 
 using System.ComponentModel.DataAnnotations;
-using Newtonsoft.Json;
+using System.Text.Json.Serialization;
 
 namespace BlazorComponentLibrary.Models;
 
@@ -19,39 +19,39 @@ public class ChartDataset
 
     [Required]
     [StringLength(100, MinimumLength = 1)]
-    [JsonProperty("label")]
+    [JsonPropertyName("label")]
     public string Label { get; set; } = string.Empty;
 
     [Required]
-    [JsonProperty("chartType")]
+    [JsonPropertyName("chartType")]
     public ChartType ChartType { get; set; } = ChartType.Line;
 
     [Required]
-    [JsonProperty("data")]
+    [JsonPropertyName("data")]
     public List<decimal> Data { get; set; } = new();
 
-    [JsonProperty("labels")]
+    [JsonPropertyName("labels")]
     public List<string> Labels { get; set; } = new();
 
-    [JsonProperty("backgroundColor")]
+    [JsonPropertyName("backgroundColor")]
     public string? BackgroundColor { get; set; }
 
-    [JsonProperty("borderColor")]
+    [JsonPropertyName("borderColor")]
     public string? BorderColor { get; set; }
 
-    [JsonProperty("borderWidth")]
+    [JsonPropertyName("borderWidth")]
     public int BorderWidth { get; set; } = 1;
 
-    [JsonProperty("fill")]
+    [JsonPropertyName("fill")]
     public bool Fill { get; set; } = false;
 
-    [JsonProperty("tension")]
+    [JsonPropertyName("tension")]
     public double Tension { get; set; } = 0.4;
 
-    [JsonProperty("createdAt")]
+    [JsonPropertyName("createdAt")]
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
-    [JsonProperty("modifiedAt")]
+    [JsonPropertyName("modifiedAt")]
     public DateTime? ModifiedAt { get; set; }
 
     /// <summary>
