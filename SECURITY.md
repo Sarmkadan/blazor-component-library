@@ -2,9 +2,14 @@
 
 ## Reporting Security Issues
 
-If you discover a security vulnerability in the Blazor Component Library, please **do not** create a public GitHub issue. Instead, report it privately to:
+If you discover a security vulnerability in the Blazor Component Library, please **do not** create a public GitHub issue. Instead, report it privately using one of these methods:
 
-**Email:** vz@sarmkadan.com  
+### Preferred: GitHub Private Vulnerability Reporting
+Use GitHub's built-in security advisory feature:
+- **URL:** https://github.com/sarmkadan/blazor-component-library/security/advisories/new
+
+### Alternative: Email
+**Email:** rutova2@gmail.com  
 **Subject:** [SECURITY] Blazor Component Library Vulnerability
 
 **Please include:**
@@ -15,18 +20,15 @@ If you discover a security vulnerability in the Blazor Component Library, please
 - Your contact information (optional)
 
 **Response Timeline:**
-- Initial acknowledgment: Within 24-48 hours
+- Initial acknowledgment: Within 48 hours
 - Initial assessment: Within 1 week
-- Update on fix: Every 2 weeks until resolved
 - Public disclosure: After fix is released
 
 ## Supported Versions
 
-| Version | Status | Support Ends | Security Updates |
-|---------|--------|--------------|------------------|
-| 1.2.x | Active | 2027-05-04 | Yes |
-| 1.1.x | Maintenance | 2026-12-01 | Critical only |
-| 1.0.x | EOL | 2026-06-01 | No |
+| Version | Status | Security Updates |
+|---------|--------|------------------|
+| 1.x | Active | Yes |
 
 **Update Frequency:**
 - Security patches: As needed (critical)
@@ -237,7 +239,7 @@ For security questions or concerns:
 
 1. **Check documentation** - [Security section in docs](docs/deployment.md#security-best-practices)
 2. **Review examples** - [Secure implementation examples](examples/03-UserAuthentication.razor)
-3. **Ask privately** - vz@sarmkadan.com
+3. **Ask privately** - rutova2@gmail.com
 4. **Open discussion** - GitHub Discussions (for non-sensitive)
 
 ---
@@ -263,7 +265,7 @@ Before deploying to production:
 
 ---
 
-**Last Updated:** May 4, 2026  
+**Last Updated:** May 6, 2026  
 **Version:** 1.2.0  
 **Maintained by:** Vladyslav Zaiets
 
