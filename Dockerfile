@@ -1,26 +1,16 @@
-# Build stage
-FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build
-WORKDIR /src
-
-COPY ["BlazorComponentLibrary.csproj", "./"]
-RUN dotnet restore "BlazorComponentLibrary.csproj"
-
-COPY . .
-RUN dotnet build "BlazorComponentLibrary.csproj" -c Release -o /app/build
-
-FROM build AS publish
-RUN dotnet publish "BlazorComponentLibrary.csproj" -c Release -o /app/publish
-
-# Runtime stage
-FROM mcr.microsoft.com/dotnet/aspnet:10.0 AS runtime
+FROM mcr.microsoft.com/dotnet/sdk:10.0-alpine AS build
 WORKDIR /app
+COPY *.csproj ./
+RUN dotnet restore
+COPY . ./
+RUN dotnet publish -c Release -o out
 
-COPY --from=publish /app/publish .
-
-EXPOSE 8080
-ENV ASPNETCORE_URLS=http://+:8080
-
-HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
-    CMD curl -f http://localhost:8080/health || exit 1
-
+FROM mcr.microsoft.com/dotnet/aspnet:10.0-alpine
+WORKDIR /app
+COPY --from=build /app/out ./
+RUN adduser -D myuser
+USER myuser
+EXPOSE 80
+ENV ASPNETCORE_URLS=http://+:80
+HEALTHCHECK --interval=10s --timeout=5s --retries=3 CMD curl --fail http://localhost:80/health || exit 1
 ENTRYPOINT ["dotnet", "BlazorComponentLibrary.dll"]
