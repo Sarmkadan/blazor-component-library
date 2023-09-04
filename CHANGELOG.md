@@ -5,86 +5,139 @@ All notable changes to the Blazor Component Library are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [1.2.0] - 2026-05-04
+## [1.0.0] - 2025-09-22
 
 ### Added
-- Event bus system for inter-component communication
-- Rate limiting middleware for API protection
-- Background task service for async operations
-- Webhook handler for external integrations
-- Advanced logging configuration options
-- Comprehensive API documentation
-- Docker containerization support
-- CI/CD pipeline with GitHub Actions
-- Complete examples directory with 5 working samples
-- FAQ and troubleshooting documentation
+- Stable public API — all interfaces frozen under semantic versioning guarantees
+- Event bus system for inter-component communication (`IEventPublisher`, `EventBus`)
+- Rate limiting middleware for API protection (`RateLimitingMiddleware`)
+- Background task service for async operations (`BackgroundTaskService`)
+- Webhook handler for external integrations (`WebhookHandler`)
+- HTTP client factory with configurable retry policies (`HttpClientFactory`)
+- Complete examples directory with six working Razor samples
+- Docker and docker-compose support for containerised demo
+- CI/CD pipeline with GitHub Actions (build, CodeQL, NuGet publish)
+- Full API reference, architecture, deployment, and FAQ documentation
 
 ### Changed
-- Improved service registration with fluent configuration
-- Enhanced error messages for better debugging
-- Optimized pagination for large datasets
-- Updated dependencies to latest stable versions
+- Promoted all interfaces from `internal` to `public` for downstream extensibility
+- Consolidated service registration under a single `AddBlazorComponentLibrary()` extension
+- Improved error messages and structured logging throughout
 
 ### Fixed
-- Memory leak in cache service cleanup
-- Race condition in concurrent data access
-- Null reference exception in modal rendering
+- Memory leak in `CacheService` cleanup on application shutdown
+- Race condition in concurrent `DataRepository` writes
+- Null reference in `ModalConfig` when `OnClose` callback was not set
 
-### Deprecated
-- Legacy `ComponentSettings` class (use `LibraryOptions` instead)
+## [0.9.1] - 2025-08-11
 
-## [1.1.0] - 2026-04-01
+### Fixed
+- Off-by-one error in `GetPagedDataAsync` returning wrong page boundaries
+- UTF-8 BOM in CSV export causing Excel import failures
+- Cache key collision when table names share a prefix
+
+## [0.9.0] - 2025-07-28
 
 ### Added
-- Form validation with custom validators
-- User role-based access control (RBAC)
-- Theme system with CSS variable generation
-- Data export to CSV, JSON, XML formats
-- In-memory caching with TTL support
-- Comprehensive middleware pipeline
-- Service registry for dependency management
-- Result pattern for standardized responses
-- HTTP client factory for API integration
-- Background task scheduling
+- Data export to CSV, JSON, and XML via `FormatterFactory`
+- `CsvFormatter`, `JsonFormatter`, `XmlFormatter` implementations
+- `ExportFormat` enum for type-safe format selection
+- `IFormatter` abstraction for custom export formats
 
 ### Changed
-- Refactored service layer for better separation of concerns
-- Improved repository pattern implementation
-- Enhanced security with password hashing
-- Better error handling throughout
+- `DataService.ExportToFormatAsync` now delegates to `FormatterFactory` instead of inline string building
 
-### Fixed
-- UTF-8 encoding issues in data export
-- Pagination off-by-one error
-- Cache key collision in high-concurrency scenarios
-
-## [1.0.0] - 2026-03-01
+## [0.8.0] - 2025-06-30
 
 ### Added
-- Core component library infrastructure
-- Data table models with sorting and filtering
-- Chart dataset management system
-- Form field configuration and models
-- Modal configuration system
-- User management with authentication
-- Theme configuration models
-- Repository pattern with in-memory storage
-- Service layer for business logic
-- Dependency injection integration
-- Configuration extensions for Program.cs
-- Custom exception hierarchy
-- Application constants and utilities
-- Comprehensive README and documentation
+- Distributed cache abstraction (`ICacheService`, `CacheService`, `CacheKeyGenerator`)
+- `CacheHelper` utility class for common cache patterns
+- Configurable TTL support via `CacheDurationMinutes` option
+- `EnableCaching` feature flag in `LibraryOptions`
 
-### Features
-- **Models**: 8 domain model classes for all components
-- **Services**: 5 core services for data management
-- **Repositories**: Repository pattern with interfaces
-- **Utilities**: 6 utility classes for common operations
-- **Formatters**: Data export to multiple formats
-- **Middleware**: Request pipeline components
-- **Controllers**: 5 HTTP API endpoints
-- **Integration**: External service integration support
+### Changed
+- `DataService` and `UserService` now use `ICacheService` for repeat reads
+- Reduced cold-read latency by caching repository results for 30 minutes by default
+
+## [0.7.0] - 2025-06-02
+
+### Added
+- User management and authentication (`UserService`, `UserRepository`)
+- Password hashing with `CryptographyHelper`
+- Role-based access control (`UserRole` enum, `HasPermissionAsync`)
+- `IUserRepository` and `IUserService` interfaces
+
+### Fixed
+- `AuthenticateAsync` returning a non-null result on empty password strings
+
+## [0.6.0] - 2025-05-05
+
+### Added
+- Full middleware pipeline: `ExceptionHandlingMiddleware`, `LoggingMiddleware`, `RateLimitingMiddleware`, `RequestValidationMiddleware`
+- `ServiceRegistry` for programmatic service introspection
+- `ResultPatternExtensions` and `DataServiceExtensions` helpers
+- `ProgramExtensions` for one-line `app.UseBlazorComponentLibrary()` setup
+
+### Changed
+- Exception handling centralised in middleware — services no longer catch and swallow errors
+- Request validation moved out of controllers into `RequestValidationMiddleware`
+
+## [0.5.0] - 2025-04-07
+
+### Added
+- Theme management with light/dark mode (`Theme`, `ThemeService`, `ThemeRepository`)
+- CSS variable generation from theme properties (`GenerateCssVariablesAsync`)
+- Chart dataset management (`ChartDataset`, `ChartType` enum — 8 chart types)
+- `ThemeController` HTTP endpoint
+
+### Changed
+- `ComponentConfig.Metadata` changed from `object` to `Dictionary<string, string>` for serialisation compatibility
+
+## [0.4.0] - 2025-03-10
+
+### Added
+- Form field configuration and validation (`FormField`, `FormFieldType`, `FormService`, `FormRepository`)
+- `ValidateFormAsync` returning structured `FormValidationResult` with per-field errors
+- Custom validation rule support via `ValidationRules` dictionary on `FormField`
+- `FormController` HTTP endpoint
+- `ValidationHelper` utility for common validation patterns
+
+### Fixed
+- `FormField.IsRequired` not enforced when `ValidationRules` dictionary was empty
+
+## [0.3.0] - 2025-02-17
+
+### Added
+- Repository pattern with interfaces (`IComponentRepository`, `IDataRepository`, `IFormRepository`)
+- In-memory repository implementations with full CRUD
+- `ComponentConfig` and `DataTableRow` pagination (`GetPagedDataAsync`)
+- Dependency injection integration (`ServiceConfiguration`, `AddBlazorComponentLibrary()`)
+- Application constants (`ApplicationConstants`) and custom exceptions (`ComponentLibraryException`)
+
+### Changed
+- Services no longer manage their own in-memory state — all storage delegated to repositories
+
+## [0.2.0] - 2025-01-27
+
+### Added
+- Service layer: `ComponentService`, `DataService` with business logic and validation
+- `Result<T>` and `Result` types for standardised operation outcomes
+- `StringHelper`, `DateTimeHelper`, `CollectionHelper` utility classes
+- `DataTableController` and `ComponentController` HTTP endpoints
+- `ModalConfig` model with configurable variants and callbacks
+
+### Changed
+- `DataTableColumn` sort order changed from `bool Ascending` to `SortOrder` enum
+
+## [0.1.0] - 2025-01-06
+
+### Added
+- Initial project scaffold targeting .NET 10 with `Microsoft.NET.Sdk.Razor`
+- Core domain models: `ComponentConfig`, `DataTableColumn`, `DataTableRow`, `ChartDataset`, `FormField`, `ModalConfig`, `Theme`, `User`
+- `BlazorComponentLibrary.csproj` with NuGet metadata (PackageId, Authors, Description, Tags)
+- MIT license and initial README
+- `.editorconfig` and `.gitignore`
+- xUnit test project skeleton with FluentAssertions and Moq
 
 ---
 
@@ -92,90 +145,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 Version numbers follow [Semantic Versioning](https://semver.org/):
 
-- **MAJOR** (1.x.0) - Breaking changes or significant features
+- **MAJOR** (1.x.0) - Breaking changes or significant restructuring
 - **MINOR** (x.1.0) - New features, backward compatible
 - **PATCH** (x.x.1) - Bug fixes and patches
 
-## Release Schedule
-
-- **Major releases**: Approximately annually
-- **Minor releases**: Quarterly
-- **Patch releases**: As needed for bug fixes
-- **Security patches**: Critical security issues are patched immediately
-
-## Upgrading
-
-### Upgrade from 1.1.x to 1.2.0
-
-1. Update NuGet package to latest
-2. No breaking changes - existing code continues to work
-3. Optional: Enable new event bus system in configuration
-
-```csharp
-services.AddBlazorComponentLibrary(options =>
-{
-    options.EnableEventBus = true;  // New in 1.2.0
-    options.EnableRateLimiting = true;
-});
-```
-
-### Upgrade from 1.0.x to 1.1.0
-
-1. Update NuGet package
-2. Replace deprecated `ComponentSettings` with `LibraryOptions`
-3. Update service registration (optional - backward compatible)
-
-## Deprecations
-
-### Deprecated in 1.2.0
-- `LegacyFormValidation` class - Use `FormService.ValidateFormAsync()` instead
-- `DirectCache` class - Use `ICacheService` instead
-
-### Will be Removed in 2.0.0
-- All classes marked with `[Obsolete]` attribute
-
 ## Security
 
-### Security Advisories
-
-Security advisories for this project are published in:
+Security advisories are published at:
 - GitHub Security Advisories: https://github.com/sarmkadan/blazor-component-library/security/advisories
-- Release notes for patch versions
 
-### Reporting Security Issues
-
-Please report security issues privately to the maintainer at https://sarmkadan.com
-
-Do not open public issues for security vulnerabilities.
-
-## Support Matrix
-
-| Version | .NET Target | Status | Support Ends |
-|---------|------------|--------|--------------|
-| 1.2.x | .NET 10 | Active | 2027-05-04 |
-| 1.1.x | .NET 10 | Maintenance | 2026-12-01 |
-| 1.0.x | .NET 10 | EOL | 2026-06-01 |
-
-**Status Legend:**
-- **Active**: Receives new features and bug fixes
-- **Maintenance**: Receives security and critical bug fixes only
-- **EOL**: End of Life - no further updates
-
-## Future Roadmap
-
-### Planned for 1.3.0
-- Real-time updates with SignalR support
-- Advanced filtering with query builders
-- Custom column templates for data tables
-- Drag-and-drop support for components
-- Accessibility improvements (WCAG 2.1)
-
-### Planned for 2.0.0
-- Blazor hybrid app support
-- MAUI integration
-- Full-text search capabilities
-- Multi-language support (i18n)
-- Advanced analytics and reporting
+Please report vulnerabilities privately at https://sarmkadan.com — do not open public issues.
 
 ---
 

@@ -20,11 +20,12 @@ A lightweight, production-grade Blazor component library featuring reusable UI c
 6. [API Reference](#api-reference)
 7. [Configuration](#configuration)
 8. [Advanced Topics](#advanced-topics)
-9. [Troubleshooting](#troubleshooting)
-10. [Performance](#performance)
-11. [Related Projects](#related-projects)
-12. [Contributing](#contributing)
-13. [License](#license)
+9. [Testing](#testing)
+10. [Troubleshooting](#troubleshooting)
+11. [Performance](#performance)
+12. [Related Projects](#related-projects)
+13. [Contributing](#contributing)
+14. [License](#license)
 
 ## Overview
 
@@ -887,6 +888,60 @@ public class EfComponentRepository : IComponentRepository
     }
 
     // ... implement other methods
+}
+```
+
+## Testing
+
+The library ships with a complete xUnit test suite covering service logic, validation, and utilities.
+
+### Run Tests
+
+```bash
+dotnet test
+```
+
+With code coverage:
+
+```bash
+dotnet test /p:CollectCoverage=true /p:CoverletOutputFormat=lcov
+```
+
+### Test Structure
+
+```
+tests/
+└── blazor-component-library.Tests/
+    ├── UserServiceTests.cs      # User creation, auth, role updates
+    ├── FormFieldTests.cs        # Field validation rules and required checks
+    └── StringHelperTests.cs     # Utility method edge cases
+```
+
+### Writing New Tests
+
+The repository pattern decouples all I/O, so services are fully testable in isolation with Moq:
+
+```csharp
+public class ComponentServiceTests
+{
+    private readonly Mock<IComponentRepository> _repo = new();
+    private readonly ComponentService _sut;
+
+    public ComponentServiceTests()
+    {
+        _sut = new ComponentService(_repo.Object);
+    }
+
+    [Fact]
+    public async Task CreateComponentAsync_ShouldReturnCreatedConfig()
+    {
+        var config = new ComponentConfig { Name = "TestTable", ComponentType = "DataTable" };
+        _repo.Setup(r => r.CreateAsync(config)).ReturnsAsync(config);
+
+        var result = await _sut.CreateComponentAsync(config);
+
+        result.Name.Should().Be("TestTable");
+    }
 }
 ```
 
