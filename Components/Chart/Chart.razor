@@ -1,0 +1,21 @@
+@inherits Chart<TData>
+@typeparam TData
+
+<div class="bcl-chart">
+    <h3 class="bcl-chart-title">@Title</h3>
+    <div class="bcl-chart-body">
+        <!-- Placeholder for chart rendering -->
+        <p>Chart Type: @ChartType</p>
+        <p>Data items: @_data.Count()</p>
+        @if (_data.Any())
+        {
+            <p>First data item: @_data.First().ToString()</p>
+        }
+        @ChildContent
+    </div>
+</div>
+
+@code {
+    // This partial class is linked to Chart.razor.cs
+    // The logic is in Chart.razor.cs
+}
