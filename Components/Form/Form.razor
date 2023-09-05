@@ -1,0 +1,12 @@
+@inherits Form<TModel>
+@typeparam TModel
+
+<form class="bcl-form" @onsubmit="HandleSubmit">
+    @ChildContent
+    <button type="submit">Submit</button>
+</form>
+
+@code {
+    // This partial class is linked to Form.razor.cs
+    // The logic is in Form.razor.cs
+}
