@@ -1,0 +1,23 @@
+@inherits DataTable<TItem>
+@typeparam TItem
+
+<table class="bcl-data-table">
+    <thead>
+        <tr>
+            @TableHeader
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in _currentViewData)
+        {
+            <tr @onclick="() => OnRowClickHandler(item)">
+                @RowTemplate(item)
+            </tr>
+        }
+    </tbody>
+</table>
+
+@code {
+    // This partial class is linked to DataTable.razor.cs
+    // The logic is in DataTable.razor.cs
+}
