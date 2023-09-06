@@ -4,10 +4,35 @@ using Microsoft.AspNetCore.Components;
 using System.Collections.Generic;
 using System.Linq;
 
+public enum SortDirection
+{
+    Ascending,
+    Descending
+}
+
+/// <summary>
+/// Compares two objects in a null-safe manner, placing nulls last.
+/// </summary>
+internal sealed class NullSafeComparer : IComparer<object?>
+{
+    public static readonly NullSafeComparer Instance = new();
+
+    public int Compare(object? x, object? y)
+    {
+        if (x is null && y is null) return 0;
+        if (x is null) return 1;
+        if (y is null) return -1;
+        if (x is IComparable cx) return cx.CompareTo(y);
+        return string.Compare(x.ToString(), y.ToString(), StringComparison.Ordinal);
+    }
+}
+
 public partial class DataTable<TItem> : ComponentBase, IDataTable<TItem>
 {
     private IEnumerable<TItem> _data = Enumerable.Empty<TItem>();
     private IEnumerable<TItem> _currentViewData = Enumerable.Empty<TItem>();
+    private Func<TItem, object?>? _sortSelector;
+    private SortDirection _sortDirection = SortDirection.Ascending;
 
     [Parameter]
     public RenderFragment TableHeader { get; set; }
@@ -34,8 +59,8 @@ public partial class DataTable<TItem> : ComponentBase, IDataTable<TItem>
     public void SetData(IEnumerable<TItem> data)
     {
         _data = data ?? Enumerable.Empty<TItem>();
-        ApplyPagination();
-        StateHasChanged(); // Notify Blazor that the component state has changed
+        ApplyView();
+        StateHasChanged();
     }
 
     /// <summary>
@@ -43,20 +68,42 @@ public partial class DataTable<TItem> : ComponentBase, IDataTable<TItem>
     /// </summary>
     public void Refresh()
     {
-        ApplyPagination();
+        ApplyView();
+        StateHasChanged();
+    }
+
+    /// <summary>
+    /// Sorts the data table by the specified key selector. Null values are placed last,
+    /// preventing NullReferenceException when columns contain null entries.
+    /// </summary>
+    /// <param name="keySelector">A function that extracts the sort key from a row item.</param>
+    /// <param name="direction">The sort direction.</param>
+    public void SortBy(Func<TItem, object?> keySelector, SortDirection direction = SortDirection.Ascending)
+    {
+        _sortSelector = keySelector;
+        _sortDirection = direction;
+        ApplyView();
         StateHasChanged();
     }
 
     protected override void OnParametersSet()
     {
         base.OnParametersSet();
-        ApplyPagination();
+        ApplyView();
     }
 
-    private void ApplyPagination()
+    private void ApplyView()
     {
-        // Simple pagination for now, no sorting/filtering implemented yet
-        _currentViewData = _data.Take(PageSize);
+        IEnumerable<TItem> result = _data;
+
+        if (_sortSelector != null)
+        {
+            result = _sortDirection == SortDirection.Ascending
+                ? result.OrderBy(_sortSelector, NullSafeComparer.Instance)
+                : result.OrderByDescending(_sortSelector, NullSafeComparer.Instance);
+        }
+
+        _currentViewData = result.Take(PageSize);
     }
 
     protected async Task OnRowClickHandler(TItem item)
