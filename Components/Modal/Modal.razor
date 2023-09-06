@@ -1,0 +1,27 @@
+@inherits Modal
+
+@if (IsVisible)
+{
+    <div class="bcl-modal-overlay" @onclick="HandleOverlayClick"></div>
+
+    <div class="bcl-modal">
+        <div class="bcl-modal-header">
+            <h5 class="bcl-modal-title">@Title</h5>
+            <button type="button" class="bcl-modal-close" @onclick="Hide">X</button>
+        </div>
+        <div class="bcl-modal-body">
+            @ChildContent
+        </div>
+        @if (FooterContent != null)
+        {
+            <div class="bcl-modal-footer">
+                @FooterContent
+            </div>
+        }
+    </div>
+}
+
+@code {
+    // This partial class is linked to Modal.razor.cs
+    // The logic is in Modal.razor.cs
+}
