@@ -31,6 +31,18 @@ public interface IDataTable<TItem>
     int PageSize { get; set; }
 
     /// <summary>
+    /// Gets or sets a value indicating whether row virtualization is enabled.
+    /// When true, only visible rows are rendered in the DOM, allowing efficient
+    /// display of large datasets.
+    /// </summary>
+    bool EnableVirtualization { get; set; }
+
+    /// <summary>
+    /// Sorts the table by the specified key selector with null-safe comparison.
+    /// </summary>
+    void SortBy(Func<TItem, object?> keySelector, SortDirection direction = SortDirection.Ascending);
+
+    /// <summary>
     /// Event callback for when a row in the data table is clicked.
     /// </summary>
     EventCallback<TItem> OnRowClick { get; set; }

@@ -53,6 +53,14 @@ public partial class DataTable<TItem> : ComponentBase, IDataTable<TItem>
     public int PageSize { get; set; } = 10;
 
     /// <summary>
+    /// When true, uses Blazor's Virtualize component to render only visible rows,
+    /// enabling efficient display of large datasets (thousands of rows) without
+    /// layout thrashing. Pagination is disabled when virtualization is active.
+    /// </summary>
+    [Parameter]
+    public bool EnableVirtualization { get; set; } = false;
+
+    /// <summary>
     /// Sets the data source for the data table.
     /// </summary>
     /// <param name="data">The enumerable collection of data items.</param>
@@ -103,7 +111,9 @@ public partial class DataTable<TItem> : ComponentBase, IDataTable<TItem>
                 : result.OrderByDescending(_sortSelector, NullSafeComparer.Instance);
         }
 
-        _currentViewData = result.Take(PageSize);
+        // When virtualization is enabled, expose all rows — the Virtualize component
+        // handles windowing. Pagination only applies in non-virtualized mode.
+        _currentViewData = EnableVirtualization ? result : result.Take(PageSize);
     }
 
     protected async Task OnRowClickHandler(TItem item)
