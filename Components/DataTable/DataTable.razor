@@ -8,11 +8,22 @@
         </tr>
     </thead>
     <tbody>
-        @foreach (var item in _currentViewData)
+        @if (EnableVirtualization)
         {
-            <tr @onclick="() => OnRowClickHandler(item)">
-                @RowTemplate(item)
-            </tr>
+            <Virtualize Items="@_currentViewData.ToList()" Context="item">
+                <tr @onclick="() => OnRowClickHandler(item)">
+                    @RowTemplate(item)
+                </tr>
+            </Virtualize>
+        }
+        else
+        {
+            @foreach (var item in _currentViewData)
+            {
+                <tr @onclick="() => OnRowClickHandler(item)">
+                    @RowTemplate(item)
+                </tr>
+            }
         }
     </tbody>
 </table>
