@@ -24,13 +24,20 @@ public partial class Chart<TData> : ComponentBase, IChart<TData>
     public object Options { get; set; } = new object();
 
     /// <summary>
+    /// Gets or sets annotations overlaid on the chart, such as threshold lines,
+    /// event markers, and reference bands.
+    /// </summary>
+    [Parameter]
+    public IEnumerable<ChartAnnotation> Annotations { get; set; } = Enumerable.Empty<ChartAnnotation>();
+
+    /// <summary>
     /// Sets the data source for the chart.
     /// </summary>
     /// <param name="data">The enumerable collection of data items.</param>
     public void SetData(IEnumerable<TData> data)
     {
         _data = data ?? Enumerable.Empty<TData>();
-        StateHasChanged(); // Notify Blazor that the component state has changed
+        StateHasChanged();
     }
 
     /// <summary>
