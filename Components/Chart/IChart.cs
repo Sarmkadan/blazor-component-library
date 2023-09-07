@@ -15,6 +15,48 @@ public enum ChartType
     Scatter
 }
 
+public enum ChartAnnotationType
+{
+    /// <summary>A horizontal line marking a threshold or target value.</summary>
+    ThresholdLine,
+    /// <summary>A vertical line marking a significant event on the x-axis.</summary>
+    EventMarker,
+    /// <summary>A shaded band between two values (e.g., an acceptable range).</summary>
+    ReferenceBand
+}
+
+/// <summary>
+/// Represents a contextual annotation overlaid on a chart, such as a threshold
+/// line, event marker, or shaded reference band.
+/// </summary>
+public class ChartAnnotation
+{
+    /// <summary>Gets or sets the annotation type.</summary>
+    public ChartAnnotationType Type { get; set; }
+
+    /// <summary>
+    /// Gets or sets the primary value for the annotation.
+    /// For ThresholdLine/EventMarker this is the line position.
+    /// For ReferenceBand this is the band's start value.
+    /// </summary>
+    public double Value { get; set; }
+
+    /// <summary>
+    /// Gets or sets the end value for a ReferenceBand annotation.
+    /// Ignored for other annotation types.
+    /// </summary>
+    public double? EndValue { get; set; }
+
+    /// <summary>Gets or sets the display label for the annotation.</summary>
+    public string Label { get; set; } = string.Empty;
+
+    /// <summary>Gets or sets the CSS color for the annotation line or band.</summary>
+    public string Color { get; set; } = "#666666";
+
+    /// <summary>Gets or sets the tooltip text shown on hover.</summary>
+    public string Tooltip { get; set; } = string.Empty;
+}
+
 public interface IChart<TData>
 {
     /// <summary>
@@ -52,4 +94,10 @@ public interface IChart<TData>
     /// Gets or sets additional options for configuring the chart (e.g., library-specific settings).
     /// </summary>
     object Options { get; set; }
+
+    /// <summary>
+    /// Gets or sets the annotations overlaid on the chart, such as threshold lines,
+    /// event markers, and reference bands.
+    /// </summary>
+    IEnumerable<ChartAnnotation> Annotations { get; set; }
 }
