@@ -1,4 +1,4 @@
-@inherits DataTable<TItem>
+@using Microsoft.AspNetCore.Components.Web
 @typeparam TItem
 
 <table class="bcl-data-table">
@@ -8,22 +8,11 @@
         </tr>
     </thead>
     <tbody>
-        @if (EnableVirtualization)
+        @foreach (var item in _currentViewData)
         {
-            <Virtualize Items="@_currentViewData.ToList()" Context="item">
-                <tr @onclick="() => OnRowClickHandler(item)">
-                    @RowTemplate(item)
-                </tr>
-            </Virtualize>
-        }
-        else
-        {
-            @foreach (var item in _currentViewData)
-            {
-                <tr @onclick="() => OnRowClickHandler(item)">
-                    @RowTemplate(item)
-                </tr>
-            }
+            <tr @onclick="() => OnRowClickHandler(item)">
+                @RowTemplate(item)
+            </tr>
         }
     </tbody>
 </table>
