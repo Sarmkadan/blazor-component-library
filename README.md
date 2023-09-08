@@ -1,8 +1,8 @@
-[![Build](https://github.com/sarmkadan/blazor-component-library/actions/workflows/build.yml/badge.svg)](https://github.com/sarmkadan/blazor-component-library/actions/workflows/build.yml)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![.NET](https://img.shields.io/badge/.NET-10.0-purple.svg)](https://dotnet.microsoft.com/)
-
 # Blazor Component Library
+
+![CI](https://github.com/sarmkadan/blazor-component-library/actions/workflows/ci.yml/badge.svg)
+![License](https://img.shields.io/github/license/sarmkadan/blazor-component-library)
+![.NET](https://img.shields.io/badge/.NET-10.0-512BD4)
 
 A reusable Blazor component library for modern web applications. Provides production-ready UI components with consistent theming, accessibility support, and responsive design out of the box.
 
