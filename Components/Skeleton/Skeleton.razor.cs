@@ -1,0 +1,31 @@
+namespace BlazorComponentLibrary.Components.Skeleton;
+
+using Microsoft.AspNetCore.Components;
+
+public partial class Skeleton : ComponentBase, ISkeleton
+{
+    [Parameter]
+    public SkeletonType Type { get; set; } = SkeletonType.Text;
+
+    [Parameter]
+    public string Width { get; set; } = "100%";
+
+    [Parameter]
+    public string Height { get; set; } = "auto";
+
+    /// <summary>
+    /// Number of text lines rendered when <see cref="Type"/> is <see cref="SkeletonType.Text"/>.
+    /// Ignored for Circle and Rectangle types.
+    /// </summary>
+    [Parameter]
+    public int Lines { get; set; } = 3;
+
+    /// <summary>
+    /// When true, a CSS pulse animation is applied to the placeholder to indicate
+    /// that content is loading.
+    /// </summary>
+    [Parameter]
+    public bool Animated { get; set; } = true;
+
+    private string CssClass => Animated ? "bcl-skeleton bcl-skeleton--animated" : "bcl-skeleton";
+}
