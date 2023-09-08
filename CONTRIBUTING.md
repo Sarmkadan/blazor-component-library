@@ -19,6 +19,20 @@ dotnet build
 dotnet run
 ```
 
+### Running Tests
+
+```bash
+dotnet test --verbosity normal
+```
+
+To produce a test results report:
+
+```bash
+dotnet test --verbosity normal --logger "trx;LogFileName=test-results.trx"
+```
+
+Results are written to `TestResults/test-results.trx`.
+
 ## Adding a New Component
 
 1. Create a new `.razor` file in `Components/` following existing naming conventions (`Bcl` prefix).
