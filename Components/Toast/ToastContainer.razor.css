@@ -1,0 +1,76 @@
+.bcl-toast-container {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    max-width: 380px;
+    pointer-events: none;
+    position: fixed;
+    width: calc(100% - 32px);
+    z-index: var(--bcl-toast-z-index, 9000);
+}
+
+/* Positioning variants */
+.bcl-toast-container--top-left      { left: 16px;  top: 16px;    }
+.bcl-toast-container--top-center    { left: 50%;   top: 16px;    transform: translateX(-50%); }
+.bcl-toast-container--top-right     { right: 16px; top: 16px;    }
+.bcl-toast-container--bottom-left   { bottom: 16px; left: 16px;  }
+.bcl-toast-container--bottom-center { bottom: 16px; left: 50%;   transform: translateX(-50%); }
+.bcl-toast-container--bottom-right  { bottom: 16px; right: 16px; }
+
+.bcl-toast {
+    align-items: center;
+    animation: bcl-toast-in 0.2s ease forwards;
+    background-color: var(--bcl-toast-bg, #ffffff);
+    border-left: 4px solid var(--bcl-toast-accent, #64748b);
+    border-radius: 6px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    color: var(--bcl-toast-color, #1e293b);
+    display: flex;
+    font-size: 0.9rem;
+    gap: 10px;
+    padding: 12px 14px;
+    pointer-events: all;
+}
+
+@keyframes bcl-toast-in {
+    from { opacity: 0; transform: translateY(8px); }
+    to   { opacity: 1; transform: translateY(0);   }
+}
+
+.bcl-toast--info    { --bcl-toast-accent: #3b82f6; }
+.bcl-toast--success { --bcl-toast-accent: #22c55e; }
+.bcl-toast--warning { --bcl-toast-accent: #f59e0b; }
+.bcl-toast--error   { --bcl-toast-accent: #ef4444; }
+
+.bcl-toast__icon {
+    flex-shrink: 0;
+    font-size: 1rem;
+}
+
+.bcl-toast__message {
+    flex: 1;
+    word-break: break-word;
+}
+
+.bcl-toast__close {
+    background: none;
+    border: none;
+    color: var(--bcl-toast-close-color, #94a3b8);
+    cursor: pointer;
+    flex-shrink: 0;
+    font-size: 0.85rem;
+    line-height: 1;
+    padding: 2px 4px;
+    transition: color 0.15s ease;
+}
+
+.bcl-toast__close:hover {
+    color: var(--bcl-toast-close-hover-color, #1e293b);
+}
+
+[data-bcl-theme="dark"] .bcl-toast {
+    --bcl-toast-bg: #1e293b;
+    --bcl-toast-color: #f1f5f9;
+    --bcl-toast-close-color: #64748b;
+    --bcl-toast-close-hover-color: #f1f5f9;
+}
