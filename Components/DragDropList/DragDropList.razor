@@ -1,0 +1,22 @@
+@typeparam TItem
+
+<ul class="@RootClass" aria-label="Reorderable list">
+    @foreach (var (item, index) in IndexedItems)
+    {
+        var capturedIndex = index;
+        <li class="bcl-dnd-item @(capturedIndex == _dragOverIndex ? "bcl-dnd-item--drag-over" : "") @(capturedIndex == _draggingIndex ? "bcl-dnd-item--dragging" : "")"
+            draggable="@(Enabled ? "true" : "false")"
+            @ondragstart="() => HandleDragStart(capturedIndex)"
+            @ondragover:preventDefault="true"
+            @ondragover="() => HandleDragOver(capturedIndex)"
+            @ondrop="HandleDrop"
+            @ondragend="HandleDragEnd">
+            <span class="bcl-dnd-handle" aria-hidden="true" title="Drag to reorder">⠿</span>
+            @ItemTemplate(item)
+        </li>
+    }
+</ul>
+
+@code {
+    // Logic is in DragDropList.razor.cs
+}
