@@ -1,0 +1,20 @@
+@using BlazorComponentLibrary.Services
+
+<div class="@ContainerClass" role="status" aria-live="polite" aria-atomic="false">
+    @foreach (var toast in VisibleToasts)
+    {
+        var toastId = toast.Id;
+        <div class="bcl-toast bcl-toast--@toast.Type.ToString().ToLower()" role="alert">
+            <span class="bcl-toast__icon" aria-hidden="true">@IconFor(toast.Type)</span>
+            <span class="bcl-toast__message">@toast.Message</span>
+            <button type="button"
+                    class="bcl-toast__close"
+                    aria-label="Dismiss notification"
+                    @onclick="() => ToastService.Dismiss(toastId)">✕</button>
+        </div>
+    }
+</div>
+
+@code {
+    // Logic is in ToastContainer.razor.cs
+}
