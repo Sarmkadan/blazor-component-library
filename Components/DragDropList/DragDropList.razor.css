@@ -1,0 +1,53 @@
+.bcl-dnd-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.bcl-dnd-item {
+    align-items: center;
+    background-color: var(--bcl-dnd-item-bg, #ffffff);
+    border: 1px solid var(--bcl-dnd-border, #e2e8f0);
+    border-radius: var(--bcl-dnd-radius, 6px);
+    cursor: grab;
+    display: flex;
+    gap: 10px;
+    margin-bottom: 6px;
+    padding: 10px 14px;
+    transition: background-color 0.15s ease, box-shadow 0.15s ease, opacity 0.15s ease;
+    user-select: none;
+}
+
+.bcl-dnd-item:active {
+    cursor: grabbing;
+}
+
+.bcl-dnd-item--dragging {
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+    opacity: 0.55;
+}
+
+.bcl-dnd-item--drag-over {
+    background-color: var(--bcl-dnd-over-bg, #eff6ff);
+    border-color: var(--bcl-dnd-over-border, #3b82f6);
+}
+
+.bcl-dnd-handle {
+    color: var(--bcl-dnd-handle-color, #94a3b8);
+    cursor: grab;
+    flex-shrink: 0;
+    font-size: 1.1rem;
+    line-height: 1;
+}
+
+.bcl-dnd-handle:active {
+    cursor: grabbing;
+}
+
+[data-bcl-theme="dark"] .bcl-dnd-item {
+    --bcl-dnd-item-bg: #1e293b;
+    --bcl-dnd-border: #334155;
+    --bcl-dnd-over-bg: #1e3a5f;
+    --bcl-dnd-over-border: #3b82f6;
+    --bcl-dnd-handle-color: #475569;
+}
