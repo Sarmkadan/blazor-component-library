@@ -171,6 +171,13 @@ A drag-and-drop reorderable list powered by the HTML5 Drag and Drop API. Fires
 
 ---
 
+## Examples
+
+Check out the [examples/](examples/) directory for complete, runnable snippets:
+- `BasicUsage.cs`: Getting started and simple service usage.
+- `AdvancedUsage.cs`: Advanced theme management and component interactions.
+- `IntegrationExample.cs`: Wiring up DI in an ASP.NET Core application.
+
 ## Documentation
 
 - [Migration Guide](docs/MIGRATION_v2.md) - Upgrading from v1.x to v2.0
