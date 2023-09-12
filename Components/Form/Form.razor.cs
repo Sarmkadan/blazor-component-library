@@ -31,7 +31,15 @@ public partial class Form<TModel> : ComponentBase, IForm<TModel> where TModel : 
     public void SetModel(TModel model)
     {
         _model = model ?? new TModel();
-        StateHasChanged(); // Notify Blazor that the component state has changed
+        NotifyStateChanged(); // Notify Blazor that the component state has changed
+    }
+
+    /// <summary>
+    /// Notifies the component that its state has changed.
+    /// </summary>
+    protected virtual void NotifyStateChanged()
+    {
+        StateHasChanged();
     }
 
     /// <summary>
