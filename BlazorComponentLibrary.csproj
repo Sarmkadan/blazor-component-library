@@ -5,15 +5,25 @@
     <LangVersion>latest</LangVersion>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
-    <Version>2.0.0</Version>
+    <PackageId>BlazorComponentLibrary</PackageId>
+    <Version>1.0.0</Version>
     <Authors>Vladyslav Zaiets</Authors>
-    <Description>Reusable Blazor component library for modern web applications</Description>
-    <RepositoryUrl>https://github.com/red-rocket-software/blazor-component-library</RepositoryUrl>
-    <License>MIT</License>
+    <Description>A set of reusable UI components for Blazor applications.</Description>
+    <PackageTags>Blazor;Components;UI</PackageTags>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageProjectUrl>https://github.com/sarmkadan/blazor-component-library</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/sarmkadan/blazor-component-library</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="10.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="README.md" Pack="true" PackagePath="\" />
   </ItemGroup>
 
   <ItemGroup>
