@@ -68,7 +68,7 @@ public partial class DataTable<TItem> : ComponentBase, IDataTable<TItem>
     {
         _data = data ?? Enumerable.Empty<TItem>();
         ApplyView();
-        StateHasChanged();
+        NotifyStateChanged();
     }
 
     /// <summary>
@@ -77,7 +77,7 @@ public partial class DataTable<TItem> : ComponentBase, IDataTable<TItem>
     public void Refresh()
     {
         ApplyView();
-        StateHasChanged();
+        NotifyStateChanged();
     }
 
     /// <summary>
@@ -91,6 +91,14 @@ public partial class DataTable<TItem> : ComponentBase, IDataTable<TItem>
         _sortSelector = keySelector;
         _sortDirection = direction;
         ApplyView();
+        NotifyStateChanged();
+    }
+
+    /// <summary>
+    /// Notifies the component that its state has changed.
+    /// </summary>
+    protected virtual void NotifyStateChanged()
+    {
         StateHasChanged();
     }
 
