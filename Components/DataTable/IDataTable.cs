@@ -7,7 +7,7 @@ public interface IDataTable<TItem>
     /// <summary>
     /// Sets the data source for the data table.
     /// </summary>
-    /// <param name="data">The enumerable collection of data items.</param>
+    /// <param name="data">The enumerable collection of data items to populate the table with.</param>
     void SetData(IEnumerable<TItem> data);
 
     /// <summary>
@@ -40,6 +40,8 @@ public interface IDataTable<TItem>
     /// <summary>
     /// Sorts the table by the specified key selector with null-safe comparison.
     /// </summary>
+    /// <param name="keySelector">A function to extract the key to sort by from a data item.</param>
+    /// <param name="direction">The sort direction. Defaults to <see cref="SortDirection.Ascending"/>.</param>
     void SortBy(Func<TItem, object?> keySelector, SortDirection direction = SortDirection.Ascending);
 
     /// <summary>
