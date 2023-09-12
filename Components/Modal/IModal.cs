@@ -8,11 +8,13 @@ public interface IModal
     /// <summary>
     /// Shows the modal dialog.
     /// </summary>
+    /// <returns>A task that represents the asynchronous show operation.</returns>
     Task Show();
 
     /// <summary>
     /// Hides the modal dialog.
     /// </summary>
+    /// <returns>A task that represents the asynchronous hide operation.</returns>
     Task Hide();
 
     /// <summary>
