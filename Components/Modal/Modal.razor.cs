@@ -1,5 +1,6 @@
 namespace BlazorComponentLibrary.Components.Modal;
 
+using BlazorComponentLibrary.Exceptions;
 using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
 using System.Threading.Tasks;
@@ -15,10 +16,10 @@ public partial class Modal : ComponentBase, IModal
     public string Title { get; set; } = string.Empty;
 
     [Parameter]
-    public RenderFragment ChildContent { get; set; }
+    public RenderFragment? ChildContent { get; set; }
 
     [Parameter]
-    public RenderFragment FooterContent { get; set; }
+    public RenderFragment? FooterContent { get; set; }
 
     [Parameter]
     public EventCallback OnClose { get; set; }
@@ -35,28 +36,53 @@ public partial class Modal : ComponentBase, IModal
     /// Shows the modal dialog. Saves the currently focused element so it can be
     /// restored when the modal closes (WCAG 2.1 SC 2.4.3).
     /// </summary>
+    /// <exception cref="ModalException">Thrown when there is an error showing the modal.</exception>
     public async Task Show()
     {
-        await JSRuntime.InvokeVoidAsync("eval", "window.__bclModalTrigger = document.activeElement");
-        _isVisible = true;
-        StateHasChanged();
+        if (JSRuntime is null)
+        {
+            throw new ModalException("JavaScript runtime is not available.");
+        }
+
+        try
+        {
+            await JSRuntime.InvokeVoidAsync("eval", "window.__bclModalTrigger = document.activeElement").ConfigureAwait(false);
+            _isVisible = true;
+            StateHasChanged();
+        }
+        catch (Exception ex) when (ex is not ModalException)
+        {
+            throw new ModalException("Failed to show modal", ex);
+        }
     }
 
     /// <summary>
     /// Hides the modal dialog and restores focus to the element that opened it.
     /// </summary>
+    /// <exception cref="ModalException">Thrown when there is an error hiding the modal.</exception>
     public async Task Hide()
     {
         _isVisible = false;
         StateHasChanged();
         if (OnClose.HasDelegate)
         {
-            await OnClose.InvokeAsync();
+            await OnClose.InvokeAsync().ConfigureAwait(false);
         }
-        await JSRuntime.InvokeVoidAsync(
-            "eval",
-            "if (window.__bclModalTrigger && typeof window.__bclModalTrigger.focus === 'function') { window.__bclModalTrigger.focus(); window.__bclModalTrigger = null; }"
-        );
+
+        if (JSRuntime is not null)
+        {
+            try
+            {
+                await JSRuntime.InvokeVoidAsync(
+                    "eval",
+                    "if (window.__bclModalTrigger && typeof window.__bclModalTrigger.focus === 'function') { window.__bclModalTrigger.focus(); window.__bclModalTrigger = null; }"
+                ).ConfigureAwait(false);
+            }
+            catch (Exception ex) when (ex is not ModalException)
+            {
+                throw new ModalException("Failed to restore focus after hiding modal", ex);
+            }
+        }
     }
 
     protected Task HandleOverlayClick()
@@ -65,6 +91,7 @@ public partial class Modal : ComponentBase, IModal
         {
             return Hide();
         }
+
         return Task.CompletedTask;
     }
 }
