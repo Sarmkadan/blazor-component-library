@@ -1,5 +1,6 @@
 namespace BlazorComponentLibrary.Components.DataTable;
 
+using BlazorComponentLibrary.Exceptions;
 using Microsoft.AspNetCore.Components;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,7 +14,7 @@ public enum SortDirection
 /// <summary>
 /// Compares two objects in a null-safe manner, placing nulls last.
 /// </summary>
-internal sealed class NullSafeComparer : IComparer<object?>
+public sealed class NullSafeComparer : IComparer<object?>
 {
     public static readonly NullSafeComparer Instance = new();
 
@@ -64,9 +65,11 @@ public partial class DataTable<TItem> : ComponentBase, IDataTable<TItem>
     /// Sets the data source for the data table.
     /// </summary>
     /// <param name="data">The enumerable collection of data items.</param>
+/// <exception cref="ArgumentNullException">Thrown when <paramref name="data"/> is null.</exception>
     public void SetData(IEnumerable<TItem> data)
     {
-        _data = data ?? Enumerable.Empty<TItem>();
+        _ = data ?? throw new ArgumentNullException(nameof(data));
+    _data = data;
         ApplyView();
         NotifyStateChanged();
     }
@@ -99,7 +102,14 @@ public partial class DataTable<TItem> : ComponentBase, IDataTable<TItem>
     /// </summary>
     protected virtual void NotifyStateChanged()
     {
-        StateHasChanged();
+        try
+        {
+            StateHasChanged();
+        }
+        catch (InvalidOperationException)
+        {
+            // Ignore if component not yet initialized (e.g. during benchmark setup)
+        }
     }
 
     protected override void OnParametersSet()
