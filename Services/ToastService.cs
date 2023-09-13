@@ -25,11 +25,15 @@ public sealed class ToastService : IToastService, IDisposable
     public event Action? ToastsChanged;
 
     /// <inheritdoc/>
-    /// <exception cref="ToastServiceException">Thrown when the message is null or whitespace.</exception>
+    /// <exception cref="ToastServiceException">Thrown when the message is null or whitespace,
+    /// or when <paramref name="durationMs"/> is negative.</exception>
     public void Show(string message, ToastType type = ToastType.Info, int durationMs = 4000)
     {
         if (string.IsNullOrWhiteSpace(message))
             throw new ToastServiceException("Toast message must not be empty.");
+
+        if (durationMs < 0)
+            throw new ToastServiceException("DurationMs cannot be negative.");
 
         var toast = new ToastMessage(Guid.NewGuid(), message, type, durationMs);
 
