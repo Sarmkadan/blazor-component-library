@@ -3,12 +3,12 @@ namespace BlazorComponentLibrary.Components.Form;
 using Microsoft.AspNetCore.Components;
 using System.Threading.Tasks;
 
-public partial class Form<TModel> : ComponentBase, IForm<TModel> where TModel : new()
+public sealed partial class Form<TModel> : ComponentBase, IForm<TModel> where TModel : new()
 {
     private TModel _model = new TModel();
 
     [Parameter]
-    public RenderFragment ChildContent { get; set; }
+    public RenderFragment? ChildContent { get; set; }
 
     [Parameter]
     public EventCallback<TModel> OnSubmit { get; set; }
@@ -37,9 +37,15 @@ public partial class Form<TModel> : ComponentBase, IForm<TModel> where TModel : 
     /// <summary>
     /// Notifies the component that its state has changed.
     /// </summary>
-    protected virtual void NotifyStateChanged()
+    private void NotifyStateChanged()
     {
-        StateHasChanged();
+        try
+        {
+            StateHasChanged();
+        }
+        catch (InvalidOperationException)
+        {
+        }
     }
 
     /// <summary>

@@ -2,7 +2,7 @@ namespace BlazorComponentLibrary.Components.Skeleton;
 
 using Microsoft.AspNetCore.Components;
 
-public partial class Skeleton : ComponentBase, ISkeleton
+public sealed partial class Skeleton : ComponentBase, ISkeleton
 {
     [Parameter]
     public SkeletonType Type { get; set; } = SkeletonType.Text;

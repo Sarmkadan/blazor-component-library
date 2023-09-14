@@ -29,7 +29,7 @@ public enum ChartAnnotationType
 /// Represents a contextual annotation overlaid on a chart, such as a threshold
 /// line, event marker, or shaded reference band.
 /// </summary>
-public class ChartAnnotation
+public sealed class ChartAnnotation
 {
     /// <summary>Gets or sets the annotation type.</summary>
     public ChartAnnotationType Type { get; set; }
