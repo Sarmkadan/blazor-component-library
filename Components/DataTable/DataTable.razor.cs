@@ -28,7 +28,7 @@ public sealed class NullSafeComparer : IComparer<object?>
     }
 }
 
-public partial class DataTable<TItem> : ComponentBase, IDataTable<TItem>
+public sealed partial class DataTable<TItem> : ComponentBase, IDataTable<TItem>
 {
     private IEnumerable<TItem> _data = Enumerable.Empty<TItem>();
     private IEnumerable<TItem> _currentViewData = Enumerable.Empty<TItem>();
@@ -100,7 +100,7 @@ public partial class DataTable<TItem> : ComponentBase, IDataTable<TItem>
     /// <summary>
     /// Notifies the component that its state has changed.
     /// </summary>
-    protected virtual void NotifyStateChanged()
+    private void NotifyStateChanged()
     {
         try
         {

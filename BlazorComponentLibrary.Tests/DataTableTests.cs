@@ -29,16 +29,11 @@ public class NullSafeComparerTests
 
 public class DataTableTests
 {
-    private class TestableDataTable<T> : DataTable<T>
-    {
-        protected override void NotifyStateChanged() { }
-    }
-
     [Fact]
     public void SortBy_ShouldSortDataCorrectly()
     {
         // Arrange
-        var table = new TestableDataTable<int>();
+        var table = new DataTable<int>();
         table.SetData(new List<int> { 3, 1, 2 });
         table.IsSortable = true;
 

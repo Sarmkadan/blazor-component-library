@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
 using System.Threading.Tasks;
 
-public partial class Modal : ComponentBase, IModal
+public sealed partial class Modal : ComponentBase, IModal
 {
     private bool _isVisible = false;
 

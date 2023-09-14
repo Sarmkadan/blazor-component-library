@@ -25,10 +25,10 @@ public sealed class ToastServiceTests
     }
 
     [Fact]
-    public void Show_EmptyMessage_ThrowsArgumentException()
+    public void Show_EmptyMessage_ThrowsToastServiceException()
     {
         var service = new ToastService();
-        Assert.Throws<ArgumentException>(() => service.Show("   "));
+        Assert.Throws<BlazorComponentLibrary.Exceptions.ToastServiceException>(() => service.Show("   "));
     }
 
     [Fact]

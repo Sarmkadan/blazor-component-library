@@ -11,7 +11,7 @@ using System.Linq;
 /// parent component can persist the new order without computing a diff.
 /// </summary>
 /// <typeparam name="TItem">The type of each list item.</typeparam>
-public partial class DragDropList<TItem> : ComponentBase, IDragDropList<TItem>
+public sealed partial class DragDropList<TItem> : ComponentBase, IDragDropList<TItem>
 {
     internal int _draggingIndex = -1;
     internal int _dragOverIndex = -1;

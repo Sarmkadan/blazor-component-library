@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Components;
 using System.Collections.Generic;
 using System.Linq;
 
-public partial class Chart<TData> : ComponentBase, IChart<TData>
+public sealed partial class Chart<TData> : ComponentBase, IChart<TData>
 {
     private IEnumerable<TData> _data = Enumerable.Empty<TData>();
 

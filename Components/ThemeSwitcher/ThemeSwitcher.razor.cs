@@ -9,7 +9,7 @@ using Microsoft.AspNetCore.Components;
 /// survives page reloads. Subscribe to <see cref="IThemeService.ThemeChanged"/> to
 /// react to theme changes elsewhere in the application.
 /// </summary>
-public partial class ThemeSwitcher : ComponentBase, IThemeSwitcher, IDisposable
+public sealed partial class ThemeSwitcher : ComponentBase, IThemeSwitcher, IDisposable
 {
     [Inject]
     private IThemeService ThemeService { get; set; } = default!;

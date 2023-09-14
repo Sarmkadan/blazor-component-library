@@ -11,16 +11,11 @@ public class FormTests
         public string? Name { get; set; }
     }
 
-    private class TestableForm<T> : Form<T> where T : new()
-    {
-        protected override void NotifyStateChanged() { }
-    }
-
     [Fact]
     public void SetModel_ShouldUpdateModel()
     {
         // Arrange
-        var form = new TestableForm<TestModel>();
+        var form = new Form<TestModel>();
         var newModel = new TestModel { Name = "Test" };
 
         // Act
@@ -34,7 +29,7 @@ public class FormTests
     public void DefaultModel_ShouldNotBeNull()
     {
         // Arrange
-        var form = new TestableForm<TestModel>();
+        var form = new Form<TestModel>();
 
         // Assert
         form.Model.Should().NotBeNull();
@@ -44,7 +39,7 @@ public class FormTests
     public async Task Validate_ShouldAlwaysReturnTrue()
     {
         // Arrange
-        var form = new TestableForm<TestModel>();
+        var form = new Form<TestModel>();
 
         // Act
         var result = await form.Validate();

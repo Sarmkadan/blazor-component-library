@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Components;
 /// Place a single <c>&lt;ToastContainer /&gt;</c> in your root layout component so it
 /// is always present regardless of the current route.
 /// </summary>
-public partial class ToastContainer : ComponentBase, IToastContainer, IDisposable
+public sealed partial class ToastContainer : ComponentBase, IToastContainer, IDisposable
 {
     [Inject]
     internal IToastService ToastService { get; set; } = default!;
