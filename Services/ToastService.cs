@@ -1,6 +1,7 @@
 namespace BlazorComponentLibrary.Services;
 
 using BlazorComponentLibrary.Exceptions;
+using Microsoft.Extensions.Logging;
 using System.Timers;
 
 /// <summary>
@@ -11,6 +12,7 @@ using System.Timers;
 /// </summary>
 public sealed class ToastService : IToastService, IDisposable
 {
+    private readonly ILogger<ToastService> _logger;
     private readonly List<ToastMessage> _toasts = new();
     private readonly List<Timer> _timers = new();
     private readonly object _lock = new();
@@ -29,11 +31,19 @@ public sealed class ToastService : IToastService, IDisposable
     /// or when <paramref name="durationMs"/> is negative.</exception>
     public void Show(string message, ToastType type = ToastType.Info, int durationMs = 4000)
     {
+        _logger.LogDebug("Showing toast with message: '{Message}', type: {ToastType}, duration: {DurationMs}ms", message, type, durationMs);
+
         if (string.IsNullOrWhiteSpace(message))
+        {
+            _logger.LogWarning("Toast message is null or whitespace");
             throw new ToastServiceException("Toast message must not be empty.");
+        }
 
         if (durationMs < 0)
+        {
+            _logger.LogWarning("Toast duration cannot be negative: {DurationMs}", durationMs);
             throw new ToastServiceException("DurationMs cannot be negative.");
+        }
 
         var toast = new ToastMessage(Guid.NewGuid(), message, type, durationMs);
 
@@ -42,6 +52,7 @@ public sealed class ToastService : IToastService, IDisposable
             _toasts.Add(toast);
         }
 
+        _logger.LogInformation("Toast added successfully with ID: {ToastId}", toast.Id);
         ToastsChanged?.Invoke();
 
         if (durationMs > 0)
@@ -51,17 +62,22 @@ public sealed class ToastService : IToastService, IDisposable
     /// <inheritdoc/>
     public void Dismiss(Guid id)
     {
+        _logger.LogDebug("Dismissing toast with ID: {ToastId}", id);
+
         lock (_lock)
         {
             _toasts.RemoveAll(t => t.Id == id);
         }
 
+        _logger.LogInformation("Toast dismissed successfully with ID: {ToastId}", id);
         ToastsChanged?.Invoke();
     }
 
     /// <inheritdoc/>
     public void DismissAll()
     {
+        _logger.LogDebug("Dismissing all toasts");
+
         lock (_lock)
         {
             _toasts.Clear();
@@ -70,6 +86,7 @@ public sealed class ToastService : IToastService, IDisposable
             _timers.Clear();
         }
 
+        _logger.LogInformation("All toasts dismissed successfully");
         ToastsChanged?.Invoke();
     }
 
@@ -100,6 +117,7 @@ public sealed class ToastService : IToastService, IDisposable
         }
         catch (Exception ex)
         {
+            _logger.LogError(ex, "Failed to schedule toast dismissal");
             throw new ToastServiceException("Failed to schedule toast dismissal", ex);
         }
     }

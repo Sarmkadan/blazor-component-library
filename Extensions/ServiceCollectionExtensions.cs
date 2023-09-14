@@ -2,6 +2,7 @@ namespace BlazorComponentLibrary.Extensions;
 
 using BlazorComponentLibrary.Services;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 
 /// <summary>Extension methods for registering library services with the DI container.</summary>
 public static class ServiceCollectionExtensions
@@ -20,6 +21,7 @@ public static class ServiceCollectionExtensions
 
         services.AddScoped<IThemeService, ThemeService>();
         services.AddScoped<IToastService, ToastService>();
+        services.AddLogging();
         return services;
     }
 }
