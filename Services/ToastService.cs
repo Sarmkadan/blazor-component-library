@@ -2,6 +2,7 @@ namespace BlazorComponentLibrary.Services;
 
 using BlazorComponentLibrary.Exceptions;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Abstractions;
 using System.Timers;
 
 /// <summary>
@@ -14,8 +15,17 @@ public sealed class ToastService : IToastService, IDisposable
 {
     private readonly ILogger<ToastService> _logger;
     private readonly List<ToastMessage> _toasts = new();
-    private readonly List<Timer> _timers = new();
+    private readonly Dictionary<Guid, Timer> _timers = new();
     private readonly object _lock = new();
+
+    /// <summary>Initialises a new instance of <see cref="ToastService"/>.</summary>
+    /// <param name="logger">
+    /// Optional logger. When omitted (e.g. in unit tests) a no-op logger is used.
+    /// </param>
+    public ToastService(ILogger<ToastService>? logger = null)
+    {
+        _logger = logger ?? NullLogger<ToastService>.Instance;
+    }
 
     /// <inheritdoc/>
     public IReadOnlyList<ToastMessage> ActiveToasts
@@ -64,10 +74,16 @@ public sealed class ToastService : IToastService, IDisposable
     {
         _logger.LogDebug("Dismissing toast with ID: {ToastId}", id);
 
+        bool removed;
         lock (_lock)
         {
-            _toasts.RemoveAll(t => t.Id == id);
+            removed = _toasts.RemoveAll(t => t.Id == id) > 0;
+            if (_timers.Remove(id, out var timer))
+                timer.Dispose();
         }
+
+        if (!removed)
+            return;
 
         _logger.LogInformation("Toast dismissed successfully with ID: {ToastId}", id);
         ToastsChanged?.Invoke();
@@ -81,9 +97,7 @@ public sealed class ToastService : IToastService, IDisposable
         lock (_lock)
         {
             _toasts.Clear();
-            foreach (var timer in _timers)
-                timer.Dispose();
-            _timers.Clear();
+            DisposeTimers();
         }
 
         _logger.LogInformation("All toasts dismissed successfully");
@@ -92,34 +106,27 @@ public sealed class ToastService : IToastService, IDisposable
 
     private void ScheduleDismiss(Guid id, int durationMs)
     {
-        try
+        var timer = new Timer(durationMs) { AutoReset = false };
+        timer.Elapsed += (_, _) =>
         {
-            var timer = new Timer(durationMs) { AutoReset = false };
-            timer.Elapsed += (_, _) =>
+            // System.Timers.Timer silently swallows exceptions thrown from Elapsed,
+            // so failures must be logged here rather than rethrown.
+            try
             {
-                try
-                {
-                    Dismiss(id);
-                    lock (_lock) { _timers.Remove(timer); }
-                }
-                catch (ObjectDisposedException)
-                {
-                    // Timer or service is being disposed, ignore
-                }
-                catch (Exception ex)
-                {
-                    throw new ToastServiceException("Failed to dismiss toast", ex);
-                }
-            };
+                Dismiss(id);
+            }
+            catch (ObjectDisposedException)
+            {
+                // Timer or service is being disposed, ignore
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Failed to auto-dismiss toast with ID: {ToastId}", id);
+            }
+        };
 
-            lock (_lock) { _timers.Add(timer); }
-            timer.Start();
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Failed to schedule toast dismissal");
-            throw new ToastServiceException("Failed to schedule toast dismissal", ex);
-        }
+        lock (_lock) { _timers[id] = timer; }
+        timer.Start();
     }
 
     /// <inheritdoc/>
@@ -127,9 +134,14 @@ public sealed class ToastService : IToastService, IDisposable
     {
         lock (_lock)
         {
-            foreach (var timer in _timers)
-                timer.Dispose();
-            _timers.Clear();
+            DisposeTimers();
         }
+    }
+
+    private void DisposeTimers()
+    {
+        foreach (var timer in _timers.Values)
+            timer.Dispose();
+        _timers.Clear();
     }
 }
