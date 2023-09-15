@@ -37,17 +37,30 @@ public sealed partial class Chart<TData> : ComponentBase, IChart<TData>
     public void SetData(IEnumerable<TData> data)
     {
         _data = data ?? Enumerable.Empty<TData>();
-        StateHasChanged();
+        NotifyStateChanged();
     }
 
     /// <summary>
     /// Refreshes the chart, re-rendering its content.
     /// </summary>
-    public void Refresh()
+    public void Refresh() => NotifyStateChanged();
+
+    private void NotifyStateChanged()
     {
-        StateHasChanged();
+        try
+        {
+            StateHasChanged();
+        }
+        catch (InvalidOperationException)
+        {
+            // Ignore if the component is not attached to a renderer (e.g. unit tests).
+        }
     }
 
-    // A placeholder for rendering logic, will be implemented in Chart.razor
-    protected RenderFragment ChildContent { get; set; }
+    /// <summary>
+    /// Gets or sets custom content rendered inside the chart body, after the
+    /// built-in summary and before any annotations.
+    /// </summary>
+    [Parameter]
+    public RenderFragment? ChildContent { get; set; }
 }

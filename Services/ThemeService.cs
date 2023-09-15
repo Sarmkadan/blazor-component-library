@@ -33,25 +33,28 @@ public sealed class ThemeService : IThemeService
     /// <exception cref="ThemeServiceException">Thrown when there is an error accessing local storage or applying theme.</exception>
     public async Task InitializeAsync()
     {
+        string? stored;
         try
         {
-            var stored = await _jsRuntime.InvokeAsync<string?>(
+            stored = await _jsRuntime.InvokeAsync<string?>(
                 "eval", "localStorage.getItem('bcl-theme')")
                 .ConfigureAwait(false);
-
-            if (Enum.TryParse<ThemeMode>(stored, ignoreCase: true, out var persisted))
-                ApplyTheme(persisted, persist: false);
         }
         catch (Exception ex) when (ex is not ThemeServiceException)
         {
-            // JS interop is unavailable during server-side pre-rendering; silently ignore.
-            // Other exceptions are wrapped and rethrown as ThemeServiceException
             throw new ThemeServiceException("Failed to initialize theme service", ex);
+        }
+
+        // Enum.IsDefined guards against stray numeric strings (e.g. "42") which
+        // Enum.TryParse would otherwise happily convert to an undefined enum value.
+        if (Enum.TryParse<ThemeMode>(stored, ignoreCase: true, out var persisted) &&
+            Enum.IsDefined(persisted))
+        {
+            ApplyTheme(persisted, persist: false);
         }
     }
 
     /// <inheritdoc/>
-    /// <exception cref="ThemeServiceException">Thrown when there is an error setting or persisting the theme.</exception>
     public void SetTheme(ThemeMode theme) => ApplyTheme(theme, persist: true);
 
     private void ApplyTheme(ThemeMode theme, bool persist)
@@ -65,24 +68,39 @@ public sealed class ThemeService : IThemeService
             _ => "auto",
         };
 
+        // The interop calls are intentionally fire-and-forget: SetTheme is synchronous
+        // by contract, and the in-memory theme remains authoritative even if the browser
+        // update fails. Faults are observed inside PushToBrowserAsync so they never
+        // surface as unobserved task exceptions.
+        _ = PushToBrowserAsync(attributeValue, persist ? theme : null);
+
+        ThemeChanged?.Invoke(theme);
+    }
+
+    private async Task PushToBrowserAsync(string attributeValue, ThemeMode? persistAs)
+    {
         try
         {
-            _ = _jsRuntime.InvokeVoidAsync(
+            await _jsRuntime.InvokeVoidAsync(
                 "eval",
                 $"document.documentElement.setAttribute('data-bcl-theme', '{attributeValue}')")
                 .ConfigureAwait(false);
 
-            if (persist)
-                _ = _jsRuntime.InvokeVoidAsync(
+            if (persistAs is { } theme)
+                await _jsRuntime.InvokeVoidAsync(
                     "eval",
                     $"localStorage.setItem('bcl-theme', '{theme}')")
                     .ConfigureAwait(false);
-
-            ThemeChanged?.Invoke(theme);
         }
-        catch (Exception ex)
+        catch (InvalidOperationException)
         {
-            throw new ThemeServiceException("Failed to apply theme", ex);
+            // JS interop is unavailable during server-side pre-rendering; the theme
+            // is re-applied once InitializeAsync runs after the first render.
+        }
+        catch (JSException)
+        {
+            // Browser-side failure (e.g. localStorage blocked). The in-memory theme
+            // has already been updated and the ThemeChanged event has been raised.
         }
     }
 }

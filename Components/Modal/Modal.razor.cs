@@ -46,7 +46,9 @@ public sealed partial class Modal : ComponentBase, IModal
 
         try
         {
-            await JSRuntime.InvokeVoidAsync("eval", "window.__bclModalTrigger = document.activeElement").ConfigureAwait(false);
+            // No ConfigureAwait(false) here: StateHasChanged must run on the
+            // component's dispatcher (sync context), otherwise Blazor Server throws.
+            await JSRuntime.InvokeVoidAsync("eval", "window.__bclModalTrigger = document.activeElement");
             _isVisible = true;
             StateHasChanged();
         }
