@@ -6,16 +6,78 @@ A lightweight, production-grade Blazor component library featuring reusable UI c
 **Website:** https://sarmkadan.com  
 **License:** MIT (Copyright 2026)
 
+## Table of Contents
+
+1. [Overview](#overview)
+2. [Architecture](#architecture)
+3. [Installation](#installation)
+4. [Quick Start](#quick-start)
+5. [Usage Examples](#usage-examples)
+6. [API Reference](#api-reference)
+7. [Configuration](#configuration)
+8. [Advanced Topics](#advanced-topics)
+9. [Troubleshooting](#troubleshooting)
+10. [Contributing](#contributing)
+11. [License](#license)
+
 ## Overview
 
-This library provides a comprehensive set of Blazor components and supporting services for building modern, responsive web applications. It focuses on:
+This library provides a comprehensive, production-ready set of Blazor components and supporting services for building modern, responsive web applications. Built on .NET 10 with C# 13, it emphasizes:
 
-- **Zero external CSS dependencies** - Minimal, composable styling
-- **Type-safe APIs** - Full C# type safety with validation
-- **Extensible architecture** - Easy to customize and extend
-- **Production-ready** - Real error handling, logging, and patterns
+- **Zero external CSS dependencies** - Minimal, composable styling; integrate with any CSS framework or use vanilla CSS
+- **Type-safe APIs** - Full C# type safety throughout; compile-time validation of component configurations
+- **Extensible architecture** - Easy to customize components, add validators, and extend services
+- **Production-ready** - Real error handling, comprehensive logging, enterprise patterns
+- **Performance-focused** - Caching layer, optimized data access, async/await throughout
+- **Full test coverage** - Repository pattern enables unit testing without database dependencies
 
-## Project Structure
+### Key Features
+
+- **Data Tables** - Sortable, filterable columns with pagination, export to CSV/JSON/XML
+- **Charts** - 8+ chart types (Line, Bar, Pie, Doughnut, Area, Scatter, Bubble, Radar)
+- **Forms** - Strongly-typed fields with built-in and custom validation
+- **Modals** - Configurable dialogs with multiple variants and callback support
+- **Themes** - Light/Dark mode system with CSS variable generation
+- **User Management** - Authentication, authorization, role-based access control
+- **Caching** - Distributed cache abstraction layer
+- **Middleware** - Request validation, exception handling, rate limiting, logging
+- **Events** - Event bus for inter-component communication
+
+## Architecture
+
+### High-Level System Design
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│                  Blazor Components Layer                     │
+│  (DataTable, Chart, Form, Modal Razor Components)           │
+└──────────────────────────┬──────────────────────────────────┘
+                           │
+┌──────────────────────────▼──────────────────────────────────┐
+│              Application Services Layer                      │
+│  (ComponentService, DataService, FormService, etc.)         │
+│  • Business logic validation                                 │
+│  • Pagination, filtering, search                            │
+│  • Statistics and aggregations                              │
+└──────────────────────────┬──────────────────────────────────┘
+                           │
+┌──────────────────────────▼──────────────────────────────────┐
+│              Repository Abstraction Layer                    │
+│  (IComponentRepository, IDataRepository, etc.)              │
+│  • In-memory implementation (swap for EF Core)              │
+│  • Async CRUD operations                                    │
+└──────────────────────────┬──────────────────────────────────┘
+                           │
+┌──────────────────────────▼──────────────────────────────────┐
+│            Infrastructure & Utilities                        │
+│  (Caching, Events, Formatters, Middleware)                 │
+│  • Cache management                                          │
+│  • Data formatting (CSV, JSON, XML)                        │
+│  • Request validation & logging                            │
+└─────────────────────────────────────────────────────────────┘
+```
+
+### Project Structure
 
 ```
 BlazorComponentLibrary/
@@ -35,7 +97,7 @@ BlazorComponentLibrary/
 │   ├── FormService.cs              # Form validation and logic
 │   ├── ThemeService.cs             # Theme management
 │   └── UserService.cs              # User management & auth
-├── Repositories/                    # Data access layer (5 repositories)
+├── Repositories/                    # Data access layer (10 files)
 │   ├── IComponentRepository.cs
 │   ├── ComponentRepository.cs
 │   ├── IDataRepository.cs
@@ -46,213 +108,910 @@ BlazorComponentLibrary/
 │   ├── ThemeRepository.cs
 │   ├── IUserRepository.cs
 │   └── UserRepository.cs
-├── Configuration/                   # Setup and configuration
-│   └── ServiceConfiguration.cs      # DI container setup
-├── Exceptions/                      # Custom exception types
-│   └── ComponentLibraryException.cs # Exception hierarchy
-├── Constants/                       # Application constants
-│   └── ApplicationConstants.cs      # Global constants
-├── BlazorComponentLibrary.csproj   # Project file
-├── LICENSE                          # MIT License
-├── .gitignore                       # Git ignore rules
-└── README.md                        # This file
+├── Controllers/                     # HTTP API endpoints (5 controllers)
+│   ├── ComponentController.cs
+│   ├── DataTableController.cs
+│   ├── FormController.cs
+│   ├── ModalController.cs
+│   └── ThemeController.cs
+├── Middleware/                      # Request pipeline middleware
+│   ├── ExceptionHandlingMiddleware.cs
+│   ├── LoggingMiddleware.cs
+│   ├── RateLimitingMiddleware.cs
+│   └── RequestValidationMiddleware.cs
+├── Configuration/                   # Dependency injection setup
+│   ├── ServiceConfiguration.cs
+│   └── ProgramExtensions.cs
+├── Caching/                        # Cache abstraction layer
+│   ├── ICacheService.cs
+│   ├── CacheService.cs
+│   └── CacheKeyGenerator.cs
+├── Events/                         # Event bus system
+│   ├── IEventPublisher.cs
+│   └── EventBus.cs
+├── Integration/                    # External service integration
+│   ├── ApiIntegrationService.cs
+│   ├── HttpClientFactory.cs
+│   └── WebhookHandler.cs
+├── Utilities/                      # Helper utilities (6 classes)
+│   ├── StringHelper.cs
+│   ├── DateTimeHelper.cs
+│   ├── CollectionHelper.cs
+│   ├── ValidationHelper.cs
+│   ├── CryptographyHelper.cs
+│   └── CacheHelper.cs
+├── Formatters/                     # Data formatters
+│   ├── IFormatter.cs
+│   ├── CsvFormatter.cs
+│   ├── JsonFormatter.cs
+│   ├── XmlFormatter.cs
+│   └── FormatterFactory.cs
+├── Constants/                      # Application constants
+│   └── ApplicationConstants.cs
+├── Exceptions/                     # Custom exception types
+│   └── ComponentLibraryException.cs
+├── Infrastructure/                 # Infrastructure services
+│   ├── DataServiceExtensions.cs
+│   ├── ResultPatternExtensions.cs
+│   └── ServiceRegistry.cs
+├── BackgroundServices/             # Background task execution
+│   └── BackgroundTaskService.cs
+├── BlazorComponentLibrary.csproj   # Project file (.NET 10)
+├── LICENSE                         # MIT License
+├── .gitignore                      # Git ignore rules
+└── README.md                       # This file
 ```
 
-## Features
+### Design Patterns Used
 
-### Components & Models
-- **Data Tables** - Sortable, filterable columns with pagination
-- **Charts** - Line, Bar, Pie, Doughnut, Area, Scatter, Bubble, Radar
-- **Forms** - Fields with validation, custom validators, type safety
-- **Modals** - Configurable dialogs with multiple size/type variants
-- **Themes** - Light/Dark mode with CSS variable generation
+- **Repository Pattern** - Data access abstraction enabling easy swapping of storage implementations
+- **Service Layer Pattern** - Business logic separation from infrastructure concerns
+- **Dependency Injection** - Loose coupling, testability, composable configuration
+- **Result Pattern** - Standardized operation results with error information
+- **Factory Pattern** - Data formatter creation, HTTP client instantiation
+- **Event-Driven Architecture** - Inter-component communication via event bus
+- **Middleware Pipeline** - Cross-cutting concerns (logging, validation, rate limiting)
 
-### Services
-- Full CRUD operations for all entities
-- Business logic validation and rules
-- Pagination and filtering
-- Search capabilities
-- Statistics and aggregations
-- User authentication and authorization
+### Technology Stack
 
-### Data Access
-- Repository pattern with dependency injection
-- In-memory storage (replace with DB as needed)
-- Async/await throughout
-- Full error handling
+- **.NET 10.0** - Latest .NET runtime
+- **Blazor (ASP.NET Core Components)** - Server-side and WebAssembly support
+- **C# 13** - Modern language features (records, patterns, nullable reference types)
+- **Microsoft Extensions** - Dependency injection, configuration, logging
+- **Newtonsoft.Json** - JSON serialization/deserialization
 
-## Getting Started
+## Installation
 
-### Installation
+### Prerequisites
 
-Add to your Blazor project:
+- .NET 10 SDK or later
+- Visual Studio 2022, Visual Studio Code, or compatible IDE
+- NuGet package manager (included with .NET SDK)
+
+### Method 1: NuGet Package (When Published)
+
+```bash
+dotnet add package BlazorComponentLibrary
+```
+
+Then in your Blazor project's `Program.cs`:
 
 ```csharp
 using BlazorComponentLibrary.Configuration;
 
-// In Program.cs
+var builder = WebApplication.CreateBuilder(args);
+
+// Add Blazor services
+builder.Services.AddRazorComponents()
+    .AddInteractiveServerComponents();
+
+// Add component library with all services
 builder.Services.AddBlazorComponentLibrary();
+
+var app = builder.Build();
+app.MapRazorComponents<App>().AddInteractiveServerRenderMode();
+app.Run();
 ```
 
-### Usage Example
+### Method 2: Project Reference (Local Development)
+
+Clone the repository and reference it from your project:
+
+```bash
+git clone https://github.com/sarmkadan/blazor-component-library.git
+```
+
+In your `.csproj`:
+
+```xml
+<ItemGroup>
+    <ProjectReference Include="../blazor-component-library/BlazorComponentLibrary.csproj" />
+</ItemGroup>
+```
+
+### Method 3: Docker
+
+```bash
+docker-compose up
+```
+
+This builds and runs a demo application showcasing all components.
+
+## Quick Start
+
+### 1. Create a Data Table
 
 ```csharp
-// Inject services
-[Inject]
-public ComponentService ComponentService { get; set; } = null!;
+@page "/components/data-table"
+@inject DataService DataService
+@inject ComponentService ComponentService
 
-// Create a component
-var config = new ComponentConfig
-{
-    Name = "MyDataTable",
-    ComponentType = "DataTable",
-    Description = "User data table"
-};
+<div class="container">
+    <h1>User Directory</h1>
+    
+    @if (rows != null)
+    {
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Role</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var row in rows)
+                {
+                    <tr>
+                        <td>@row.Values["Name"]</td>
+                        <td>@row.Values["Email"]</td>
+                        <td>@row.Values["Role"]</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+</div>
 
-var created = await ComponentService.CreateComponentAsync(config);
+@code {
+    private List<DataTableRow>? rows;
 
-// Retrieve all components
-var components = await ComponentService.GetAllComponentsAsync();
+    protected override async Task OnInitializedAsync()
+    {
+        var tableConfig = new ComponentConfig
+        {
+            Name = "UserDirectory",
+            ComponentType = "DataTable",
+            Description = "User management table"
+        };
+
+        await ComponentService.CreateComponentAsync(tableConfig);
+        rows = await DataService.GetTableDataAsync("users");
+    }
+}
 ```
 
-## Architecture
+### 2. Build a Form with Validation
 
-### Layered Design
-1. **Models** - Domain entities with validation and business logic
-2. **Services** - Application business logic and workflows
-3. **Repositories** - Data persistence abstraction
-4. **Configuration** - Dependency injection setup
+```csharp
+@page "/forms/contact"
+@inject FormService FormService
 
-### Design Patterns
-- **Repository Pattern** - Data access abstraction
-- **Service Layer Pattern** - Business logic separation
-- **Dependency Injection** - Loose coupling, testability
-- **Result Pattern** - Standardized API responses
-- **Validation Pattern** - Input validation and error handling
+<div class="form-container">
+    <h2>Contact Form</h2>
 
-## API Examples
+    <EditForm Model="@model" OnValidSubmit="@HandleValidSubmit">
+        <DataAnnotationsValidator />
+        <ValidationSummary />
+
+        <div class="form-group">
+            <label>Name</label>
+            <InputText @bind-Value="model.Name" class="form-control" />
+            <ValidationMessage For="@(() => model.Name)" />
+        </div>
+
+        <div class="form-group">
+            <label>Email</label>
+            <InputText @bind-Value="model.Email" class="form-control" />
+            <ValidationMessage For="@(() => model.Email)" />
+        </div>
+
+        <div class="form-group">
+            <label>Message</label>
+            <InputTextArea @bind-Value="model.Message" class="form-control" rows="5" />
+            <ValidationMessage For="@(() => model.Message)" />
+        </div>
+
+        <button type="submit" class="btn btn-primary">Send</button>
+    </EditForm>
+</div>
+
+@code {
+    private ContactFormModel model = new();
+
+    private async Task HandleValidSubmit()
+    {
+        var field = new FormField
+        {
+            Name = "contact_form",
+            Label = "Contact Form",
+            FieldType = FormFieldType.Text,
+            IsRequired = true
+        };
+
+        await FormService.CreateFieldAsync(field);
+        
+        // Process form submission
+    }
+
+    public class ContactFormModel
+    {
+        [Required(ErrorMessage = "Name is required")]
+        [StringLength(100)]
+        public string Name { get; set; } = "";
+
+        [Required]
+        [EmailAddress]
+        public string Email { get; set; } = "";
+
+        [Required]
+        [StringLength(1000)]
+        public string Message { get; set; } = "";
+    }
+}
+```
+
+### 3. Display a Chart
+
+```csharp
+@page "/components/charts"
+@inject DataService DataService
+
+<div class="chart-container">
+    <h2>Monthly Revenue</h2>
+    
+    @if (dataset != null)
+    {
+        <canvas @ref="chartCanvas"></canvas>
+    }
+</div>
+
+@code {
+    private ChartDataset? dataset;
+    private ElementReference chartCanvas;
+
+    protected override async Task OnInitializedAsync()
+    {
+        dataset = new ChartDataset
+        {
+            Label = "Revenue",
+            Data = new List<decimal> { 1000, 1500, 1200, 2000, 1800, 2200 },
+            ChartType = ChartType.Line,
+            BackgroundColor = "rgba(75, 192, 192, 0.2)",
+            BorderColor = "rgba(75, 192, 192, 1)"
+        };
+    }
+}
+```
+
+### 4. User Authentication
+
+```csharp
+@page "/auth/login"
+@inject UserService UserService
+@inject NavigationManager NavigationManager
+
+<div class="login-container">
+    <h2>Login</h2>
+
+    @if (errorMessage != null)
+    {
+        <div class="alert alert-danger">@errorMessage</div>
+    }
+
+    <form @onsubmit="HandleLogin">
+        <div class="form-group">
+            <label>Username</label>
+            <input type="text" @bind="username" class="form-control" />
+        </div>
+
+        <div class="form-group">
+            <label>Password</label>
+            <input type="password" @bind="password" class="form-control" />
+        </div>
+
+        <button type="submit" class="btn btn-primary">Login</button>
+    </form>
+</div>
+
+@code {
+    private string username = "";
+    private string password = "";
+    private string? errorMessage;
+
+    private async Task HandleLogin()
+    {
+        try
+        {
+            var user = await UserService.AuthenticateAsync(username, password);
+            if (user != null)
+            {
+                NavigationManager.NavigateTo("/dashboard");
+            }
+            else
+            {
+                errorMessage = "Invalid credentials";
+            }
+        }
+        catch (Exception ex)
+        {
+            errorMessage = ex.Message;
+        }
+    }
+}
+```
+
+## Usage Examples
 
 ### Component Management
+
 ```csharp
 var service = _componentService;
 
-// Create
-var config = await service.CreateComponentAsync(new ComponentConfig 
+// Create a new component
+var config = new ComponentConfig 
 { 
-    Name = "Table", 
-    ComponentType = "DataTable" 
-});
+    Name = "ProductTable", 
+    ComponentType = "DataTable",
+    Description = "Displays all products"
+};
+var result = await service.CreateComponentAsync(config);
 
-// Read
+// Retrieve a specific component
 var component = await service.GetComponentByIdAsync(1);
 
-// Update
-await service.UpdateComponentAsync(1, config);
+// Update component configuration
+var updated = new ComponentConfig 
+{ 
+    Name = "ProductTable-Updated",
+    ComponentType = "DataTable" 
+};
+await service.UpdateComponentAsync(1, updated);
 
-// Delete
-await service.DeleteComponentAsync(1);
+// Get all components with pagination
+var allComponents = await service.GetAllComponentsAsync();
 
-// Search
-var results = await service.SearchComponentsAsync("data");
+// Search components
+var searchResults = await service.SearchComponentsAsync("table");
 
-// Statistics
+// Get component statistics
 var stats = await service.GetComponentStatisticsAsync();
+
+// Delete component
+await service.DeleteComponentAsync(1);
 ```
 
-### User Authentication
+### Data Table Operations
+
 ```csharp
-// Create user
-var user = await _userService.CreateUserAsync(
-    "john_doe",
-    "john@example.com",
-    "password123"
-);
+var dataService = _dataService;
 
-// Authenticate
-var authenticated = await _userService.AuthenticateAsync(
-    "john_doe",
-    "password123"
-);
+// Add rows to table
+var row = new DataTableRow
+{
+    Values = new Dictionary<string, object>
+    {
+        { "Id", 1 },
+        { "Name", "John Doe" },
+        { "Email", "john@example.com" },
+        { "Status", "Active" }
+    }
+};
+await dataService.AddRowAsync("users", row);
 
-// Manage roles
-await _userService.UpdateRoleAsync(userId, UserRole.Admin);
+// Retrieve table data with filtering
+var columns = new List<DataTableColumn>
+{
+    new() { Name = "Name", SortOrder = SortOrder.Ascending },
+    new() { Name = "Email", IsVisible = true }
+};
+var data = await dataService.GetTableDataAsync("users");
+
+// Export data to CSV
+var csv = await dataService.ExportToFormatAsync("users", ExportFormat.Csv);
+
+// Paginate results
+var page1 = await dataService.GetPagedDataAsync("users", pageNumber: 1, pageSize: 25);
 ```
 
 ### Form Validation
+
 ```csharp
+var formService = _formService;
+
 // Create form fields
 var emailField = new FormField
 {
     Name = "email",
     Label = "Email Address",
     FieldType = FormFieldType.Email,
-    IsRequired = true
+    IsRequired = true,
+    ValidationRules = new Dictionary<string, string>
+    {
+        { "pattern", @"^[^\s@]+@[^\s@]+\.[^\s@]+$" }
+    }
 };
 
-await _formService.CreateFieldAsync(emailField);
+await formService.CreateFieldAsync(emailField);
 
-// Validate form
-var result = await _formService.ValidateFormAsync(formData);
-if (!result.IsValid)
+// Validate form submission
+var formData = new Dictionary<string, object>
 {
-    foreach (var error in result.Errors)
+    { "email", "user@example.com" },
+    { "name", "John Doe" }
+};
+
+var validationResult = await formService.ValidateFormAsync(formData);
+if (validationResult.IsValid)
+{
+    // Process valid form
+}
+else
+{
+    foreach (var error in validationResult.Errors)
     {
         Console.WriteLine($"{error.Key}: {error.Value}");
     }
 }
 ```
 
-## Error Handling
-
-The library uses a custom exception hierarchy:
+### User Authentication & Authorization
 
 ```csharp
-ComponentLibraryException (base)
-├── InvalidComponentException
-├── ComponentNotFoundException
-├── FormValidationException
-├── UnauthorizedException
-├── ForbiddenException
-├── ConflictException
-└── MissingDependencyException
-```
+var userService = _userService;
 
-## Constants and Configuration
+// Create a user account
+var user = await userService.CreateUserAsync(
+    username: "john_doe",
+    email: "john@example.com",
+    password: "securepassword"
+);
 
-Global settings are defined in `ApplicationConstants` and can be customized via `LibrarySettings`:
+// Authenticate user
+var authenticated = await userService.AuthenticateAsync(
+    username: "john_doe",
+    password: "securepassword"
+);
 
-```csharp
-var settings = new LibrarySettings
+if (authenticated != null)
 {
-    LibraryName = "Custom Name",
-    EnableCaching = true,
-    DefaultPageSize = 50,
-    EnableLogging = true
+    // User successfully authenticated
+}
+
+// Update user role
+await userService.UpdateRoleAsync(authenticated.Id, UserRole.Admin);
+
+// Check permissions
+var hasPermission = await userService.HasPermissionAsync(
+    userId: authenticated.Id,
+    permission: "CanEditUsers"
+);
+
+// List all users
+var allUsers = await userService.GetAllUsersAsync();
+
+// Delete user account
+await userService.DeleteUserAsync(authenticated.Id);
+```
+
+### Theme Management
+
+```csharp
+var themeService = _themeService;
+
+// Create a custom theme
+var darkTheme = new Theme
+{
+    Name = "Dark Mode",
+    IsDarkMode = true,
+    PrimaryColor = "#1e293b",
+    SecondaryColor = "#475569",
+    AccentColor = "#0ea5e9"
 };
+
+await themeService.CreateThemeAsync(darkTheme);
+
+// Get current theme
+var currentTheme = await themeService.GetCurrentThemeAsync();
+
+// Switch theme
+await themeService.SetActiveThemeAsync("Dark Mode");
+
+// Generate CSS variables
+var cssVariables = await themeService.GenerateCssVariablesAsync();
 ```
 
-## Development
+### Caching
 
-Built on .NET 10.0 with C# 13 latest features.
+```csharp
+var cacheService = _cacheService;
 
-### Building
-```bash
-dotnet build
+// Store item in cache
+await cacheService.SetAsync("user:123", user, TimeSpan.FromHours(1));
+
+// Retrieve from cache
+var cachedUser = await cacheService.GetAsync<User>("user:123");
+
+// Remove from cache
+await cacheService.RemoveAsync("user:123");
+
+// Clear all cache
+await cacheService.ClearAsync();
 ```
 
-### Testing
-```bash
-dotnet test
+## API Reference
+
+### ComponentService
+
+```csharp
+public interface IComponentService
+{
+    Task<ComponentConfig> CreateComponentAsync(ComponentConfig config);
+    Task<ComponentConfig?> GetComponentByIdAsync(int id);
+    Task<IEnumerable<ComponentConfig>> GetAllComponentsAsync();
+    Task<IEnumerable<ComponentConfig>> SearchComponentsAsync(string query);
+    Task UpdateComponentAsync(int id, ComponentConfig config);
+    Task DeleteComponentAsync(int id);
+    Task<ComponentStatistics> GetComponentStatisticsAsync();
+}
+```
+
+### DataService
+
+```csharp
+public interface IDataService
+{
+    Task AddRowAsync(string tableName, DataTableRow row);
+    Task<List<DataTableRow>> GetTableDataAsync(string tableName);
+    Task<PaginatedResult<DataTableRow>> GetPagedDataAsync(string tableName, int pageNumber, int pageSize);
+    Task<string> ExportToFormatAsync(string tableName, ExportFormat format);
+    Task UpdateRowAsync(string tableName, int rowId, DataTableRow row);
+    Task DeleteRowAsync(string tableName, int rowId);
+}
+```
+
+### FormService
+
+```csharp
+public interface IFormService
+{
+    Task<FormField> CreateFieldAsync(FormField field);
+    Task<FormField?> GetFieldByNameAsync(string name);
+    Task<FormValidationResult> ValidateFormAsync(Dictionary<string, object> formData);
+    Task UpdateFieldAsync(string name, FormField field);
+    Task DeleteFieldAsync(string name);
+    Task<IEnumerable<FormField>> GetAllFieldsAsync();
+}
+```
+
+### UserService
+
+```csharp
+public interface IUserService
+{
+    Task<User> CreateUserAsync(string username, string email, string password);
+    Task<User?> AuthenticateAsync(string username, string password);
+    Task<User?> GetUserByIdAsync(int id);
+    Task UpdateRoleAsync(int userId, UserRole role);
+    Task DeleteUserAsync(int id);
+    Task<bool> HasPermissionAsync(int userId, string permission);
+    Task<IEnumerable<User>> GetAllUsersAsync();
+}
+```
+
+### ThemeService
+
+```csharp
+public interface IThemeService
+{
+    Task<Theme> CreateThemeAsync(Theme theme);
+    Task<Theme?> GetThemeByNameAsync(string name);
+    Task<Theme?> GetCurrentThemeAsync();
+    Task SetActiveThemeAsync(string themeName);
+    Task<string> GenerateCssVariablesAsync();
+    Task DeleteThemeAsync(string themeName);
+    Task<IEnumerable<Theme>> GetAllThemesAsync();
+}
+```
+
+## Configuration
+
+### Dependency Injection Setup
+
+The library provides a convenient extension method for configuring all services:
+
+```csharp
+// Minimal setup
+builder.Services.AddBlazorComponentLibrary();
+
+// Custom configuration
+builder.Services.AddBlazorComponentLibrary(options =>
+{
+    options.EnableCaching = true;
+    options.DefaultPageSize = 50;
+    options.CacheDurationMinutes = 60;
+});
+```
+
+### Supported Configuration Options
+
+```csharp
+public class LibraryOptions
+{
+    // Caching
+    public bool EnableCaching { get; set; } = true;
+    public int CacheDurationMinutes { get; set; } = 30;
+
+    // Pagination
+    public int DefaultPageSize { get; set; } = 25;
+    public int MaxPageSize { get; set; } = 1000;
+
+    // Features
+    public bool EnableEventBus { get; set; } = true;
+    public bool EnableLogging { get; set; } = true;
+    public bool EnableRateLimiting { get; set; } = false;
+
+    // Validation
+    public bool StrictValidation { get; set; } = true;
+    public bool EnableCustomValidators { get; set; } = true;
+}
+```
+
+### Application Settings
+
+Configure via `appsettings.json`:
+
+```json
+{
+  "BlazorComponentLibrary": {
+    "EnableCaching": true,
+    "CacheDurationMinutes": 30,
+    "DefaultPageSize": 25,
+    "EnableLogging": true,
+    "EnableRateLimiting": false
+  },
+  "Logging": {
+    "LogLevel": {
+      "Default": "Information",
+      "BlazorComponentLibrary": "Debug"
+    }
+  }
+}
+```
+
+## Advanced Topics
+
+### Custom Data Formatters
+
+Extend the formatter factory to support additional formats:
+
+```csharp
+public class CustomFormatter : IFormatter
+{
+    public string Format(List<DataTableRow> data)
+    {
+        // Implement custom formatting logic
+        return formattedData;
+    }
+}
+
+// Register in DI container
+services.AddScoped<IFormatter, CustomFormatter>();
+```
+
+### Event-Driven Architecture
+
+Publish and subscribe to application events:
+
+```csharp
+// Publish event
+await _eventBus.PublishAsync(new ComponentCreatedEvent 
+{ 
+    ComponentId = 1, 
+    ComponentName = "MyComponent" 
+});
+
+// Subscribe to events
+_eventBus.Subscribe<ComponentCreatedEvent>(async (e) =>
+{
+    Console.WriteLine($"Component created: {e.ComponentName}");
+});
+```
+
+### Rate Limiting
+
+Configure rate limiting for API endpoints:
+
+```csharp
+app.UseMiddleware<RateLimitingMiddleware>(
+    new RateLimitOptions
+    {
+        RequestsPerMinute = 100,
+        EndpointExclusions = new[] { "/health" }
+    }
+);
+```
+
+### Custom Middleware
+
+The library supports custom middleware components:
+
+```csharp
+public class CustomMiddleware : IMiddleware
+{
+    public async Task InvokeAsync(HttpContext context, RequestDelegate next)
+    {
+        // Pre-processing
+        await next(context);
+        // Post-processing
+    }
+}
+```
+
+### Database Integration
+
+Swap in-memory repositories with Entity Framework Core:
+
+```csharp
+// Register EF Core DbContext
+services.AddDbContext<ComponentDbContext>(options =>
+    options.UseSqlServer(configuration.GetConnectionString("DefaultConnection"))
+);
+
+// Implement custom repository
+public class EfComponentRepository : IComponentRepository
+{
+    private readonly ComponentDbContext _context;
+
+    public async Task<ComponentConfig> CreateAsync(ComponentConfig config)
+    {
+        _context.Components.Add(config);
+        await _context.SaveChangesAsync();
+        return config;
+    }
+
+    // ... implement other methods
+}
+```
+
+## Troubleshooting
+
+### Issue: Services not registering
+
+**Solution:** Ensure `AddBlazorComponentLibrary()` is called before building the host:
+
+```csharp
+var builder = WebApplication.CreateBuilder(args);
+builder.Services.AddBlazorComponentLibrary(); // Call this
+var app = builder.Build();
+app.Run();
+```
+
+### Issue: NullReferenceException on injected services
+
+**Solution:** Verify services are injected in `@code` block:
+
+```csharp
+@code {
+    [Inject]
+    public ComponentService ComponentService { get; set; } = null!;
+    
+    protected override async Task OnInitializedAsync()
+    {
+        // Service is now available
+    }
+}
+```
+
+### Issue: Form validation not working
+
+**Solution:** Ensure EditForm component includes DataAnnotationsValidator:
+
+```csharp
+<EditForm Model="@model" OnValidSubmit="@HandleSubmit">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+    <!-- Form fields -->
+</EditForm>
+```
+
+### Issue: Cache not clearing properly
+
+**Solution:** Use the cache service to explicitly clear:
+
+```csharp
+await _cacheService.ClearAsync();
+```
+
+### Issue: Performance degradation with large datasets
+
+**Solution:** Implement pagination and filtering:
+
+```csharp
+var pagedResult = await dataService.GetPagedDataAsync(
+    tableName: "users", 
+    pageNumber: 1, 
+    pageSize: 50
+);
+```
+
+### Issue: Memory leaks in long-running applications
+
+**Solution:** Properly dispose of resources:
+
+```csharp
+public class ComponentRepository : IAsyncDisposable
+{
+    public async ValueTask DisposeAsync()
+    {
+        // Cleanup resources
+    }
+}
 ```
 
 ## Contributing
 
-Contributions are welcome. Please maintain the existing code structure and patterns.
+We welcome contributions! Please follow these guidelines:
 
-## Support
+1. **Fork the repository** on GitHub
+2. **Create a feature branch** (`git checkout -b feature/amazing-feature`)
+3. **Make your changes** following the existing code style and patterns
+4. **Write or update tests** to cover your changes
+5. **Commit with clear messages** (`git commit -m 'Add amazing feature'`)
+6. **Push to the branch** (`git push origin feature/amazing-feature`)
+7. **Open a Pull Request** with a clear description
 
-For issues or questions, visit https://sarmkadan.com
+### Code Standards
+
+- Follow C# naming conventions (PascalCase for public members)
+- Write XML documentation comments for public APIs
+- Use async/await for all I/O operations
+- Include error handling and logging
+- Maintain existing architecture patterns
+- Add unit tests for new functionality
+
+### Development Setup
+
+```bash
+# Clone repository
+git clone https://github.com/sarmkadan/blazor-component-library.git
+cd blazor-component-library
+
+# Build project
+dotnet build
+
+# Run tests
+dotnet test
+
+# Run demo application
+dotnet run --project examples/BlazorComponentLibraryDemo
+
+# Check code coverage
+dotnet test /p:CollectCoverage=true
+```
 
 ## License
 
-MIT License - Copyright 2026 Vladyslav Zaiets. See LICENSE file for details.
+MIT License - Copyright 2026 Vladyslav Zaiets
+
+Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+
+See the LICENSE file for the full license text.
+
+---
+
+**Built by [Vladyslav Zaiets](https://sarmkadan.com) - CTO & Software Architect**
+
+[Portfolio](https://sarmkadan.com) | [GitHub](https://github.com/sarmkadan) | [Telegram](https://t.me/sarmkadan)
