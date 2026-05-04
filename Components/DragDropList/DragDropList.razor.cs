@@ -89,8 +89,13 @@ public sealed partial class DragDropList<TItem> : ComponentBase, IDragDropList<T
     /// <param name="fromIndex">Zero-based index of the item to move.</param>
     /// <param name="toIndex">Zero-based target index after the move.</param>
     /// <returns>A new <see cref="List{T}"/> reflecting the reordered items.</returns>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="source"/> is null.</exception>
+    /// <exception cref="ArgumentOutOfRangeException">
+    /// Thrown when <paramref name="fromIndex"/> or <paramref name="toIndex"/> is outside the bounds of <paramref name="source"/>.
+    /// </exception>
     public static List<TItem> Reorder(IList<TItem> source, int fromIndex, int toIndex)
     {
+        ArgumentNullException.ThrowIfNull(source);
         if (fromIndex < 0 || fromIndex >= source.Count)
             throw new ArgumentOutOfRangeException(nameof(fromIndex));
         if (toIndex < 0 || toIndex >= source.Count)

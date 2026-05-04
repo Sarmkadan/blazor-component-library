@@ -1,6 +1,6 @@
 using System;
 using System.Collections.Generic;
-using BlazorComponentLibrary;
+using BlazorComponentLibrary.Services;
 
 namespace BlazorComponentLibrary.Examples;
 
