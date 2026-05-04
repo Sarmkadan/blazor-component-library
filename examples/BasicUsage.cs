@@ -1,5 +1,6 @@
 using Microsoft.Extensions.DependencyInjection;
-using BlazorComponentLibrary;
+using BlazorComponentLibrary.Extensions;
+using BlazorComponentLibrary.Services;
 
 namespace BlazorComponentLibrary.Examples;
 

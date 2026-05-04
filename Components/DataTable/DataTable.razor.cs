@@ -65,11 +65,11 @@ public sealed partial class DataTable<TItem> : ComponentBase, IDataTable<TItem>
     /// Sets the data source for the data table.
     /// </summary>
     /// <param name="data">The enumerable collection of data items.</param>
-/// <exception cref="ArgumentNullException">Thrown when <paramref name="data"/> is null.</exception>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="data"/> is null.</exception>
     public void SetData(IEnumerable<TItem> data)
     {
-        _ = data ?? throw new ArgumentNullException(nameof(data));
-    _data = data;
+        ArgumentNullException.ThrowIfNull(data);
+        _data = data;
         ApplyView();
         NotifyStateChanged();
     }

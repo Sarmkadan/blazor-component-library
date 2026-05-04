@@ -1,6 +1,6 @@
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using BlazorComponentLibrary;
+using BlazorComponentLibrary.Extensions;
 
 namespace BlazorComponentLibrary.Examples;
 
