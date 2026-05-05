@@ -32,6 +32,7 @@ bld/
 # Rider
 .idea/
 *.sln.iml
+*.DotSettings.user
 *.swp
 *.swo
 
@@ -44,6 +45,7 @@ coverage/
 *.nupkg
 *.snupkg
 .nuget/
+packages/
 
 # Yarn
 node_modules/
@@ -53,6 +55,7 @@ dist/
 .env
 .env.local
 .env.*.local
+appsettings.Development.json
 
 # Compiled TypeScript
 *.js
