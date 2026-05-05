@@ -4,7 +4,7 @@
 // =============================================================================
 
 using System.ComponentModel.DataAnnotations;
-using Newtonsoft.Json;
+using System.Text.Json.Serialization;
 
 namespace BlazorComponentLibrary.Models;
 
@@ -19,58 +19,58 @@ public class ModalConfig
 
     [Required]
     [StringLength(100, MinimumLength = 1)]
-    [JsonProperty("title")]
+    [JsonPropertyName("title")]
     public string Title { get; set; } = string.Empty;
 
-    [JsonProperty("content")]
+    [JsonPropertyName("content")]
     public string? Content { get; set; }
 
-    [JsonProperty("modalType")]
+    [JsonPropertyName("modalType")]
     public ModalType ModalType { get; set; } = ModalType.Default;
 
-    [JsonProperty("size")]
+    [JsonPropertyName("size")]
     public ModalSize Size { get; set; } = ModalSize.Medium;
 
-    [JsonProperty("isPrimary")]
+    [JsonPropertyName("isPrimary")]
     public bool IsPrimary { get; set; } = false;
 
-    [JsonProperty("isClosable")]
+    [JsonPropertyName("isClosable")]
     public bool IsClosable { get; set; } = true;
 
-    [JsonProperty("isBackdropClickable")]
+    [JsonPropertyName("isBackdropClickable")]
     public bool IsBackdropClickable { get; set; } = true;
 
-    [JsonProperty("showHeader")]
+    [JsonPropertyName("showHeader")]
     public bool ShowHeader { get; set; } = true;
 
-    [JsonProperty("showFooter")]
+    [JsonPropertyName("showFooter")]
     public bool ShowFooter { get; set; } = true;
 
-    [JsonProperty("primaryButtonText")]
+    [JsonPropertyName("primaryButtonText")]
     public string PrimaryButtonText { get; set; } = "Confirm";
 
-    [JsonProperty("secondaryButtonText")]
+    [JsonPropertyName("secondaryButtonText")]
     public string SecondaryButtonText { get; set; } = "Cancel";
 
-    [JsonProperty("primaryButtonClass")]
+    [JsonPropertyName("primaryButtonClass")]
     public string? PrimaryButtonClass { get; set; }
 
-    [JsonProperty("secondaryButtonClass")]
+    [JsonPropertyName("secondaryButtonClass")]
     public string? SecondaryButtonClass { get; set; }
 
-    [JsonProperty("headerClass")]
+    [JsonPropertyName("headerClass")]
     public string? HeaderClass { get; set; }
 
-    [JsonProperty("bodyClass")]
+    [JsonPropertyName("bodyClass")]
     public string? BodyClass { get; set; }
 
-    [JsonProperty("footerClass")]
+    [JsonPropertyName("footerClass")]
     public string? FooterClass { get; set; }
 
-    [JsonProperty("maxWidth")]
+    [JsonPropertyName("maxWidth")]
     public string? MaxWidth { get; set; }
 
-    [JsonProperty("createdAt")]
+    [JsonPropertyName("createdAt")]
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
     /// <summary>

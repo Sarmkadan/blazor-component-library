@@ -4,7 +4,7 @@
 // =============================================================================
 
 using System.ComponentModel.DataAnnotations;
-using Newtonsoft.Json;
+using System.Text.Json.Serialization;
 
 namespace BlazorComponentLibrary.Models;
 
@@ -19,37 +19,37 @@ public class DataTableColumn
 
     [Required]
     [StringLength(100, MinimumLength = 1)]
-    [JsonProperty("key")]
+    [JsonPropertyName("key")]
     public string Key { get; set; } = string.Empty;
 
     [Required]
     [StringLength(150)]
-    [JsonProperty("header")]
+    [JsonPropertyName("header")]
     public string Header { get; set; } = string.Empty;
 
-    [JsonProperty("dataType")]
+    [JsonPropertyName("dataType")]
     public DataType DataType { get; set; } = DataType.String;
 
-    [JsonProperty("isVisible")]
+    [JsonPropertyName("isVisible")]
     public bool IsVisible { get; set; } = true;
 
-    [JsonProperty("isSortable")]
+    [JsonPropertyName("isSortable")]
     public bool IsSortable { get; set; } = true;
 
-    [JsonProperty("isFilterable")]
+    [JsonPropertyName("isFilterable")]
     public bool IsFilterable { get; set; } = true;
 
     [Range(10, 500)]
-    [JsonProperty("width")]
+    [JsonPropertyName("width")]
     public int Width { get; set; } = 100;
 
-    [JsonProperty("alignment")]
+    [JsonPropertyName("alignment")]
     public TextAlignment Alignment { get; set; } = TextAlignment.Left;
 
-    [JsonProperty("sortOrder")]
+    [JsonPropertyName("sortOrder")]
     public int SortOrder { get; set; } = 0;
 
-    [JsonProperty("format")]
+    [JsonPropertyName("format")]
     public string? Format { get; set; }
 
     /// <summary>

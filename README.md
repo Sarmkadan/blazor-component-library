@@ -1,3 +1,7 @@
+[![Build](https://github.com/sarmkadan/blazor-component-library/actions/workflows/build.yml/badge.svg)](https://github.com/sarmkadan/blazor-component-library/actions/workflows/build.yml)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![.NET](https://img.shields.io/badge/.NET-10.0-purple.svg)](https://dotnet.microsoft.com/)
+
 # Blazor Component Library
 
 A lightweight, production-grade Blazor component library featuring reusable UI components for data tables, charts, forms, and modals without heavy CSS framework dependencies.
@@ -178,7 +182,7 @@ BlazorComponentLibrary/
 - **Blazor (ASP.NET Core Components)** - Server-side and WebAssembly support
 - **C# 13** - Modern language features (records, patterns, nullable reference types)
 - **Microsoft Extensions** - Dependency injection, configuration, logging
-- **Newtonsoft.Json** - JSON serialization/deserialization
+- **System.Text.Json** - JSON serialization/deserialization (built-in .NET)
 
 ## Installation
 

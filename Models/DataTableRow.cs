@@ -4,7 +4,7 @@
 // =============================================================================
 
 using System.ComponentModel.DataAnnotations;
-using Newtonsoft.Json;
+using System.Text.Json.Serialization;
 
 namespace BlazorComponentLibrary.Models;
 
@@ -18,26 +18,26 @@ public class DataTableRow
     public int Id { get; set; }
 
     [Required]
-    [JsonProperty("tableId")]
+    [JsonPropertyName("tableId")]
     public int TableId { get; set; }
 
     [Required]
-    [JsonProperty("data")]
+    [JsonPropertyName("data")]
     public Dictionary<string, object?> Data { get; set; } = new();
 
-    [JsonProperty("isSelected")]
+    [JsonPropertyName("isSelected")]
     public bool IsSelected { get; set; } = false;
 
-    [JsonProperty("isExpanded")]
+    [JsonPropertyName("isExpanded")]
     public bool IsExpanded { get; set; } = false;
 
-    [JsonProperty("cssClass")]
+    [JsonPropertyName("cssClass")]
     public string? CssClass { get; set; }
 
-    [JsonProperty("rowNumber")]
+    [JsonPropertyName("rowNumber")]
     public int RowNumber { get; set; }
 
-    [JsonProperty("createdAt")]
+    [JsonPropertyName("createdAt")]
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
     /// <summary>

@@ -4,7 +4,7 @@
 // =============================================================================
 
 using System.ComponentModel.DataAnnotations;
-using Newtonsoft.Json;
+using System.Text.Json.Serialization;
 
 namespace BlazorComponentLibrary.Models;
 
@@ -19,60 +19,60 @@ public class Theme
 
     [Required]
     [StringLength(50, MinimumLength = 1)]
-    [JsonProperty("name")]
+    [JsonPropertyName("name")]
     public string Name { get; set; } = string.Empty;
 
-    [JsonProperty("mode")]
+    [JsonPropertyName("mode")]
     public ThemeMode Mode { get; set; } = ThemeMode.Light;
 
-    [JsonProperty("primaryColor")]
+    [JsonPropertyName("primaryColor")]
     public string PrimaryColor { get; set; } = "#007bff";
 
-    [JsonProperty("secondaryColor")]
+    [JsonPropertyName("secondaryColor")]
     public string SecondaryColor { get; set; } = "#6c757d";
 
-    [JsonProperty("successColor")]
+    [JsonPropertyName("successColor")]
     public string SuccessColor { get; set; } = "#28a745";
 
-    [JsonProperty("dangerColor")]
+    [JsonPropertyName("dangerColor")]
     public string DangerColor { get; set; } = "#dc3545";
 
-    [JsonProperty("warningColor")]
+    [JsonPropertyName("warningColor")]
     public string WarningColor { get; set; } = "#ffc107";
 
-    [JsonProperty("infoColor")]
+    [JsonPropertyName("infoColor")]
     public string InfoColor { get; set; } = "#17a2b8";
 
-    [JsonProperty("backgroundColor")]
+    [JsonPropertyName("backgroundColor")]
     public string BackgroundColor { get; set; } = "#ffffff";
 
-    [JsonProperty("textColor")]
+    [JsonPropertyName("textColor")]
     public string TextColor { get; set; } = "#212529";
 
-    [JsonProperty("borderColor")]
+    [JsonPropertyName("borderColor")]
     public string BorderColor { get; set; } = "#dee2e6";
 
-    [JsonProperty("fontFamily")]
+    [JsonPropertyName("fontFamily")]
     public string FontFamily { get; set; } = "-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif";
 
     [Range(8, 32)]
-    [JsonProperty("baseFontSize")]
+    [JsonPropertyName("baseFontSize")]
     public int BaseFontSize { get; set; } = 14;
 
     [Range(1, 4)]
-    [JsonProperty("lineHeight")]
+    [JsonPropertyName("lineHeight")]
     public double LineHeight { get; set; } = 1.5;
 
-    [JsonProperty("borderRadius")]
+    [JsonPropertyName("borderRadius")]
     public string BorderRadius { get; set; } = "4px";
 
-    [JsonProperty("shadowColor")]
+    [JsonPropertyName("shadowColor")]
     public string ShadowColor { get; set; } = "rgba(0, 0, 0, 0.1)";
 
-    [JsonProperty("isActive")]
+    [JsonPropertyName("isActive")]
     public bool IsActive { get; set; } = true;
 
-    [JsonProperty("createdAt")]
+    [JsonPropertyName("createdAt")]
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
     /// <summary>

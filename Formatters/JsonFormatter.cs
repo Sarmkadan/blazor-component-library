@@ -3,46 +3,40 @@
 // CTO & Software Architect
 // =============================================================================
 
-using Newtonsoft.Json;
-using Newtonsoft.Json.Converters;
-using Newtonsoft.Json.Serialization;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 
 namespace BlazorComponentLibrary.Formatters;
 
 /// <summary>
-/// JSON formatter using Newtonsoft.Json.
+/// JSON formatter using System.Text.Json.
 /// Provides serialization and deserialization with consistent settings.
 /// Used for API responses and data persistence.
 /// </summary>
 public class JsonFormatter : IDataFormatter
 {
-    private readonly JsonSerializerSettings _settings;
+    private readonly JsonSerializerOptions _options;
 
     public JsonFormatter()
     {
-        _settings = new JsonSerializerSettings
+        _options = new JsonSerializerOptions
         {
-            ContractResolver = new CamelCasePropertyNamesContractResolver(),
-            DateFormatString = "yyyy-MM-ddTHH:mm:ss.fffZ",
-            DateTimeZoneHandling = DateTimeZoneHandling.Utc,
-            NullValueHandling = NullValueHandling.Ignore,
-            Formatting = Formatting.Indented,
-            Converters = new JsonConverter[]
-            {
-                new StringEnumConverter { NamingStrategy = new CamelCaseNamingStrategy() }
-            }
+            PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+            DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
+            WriteIndented = true,
+            Converters = { new JsonStringEnumConverter(JsonNamingPolicy.CamelCase) }
         };
     }
 
     /// <summary>
     /// Serializes object to JSON string.
-    /// Uses configured settings for consistent formatting.
+    /// Uses configured options for consistent formatting.
     /// </summary>
     public string Serialize<T>(T? obj) where T : class
     {
         try
         {
-            return JsonConvert.SerializeObject(obj, _settings);
+            return JsonSerializer.Serialize(obj, _options);
         }
         catch (JsonException ex)
         {
@@ -61,7 +55,7 @@ public class JsonFormatter : IDataFormatter
 
         try
         {
-            return JsonConvert.DeserializeObject<T>(json, _settings);
+            return JsonSerializer.Deserialize<T>(json, _options);
         }
         catch (JsonException ex)
         {
@@ -102,7 +96,7 @@ public class JsonFormatter : IDataFormatter
 
         try
         {
-            JsonConvert.DeserializeObject(json);
+            using var _ = JsonDocument.Parse(json);
             return true;
         }
         catch
@@ -113,22 +107,70 @@ public class JsonFormatter : IDataFormatter
 
     /// <summary>
     /// Merges two objects into a single JSON representation.
-    /// Used for patching and partial updates.
+    /// Used for patching and partial updates. Array properties are unioned.
     /// </summary>
     public string Merge<T>(T obj1, T obj2) where T : class
     {
         var json1 = Serialize(obj1);
         var json2 = Serialize(obj2);
 
-        var jObject1 = Newtonsoft.Json.Linq.JObject.Parse(json1);
-        var jObject2 = Newtonsoft.Json.Linq.JObject.Parse(json2);
+        using var doc1 = JsonDocument.Parse(json1);
+        using var doc2 = JsonDocument.Parse(json2);
 
-        jObject1.Merge(jObject2, new Newtonsoft.Json.Linq.JsonMergeSettings
+        using var stream = new System.IO.MemoryStream();
+        using var writer = new Utf8JsonWriter(stream, new JsonWriterOptions { Indented = true });
+
+        MergeElements(writer, doc1.RootElement, doc2.RootElement);
+        writer.Flush();
+
+        return System.Text.Encoding.UTF8.GetString(stream.ToArray());
+    }
+
+    private static void MergeElements(Utf8JsonWriter writer, JsonElement base_, JsonElement override_)
+    {
+        if (base_.ValueKind != JsonValueKind.Object || override_.ValueKind != JsonValueKind.Object)
         {
-            MergeArrayHandling = Newtonsoft.Json.Linq.MergeArrayHandling.Union
-        });
+            override_.WriteTo(writer);
+            return;
+        }
 
-        return jObject1.ToString();
+        writer.WriteStartObject();
+
+        foreach (var prop in base_.EnumerateObject())
+        {
+            writer.WritePropertyName(prop.Name);
+            if (override_.TryGetProperty(prop.Name, out var overrideProp))
+            {
+                if (prop.Value.ValueKind == JsonValueKind.Array && overrideProp.ValueKind == JsonValueKind.Array)
+                {
+                    writer.WriteStartArray();
+                    foreach (var item in prop.Value.EnumerateArray())
+                        item.WriteTo(writer);
+                    foreach (var item in overrideProp.EnumerateArray())
+                        item.WriteTo(writer);
+                    writer.WriteEndArray();
+                }
+                else
+                {
+                    MergeElements(writer, prop.Value, overrideProp);
+                }
+            }
+            else
+            {
+                prop.Value.WriteTo(writer);
+            }
+        }
+
+        foreach (var prop in override_.EnumerateObject())
+        {
+            if (!base_.TryGetProperty(prop.Name, out _))
+            {
+                writer.WritePropertyName(prop.Name);
+                prop.Value.WriteTo(writer);
+            }
+        }
+
+        writer.WriteEndObject();
     }
 
     /// <summary>
