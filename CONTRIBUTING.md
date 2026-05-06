@@ -455,6 +455,10 @@ For more information, see:
 - [Architecture](docs/architecture.md)
 - [Code of Conduct](CODE_OF_CONDUCT.md)
 
+## License
+
+By contributing to the Blazor Component Library, you agree that your contributions will be licensed under the same [MIT License](LICENSE) that covers the project.
+
 ---
 
 **Maintained by:** Vladyslav Zaiets  
