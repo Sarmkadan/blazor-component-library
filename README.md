@@ -74,13 +74,14 @@ The application will be available at `http://localhost:8080`.
 
 ```
 BlazorComponentLibrary/
-  Components/         - Razor component implementations
-  Themes/             - CSS/SCSS theming and design tokens
-  Services/           - DI-registered services (toast, modal, theme)
-  Models/             - Component parameter models and enums
+  Components/         - one folder per component (razor + code-behind + interface + scoped css)
+  Services/           - DI-registered services (theme, toast)
   Extensions/         - ServiceCollection extension methods
-  wwwroot/            - Static assets (CSS, JS interop)
+  Exceptions/         - library exception hierarchy
 ```
+
+Design decisions, data flow, and known limitations are documented in
+[docs/ARCHITECTURE.md](docs/ARCHITECTURE.md).
 
 ## Components
 
