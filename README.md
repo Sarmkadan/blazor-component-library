@@ -391,9 +391,41 @@ bool hasLabel = annotation.HasLabel();
 
 ---
 
-## NullSafeComparerExtensions
+## NullSafeComparer
 
-Provides extension methods for null-safe comparison that enable advanced sorting, filtering, and collection operations with null-safe comparison semantics. These methods treat `null` values as less than any non-null value, ensuring consistent and predictable sorting behavior when working with collections that may contain null elements.
+A null-safe comparer that implements `IComparer<object?>` and places `null` values after non-null values. This comparer is particularly useful for sorting data tables and collections where some values may be null, ensuring consistent and predictable sorting behavior without throwing `NullReferenceException`.
+
+```csharp
+// Create a data table with nullable properties
+var products = new List<Product>
+{
+    new Product { Id = 1, Name = "Laptop", Price = 999.99m },
+    new Product { Id = 2, Name = "Mouse" },
+    new Product { Id = 3, Name = "Keyboard", Price = 49.99m },
+    new Product { Id = 4, Name = "Monitor" }
+};
+
+// Use NullSafeComparer with DataTable
+var dataTable = new DataTable<Product>();
+dataTable.SetData(products);
+
+// Sort by price (nulls will appear last)
+dataTable.SortBy(p => p.Price);
+
+public class Product
+{
+    public int Id { get; set; }
+    public string Name { get; set; }
+    public decimal? Price { get; set; }
+}
+```
+
+**Usage in DataTable component:**
+
+- `Compare(object? x, object? y)` – Compares two objects, placing nulls after non-null values
+- The comparer is automatically used by `DataTable<TItem>.SortBy()` when sorting nullable properties
+
+## NullSafeComparerExtensions
 
 ```csharp
 @using BlazorComponentLibrary.Components.DataTable
