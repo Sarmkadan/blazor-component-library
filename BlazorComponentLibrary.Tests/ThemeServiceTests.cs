@@ -5,8 +5,15 @@ using BlazorComponentLibrary.Services;
 using Microsoft.JSInterop;
 using Moq;
 
+/// <summary>
+/// Tests for the ThemeService class.
+/// </summary>
 public sealed class ThemeServiceTests
 {
+    /// <summary>
+    /// Creates a new instance of the ThemeService class with a mock IJSRuntime.
+    /// </summary>
+    /// <returns>A new instance of the ThemeService class.</returns>
     private static ThemeService CreateService()
     {
         var jsMock = new Mock<IJSRuntime>();
@@ -18,6 +25,9 @@ public sealed class ThemeServiceTests
         return new ThemeService(jsMock.Object);
     }
 
+    /// <summary>
+    /// Verifies that the default theme is System.
+    /// </summary>
     [Fact]
     public void DefaultTheme_IsSystem()
     {
@@ -25,6 +35,9 @@ public sealed class ThemeServiceTests
         Assert.Equal(ThemeMode.System, service.CurrentTheme);
     }
 
+    /// <summary>
+    /// Verifies that setting the theme to Dark updates the current theme.
+    /// </summary>
     [Fact]
     public void SetTheme_Dark_UpdatesCurrentTheme()
     {
@@ -33,6 +46,9 @@ public sealed class ThemeServiceTests
         Assert.Equal(ThemeMode.Dark, service.CurrentTheme);
     }
 
+    /// <summary>
+    /// Verifies that setting the theme to Light updates the current theme.
+    /// </summary>
     [Fact]
     public void SetTheme_Light_UpdatesCurrentTheme()
     {
@@ -41,6 +57,9 @@ public sealed class ThemeServiceTests
         Assert.Equal(ThemeMode.Light, service.CurrentTheme);
     }
 
+    /// <summary>
+    /// Verifies that setting the theme raises the ThemeChanged event with the correct mode.
+    /// </summary>
     [Fact]
     public void SetTheme_RaisesThemeChangedEvent_WithCorrectMode()
     {
@@ -53,6 +72,9 @@ public sealed class ThemeServiceTests
         Assert.Equal(ThemeMode.Dark, raised);
     }
 
+    /// <summary>
+    /// Verifies that setting the theme multiple times always reflects the last value.
+    /// </summary>
     [Fact]
     public void SetTheme_CalledMultipleTimes_AlwaysReflectsLastValue()
     {
@@ -64,6 +86,9 @@ public sealed class ThemeServiceTests
         Assert.Equal(ThemeMode.System, service.CurrentTheme);
     }
 
+    /// <summary>
+    /// Verifies that creating a new instance of the ThemeService class with a null IJSRuntime throws an ArgumentNullException.
+    /// </summary>
     [Fact]
     public void Constructor_NullJsRuntime_ThrowsArgumentNullException()
     {
