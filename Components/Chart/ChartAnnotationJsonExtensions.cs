@@ -37,8 +37,12 @@ public static class ChartAnnotationJsonExtensions
     /// Deserializes a chart annotation from a JSON string.
     /// </summary>
     /// <param name="json">The JSON string to deserialize.</param>
-    /// <returns>The deserialized chart annotation, or <see langword="null"/> if the JSON is invalid.</returns>
+    /// <returns>The deserialized chart annotation if successful; otherwise, <see langword="null"/>.</returns>
     /// <exception cref="ArgumentException">Thrown when <paramref name="json"/> is <see langword="null"/> or empty.</exception>
+    /// <remarks>
+    /// This method returns <see langword="null"/> on deserialization failure rather than throwing, making it suitable for
+    /// scenarios where invalid JSON should be handled gracefully without exceptions.
+    /// </remarks>
     public static ChartAnnotation? FromJson(string json)
     {
         ArgumentException.ThrowIfNullOrEmpty(json);
