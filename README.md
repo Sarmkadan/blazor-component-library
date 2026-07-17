@@ -268,7 +268,27 @@ A drag-and-drop reorderable list component that enables users to reorder items u
 
 ---
 
-## Chart
+## DragDropListTests
+
+The `DragDropListTests` class provides comprehensive unit tests for the `DragDropList<T>.Reorder` functionality. These tests validate correct reordering behavior, ensure immutability of the source list, and verify proper handling of boundary conditions and invalid indices.
+
+```csharp
+[Fact]
+public void Reorder_MovesItemFromLowerToHigherIndex()
+{
+    var items = new List<string> { "A", "B", "C", "D" };
+    var result = DragDropList<string>.Reorder(items, fromIndex: 0, toIndex: 2);
+    Assert.Equal(new[] { "B", "C", "A", "D" }, result);
+}
+
+[Fact]
+public void Reorder_NegativeFromIndex_ThrowsArgumentOutOfRange()
+{
+    var items = new List<string> { "A", "B" };
+    Assert.Throws<ArgumentOutOfRangeException>(() =>
+        DragDropList<string>.Reorder(items, fromIndex: -1, toIndex: 0));
+}
+```
 
 A flexible chart component for rendering data visualizations in Blazor applications. The Chart component supports multiple chart types (bar, line, pie, etc.) and provides methods to dynamically update data and refresh the visualization. Annotations can be added to highlight specific data points or thresholds.
 
