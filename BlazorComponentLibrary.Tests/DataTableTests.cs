@@ -2,10 +2,14 @@ using BlazorComponentLibrary.Components.DataTable;
 using FluentAssertions;
 using Xunit;
 
-namespace BlazorComponentLibrary.Tests;
-
+/// <summary>
+/// Tests for the NullSafeComparer class.
+/// </summary>
 public class NullSafeComparerTests
 {
+    /// <summary>
+    /// Verifies that the Compare method places nulls last.
+    /// </summary>
     [Fact]
     public void Compare_ShouldPlaceNullsLast()
     {
@@ -16,6 +20,9 @@ public class NullSafeComparerTests
         comparer.Compare(null, null).Should().Be(0);
     }
 
+    /// <summary>
+    /// Verifies that the Compare method compares values correctly.
+    /// </summary>
     [Fact]
     public void Compare_ShouldCompareValuesCorrectly()
     {
@@ -27,8 +34,14 @@ public class NullSafeComparerTests
     }
 }
 
+/// <summary>
+/// Tests for the DataTable class.
+/// </summary>
 public class DataTableTests
 {
+    /// <summary>
+    /// Verifies that the SortBy method sorts data correctly.
+    /// </summary>
     [Fact]
     public void SortBy_ShouldSortDataCorrectly()
     {
