@@ -1,5 +1,9 @@
 namespace BlazorComponentLibrary.Extensions;
 
+/// <summary>
+/// Contains extension methods for <see cref="IServiceCollection"/> that register BlazorComponentLibrary
+/// services with the dependency injection container.
+/// </summary>
 using BlazorComponentLibrary.Services;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
@@ -25,6 +29,7 @@ public static class ServiceCollectionExtensions
         services.TryAddScoped<IThemeService, ThemeService>();
         services.TryAddScoped<IToastService, ToastService>();
         services.AddLogging();
+
         return services;
     }
 }
