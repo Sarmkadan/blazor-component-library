@@ -199,6 +199,53 @@ A drag-and-drop reorderable list powered by the HTML5 Drag and Drop API. Fires
 
 ---
 
+## DragDropListExtensions
+
+Provides extension methods for `DragDropList<TItem>` that offer convenient utilities for manipulating and querying drag-and-drop lists programmatically. These methods simplify common operations like moving items to specific positions, swapping items, and checking list contents without manual index management.
+
+
+```csharp
+@using BlazorComponentLibrary.Components.DragDropList
+
+// Sample list of tasks
+var tasks = new List<string> { "Task 1", "Task 2", "Task 3", "Task 4" };
+
+var dragDropList = new DragDropList<string> { Items = tasks };
+
+// Move "Task 3" to the beginning of the list
+dragDropList.MoveToBeginning("Task 3");
+
+// Move "Task 1" to the end of the list
+dragDropList.MoveToEnd("Task 1");
+
+// Swap the first and last items
+dragDropList.SwapItems(0, dragDropList.Count() - 1);
+
+// Get the index of a specific item
+var taskIndex = dragDropList.IndexOf("Task 2");
+
+// Check if an item exists in the list
+bool hasTask = dragDropList.Contains("Task 4");
+
+// Get the total number of items
+int totalItems = dragDropList.Count();
+
+// Get a read-only view of the items
+var readOnlyItems = dragDropList.AsReadOnly();
+```
+
+**Available Methods:**
+
+- `MoveItem<TItem>(TItem item, int fromIndex, int toIndex)` – Moves an item from one index to another
+- `MoveToBeginning<TItem>(TItem item)` – Moves an item to the beginning of the list
+- `MoveToEnd<TItem>(TItem item)` – Moves an item to the end of the list
+- `SwapItems<TItem>(int index1, int index2)` – Swaps two items by their indices
+- `IndexOf<TItem>(TItem item)` – Gets the current index of a specific item
+- `Contains<TItem>(TItem item)` – Determines whether the list contains a specific item
+- `Count<TItem>()` – Gets the number of items in the list
+- `AsReadOnly<TItem>()` – Gets a read-only view of the items in the list
+
+
 ## Examples
 
 Check out the [examples/](examples/) directory for complete, runnable snippets:
