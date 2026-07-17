@@ -3,6 +3,7 @@ namespace BlazorComponentLibrary.Components.Chart;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.Linq;
 
 /// <summary>
 /// Provides validation helpers for <see cref="ChartAnnotation"/> instances.
@@ -38,6 +39,7 @@ public static class ChartAnnotationValidation
             problems.Add("ChartAnnotation.Value cannot be infinite.");
         }
 
+
         // Validate Label - must not be null or whitespace
         if (string.IsNullOrWhiteSpace(value.Label))
         {
@@ -51,10 +53,7 @@ public static class ChartAnnotationValidation
         }
 
         // Validate Tooltip - can be empty but not null
-        if (value.Tooltip is null)
-        {
-            problems.Add("ChartAnnotation.Tooltip cannot be null.");
-        }
+        ArgumentNullException.ThrowIfNull(value.Tooltip);
 
         // Validate EndValue based on annotation type
         switch (value.Type)
@@ -112,10 +111,7 @@ public static class ChartAnnotationValidation
     /// <param name="value">The annotation instance to check.</param>
     /// <returns><see langword="true"/> if the annotation is valid; otherwise, <see langword="false"/>.</returns>
     /// <exception cref="ArgumentNullException"><paramref name="value"/> is <see langword="null"/>.</exception>
-    public static bool IsValid(this ChartAnnotation value)
-    {
-        return Validate(value).Count == 0;
-    }
+    public static bool IsValid(this ChartAnnotation value) => Validate(value).Count == 0;
 
     /// <summary>
     /// Ensures that a <see cref="ChartAnnotation"/> instance is valid, throwing an exception if it is not.
