@@ -5,10 +5,10 @@ using System.Collections.Generic;
 using System.Linq;
 
 /// <summary>
-/// A generic null-safe comparer that wraps NullSafeComparer for use with LINQ OrderBy methods.
+/// A generic null-safe comparer that handles null values by treating them as less than any non-null value.
 /// </summary>
 /// <typeparam name="T">The type to compare.</typeparam>
-internal sealed class NullSafeComparer<T> : IComparer<T>
+internal sealed class NullSafeComparer<T> : IComparer<T?>
 {
     public static readonly NullSafeComparer<T> Instance = new();
 
@@ -16,13 +16,16 @@ internal sealed class NullSafeComparer<T> : IComparer<T>
 
     public int Compare(T? x, T? y)
     {
-        var comparer = NullSafeComparer.Instance;
-        return comparer.Compare(x, y);
+        if (x is null && y is null) return 0;
+        if (x is null) return -1;
+        if (y is null) return 1;
+
+        return Comparer<T>.Default.Compare(x, y);
     }
 }
 
 /// <summary>
-/// Provides extension methods for <see cref="NullSafeComparer"/> that enable advanced sorting, filtering,
+/// Provides extension methods for null-safe comparison that enable advanced sorting, filtering,
 /// and collection operations with null-safe comparison semantics.
 /// </summary>
 public static class NullSafeComparerExtensions
@@ -43,7 +46,7 @@ public static class NullSafeComparerExtensions
         ArgumentNullException.ThrowIfNull(source);
         ArgumentNullException.ThrowIfNull(keySelector);
 
-        return System.Linq.Enumerable.OrderBy(source, keySelector, new NullSafeComparer<TKey>());
+        return System.Linq.Enumerable.OrderBy(source, keySelector, NullSafeComparer<TKey>.Instance);
     }
 
     /// <summary>
@@ -62,7 +65,7 @@ public static class NullSafeComparerExtensions
         ArgumentNullException.ThrowIfNull(source);
         ArgumentNullException.ThrowIfNull(keySelector);
 
-        return System.Linq.Enumerable.OrderByDescending(source, keySelector, new NullSafeComparer<TKey>());
+        return System.Linq.Enumerable.OrderByDescending(source, keySelector, NullSafeComparer<TKey>.Instance);
     }
 
     /// <summary>
@@ -72,11 +75,15 @@ public static class NullSafeComparerExtensions
     /// <param name="source">A sequence of values to determine the minimum of.</param>
     /// <returns>The minimum value in the sequence, or default if the sequence is empty.</returns>
     /// <exception cref="ArgumentNullException">Thrown when <paramref name="source"/> is null.</exception>
+    /// <exception cref="InvalidOperationException">Thrown when the sequence contains only null values and no default value exists.</exception>
     public static TSource? Min<TSource>(this IEnumerable<TSource> source) where TSource : IComparable<TSource>
     {
         ArgumentNullException.ThrowIfNull(source);
 
-        return source.OrderBy(x => x, NullSafeComparer.Instance).FirstOrDefault();
+        return source
+            .Where(x => x is not null)
+            .OrderByNullSafe(x => x)
+            .FirstOrDefault();
     }
 
     /// <summary>
@@ -86,11 +93,15 @@ public static class NullSafeComparerExtensions
     /// <param name="source">A sequence of values to determine the maximum of.</param>
     /// <returns>The maximum value in the sequence, or default if the sequence is empty.</returns>
     /// <exception cref="ArgumentNullException">Thrown when <paramref name="source"/> is null.</exception>
+    /// <exception cref="InvalidOperationException">Thrown when the sequence contains only null values and no default value exists.</exception>
     public static TSource? Max<TSource>(this IEnumerable<TSource> source) where TSource : IComparable<TSource>
     {
         ArgumentNullException.ThrowIfNull(source);
 
-        return source.OrderByDescending(x => x, NullSafeComparer.Instance).FirstOrDefault();
+        return source
+            .Where(x => x is not null)
+            .OrderByDescendingNullSafe(x => x)
+            .FirstOrDefault();
     }
 
     /// <summary>
