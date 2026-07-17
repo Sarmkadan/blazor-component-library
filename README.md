@@ -666,6 +666,52 @@ Provides extension methods for `Modal` components that simplify common modal ope
 }
 ```
 
+## Modal
+
+A flexible modal dialog component that provides a customizable container for displaying content, titles, and footer actions. The Modal component supports programmatic opening and closing, customizable title, content, and footer sections, and configurable behavior for closing via overlay clicks.
+
+```razor
+<Modal @ref="myModal" 
+       Title="Confirmation" 
+       CloseOnOverlayClick="true" 
+       OnClose="HandleClose">
+    <ChildContent>
+        <p>Are you sure you want to proceed?</p>
+    </ChildContent>
+    <FooterContent>
+        <button @onclick="async () => await myModal.Hide()">Close</button>
+        <button class="btn-primary" @onclick="Confirm">Confirm</button>
+    </FooterContent>
+</Modal>
+
+@code {
+    private Modal myModal;
+
+    private async Task OpenModal() => await myModal.Show();
+    private void HandleClose() => Console.WriteLine("Modal closed.");
+    private async Task Confirm()
+    {
+        // ... perform confirmation logic
+        await myModal.Hide();
+    }
+}
+```
+
+**Parameters**
+
+| Parameter | Type | Default | Description |
+|-----------|------|---------|-------------|
+| Title | `string` | `string.Empty` | Title of the modal dialog |
+| ChildContent | `RenderFragment?` | `null` | Main content displayed within the modal body |
+| FooterContent | `RenderFragment?` | `null` | Footer content for actions (buttons, etc.) |
+| OnClose | `EventCallback` | — | Callback invoked when the modal is closed |
+| CloseOnOverlayClick | `bool` | `true` | Whether clicking the overlay closes the modal |
+
+**Methods**
+
+- `Task Show()` – Displays the modal dialog.
+- `Task Hide()` – Hides the modal dialog and restores focus.
+
 
 Provides extension methods for `DragDropList<TItem>` that offer convenient utilities for manipulating and querying drag-and-drop lists programmatically. These methods simplify common operations like moving items to specific positions, swapping items, and checking list contents without manual index management.
 
