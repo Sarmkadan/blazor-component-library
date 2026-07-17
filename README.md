@@ -391,6 +391,43 @@ bool hasLabel = annotation.HasLabel();
 
 ---
 
+## Form
+
+A generic form component for Blazor that provides model binding, validation, and submission handling. The Form component supports two-way data binding with any model type, automatic validation, and customizable submission logic.
+
+```csharp
+// Create a form with a model
+var form = new Form<Person>();
+
+// Set the model and handle submission
+form.SetModel(new Person { Name = "John Doe", Email = "john@example.com" });
+form.OnSubmit = model => {
+    Console.WriteLine($"Form submitted with: {model.Name}, {model.Email}");
+    return Task.FromResult(true);
+};
+
+// Validate the form
+bool isValid = await form.Validate();
+
+// Access the child content
+RenderFragment content = form.ChildContent;
+```
+
+**Parameters**
+
+| Parameter | Type | Default | Description |
+|-----------|------|---------|-------------|
+| ChildContent | `RenderFragment?` | `null` | Content rendered inside the form |
+| OnSubmit | `EventCallback<TModel>` | — | Callback invoked when the form is submitted |
+| SetModel | `void` | — | Sets the model instance for the form |
+| Validate | `Task<bool>` | — | Validates the form and returns whether it's valid |
+
+**Generic Type Parameter**
+
+- `TModel` - The model type that the form binds to (must have a parameterless constructor)
+
+---
+
 ## ChartAnnotation
 
 Represents a contextual annotation overlaid on a chart, such as a threshold line, event marker, or shaded reference band. Annotations help highlight important data points, thresholds, or ranges to provide additional context to chart viewers.
