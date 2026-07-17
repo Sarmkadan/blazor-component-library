@@ -215,6 +215,75 @@ A drag-and-drop reorderable list component that enables users to reorder items u
 
 ---
 
+## Chart
+
+A flexible chart component for rendering data visualizations in Blazor applications. The Chart component supports multiple chart types (bar, line, pie, etc.) and provides methods to dynamically update data and refresh the visualization. Annotations can be added to highlight specific data points or thresholds.
+
+
+
+
+```razor
+<Chart @ref="chartRef"
+       ChartType="ChartType.Bar"
+       Title="Sales by Quarter"
+       Labels="@labels"
+       Colors="@colors"
+       Options="@chartOptions">
+    <ChildContent>
+        @foreach (var item in data)
+        {
+            <ChartDataset Data="@item.Values" />
+        }
+    </ChildContent>
+</Chart>
+
+@code {
+private Chart<object> chartRef;
+private List<string> labels = new() { "Q1", "Q2", "Q3", "Q4" };
+private List<string> colors = new() { "#36a2eb", "#ff6384", "#4bc0c0", "#ffcd56" };
+private object chartOptions = new { responsive = true, maintainAspectRatio = false };
+private List<ChartData> data = new()
+{
+    new ChartData { Values = new List<int> { 50, 75, 100, 80 } },
+    new ChartData { Values = new List<int> { 30, 60, 85, 95 } }
+};
+
+public class ChartData
+{
+    public List<int> Values { get; set; }
+}
+
+private void UpdateChartData()
+{
+    chartRef.SetData(data);
+    chartRef.Refresh();
+}
+}
+```
+
+**Parameters**
+
+| Parameter | Type | Default | Description |
+|-----------|----------|---------|-------------|
+| ChartType | `ChartType` | — | Type of chart to render (bar, line, pie, etc.) |
+| Title | `string` | `string.Empty` | Chart title displayed above the visualization |
+| Labels | `IEnumerable<string>` | `Enumerable.Empty<string>()` | Labels for data points |
+| Colors | `IEnumerable<string>` | `Enumerable.Empty<string>()` | Colors for data series |
+| Options | `object` | `{}` | Chart.js configuration options as an anonymous object |
+| Annotations | `IEnumerable<ChartAnnotation>` | `Enumerable.Empty<ChartAnnotation>()` | Annotations overlaid on the chart |
+| ChildContent | `RenderFragment?` | `null` | Custom content rendered inside the chart body |
+
+**Methods**
+
+- `SetData(IEnumerable<TData> data)` – Sets the data source for the chart
+- `Refresh()` – Refreshes the chart, re-rendering its content
+
+
+
+
+---
+
+
 ## Skeleton
 
 A loading skeleton placeholder component that displays animated placeholders while content is being fetched or rendered. The skeleton provides visual feedback to users during asynchronous operations, improving perceived performance and reducing layout shifts.
