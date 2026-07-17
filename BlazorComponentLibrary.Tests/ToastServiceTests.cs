@@ -3,8 +3,14 @@ namespace BlazorComponentLibrary.Tests;
 using Xunit;
 using BlazorComponentLibrary.Services;
 
+/// <summary>
+/// Tests for the ToastService class.
+/// </summary>
 public sealed class ToastServiceTests
 {
+    /// <summary>
+    /// Verifies that the Show method adds a toast to the active list.
+    /// </summary>
     [Fact]
     public void Show_AddsToastToActiveList()
     {
@@ -13,6 +19,10 @@ public sealed class ToastServiceTests
         Assert.Single(service.ActiveToasts);
     }
 
+    /// <summary>
+    /// Verifies that the Show method sets the message and type of the toast.
+    /// </summary>
+    /// <param name="service">The ToastService instance to test.</param>
     [Fact]
     public void Show_SetsMessageAndType()
     {
@@ -24,6 +34,10 @@ public sealed class ToastServiceTests
         Assert.Equal(ToastType.Success, toast.Type);
     }
 
+    /// <summary>
+    /// Verifies that the Show method throws a ToastServiceException when an empty message is provided.
+    /// </summary>
+    /// <param name="service">The ToastService instance to test.</param>
     [Fact]
     public void Show_EmptyMessage_ThrowsToastServiceException()
     {
@@ -31,6 +45,10 @@ public sealed class ToastServiceTests
         Assert.Throws<BlazorComponentLibrary.Exceptions.ToastServiceException>(() => service.Show("   "));
     }
 
+    /// <summary>
+    /// Verifies that the Show method raises the ToastsChanged event.
+    /// </summary>
+    /// <param name="service">The ToastService instance to test.</param>
     [Fact]
     public void Show_RaisesToastsChangedEvent()
     {
@@ -43,6 +61,10 @@ public sealed class ToastServiceTests
         Assert.True(raised);
     }
 
+    /// <summary>
+    /// Verifies that the Dismiss method removes the correct toast by its ID.
+    /// </summary>
+    /// <param name="service">The ToastService instance to test.</param>
     [Fact]
     public void Dismiss_RemovesCorrectToastById()
     {
@@ -57,6 +79,10 @@ public sealed class ToastServiceTests
         Assert.DoesNotContain(service.ActiveToasts, t => t.Id == idToRemove);
     }
 
+    /// <summary>
+    /// Verifies that the Dismiss method does not throw an exception when an unknown ID is provided.
+    /// </summary>
+    /// <param name="service">The ToastService instance to test.</param>
     [Fact]
     public void Dismiss_UnknownId_DoesNotThrow()
     {
@@ -66,6 +92,10 @@ public sealed class ToastServiceTests
         Assert.Null(exception);
     }
 
+    /// <summary>
+    /// Verifies that the DismissAll method clears the active toasts list.
+    /// </summary>
+    /// <param name="service">The ToastService instance to test.</param>
     [Fact]
     public void DismissAll_ClearsActiveToasts()
     {
@@ -79,6 +109,10 @@ public sealed class ToastServiceTests
         Assert.Empty(service.ActiveToasts);
     }
 
+    /// <summary>
+    /// Verifies that multiple toasts are stored in the correct order.
+    /// </summary>
+    /// <param name="service">The ToastService instance to test.</param>
     [Fact]
     public void MultipleToasts_AreStoredInOrder()
     {
