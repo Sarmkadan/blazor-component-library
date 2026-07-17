@@ -171,31 +171,47 @@ toastContainer.DismissAll();
 
 ---
 
-### DragDropList&lt;TItem&gt;
+## DragDropList
 
-A drag-and-drop reorderable list powered by the HTML5 Drag and Drop API. Fires
-`OnOrderChanged` with the updated list after every successful drop.
+A drag-and-drop reorderable list component that enables users to reorder items using the HTML5 Drag and Drop API. The component maintains the order of items and fires the `OnOrderChanged` event whenever the list is reordered through drag-and-drop interactions.
+
+
 
 ```razor
-<DragDropList TItem="string"
-              Items="@_tasks"
-              OnOrderChanged="@(updated => _tasks = updated.ToList())"
-              Enabled="true">
-    <ItemTemplate Context="task">
-        <span>@task</span>
-    </ItemTemplate>
+<DragDropList Items="@tasks"
+              ItemTemplate="@(task => RenderTask(task))"
+              OnOrderChanged="HandleTasksReordered"
+              Enabled="true"
+              CssClass="my-custom-list">
 </DragDropList>
+
+@code {
+    private List<string> tasks = new() { "Task 1", "Task 2", "Task 3", "Task 4" };
+
+    private RenderFragment<DragDropList<string>> RenderTask(string task) => builder =>
+    {
+        builder.OpenElement(0, "div");
+        builder.AddContent(1, task);
+        builder.CloseElement();
+    };
+
+    private void HandleTasksReordered(IList<string> reorderedTasks)
+    {
+        tasks = new List<string>(reorderedTasks);
+        StateHasChanged();
+    }
+}
 ```
 
 **Parameters**
 
-| Parameter       | Type                       | Default | Description                                    |
+| Parameter | Type | Default | Description |
 |-----------------|----------------------------|---------|------------------------------------------------|
-| Items           | `IList<TItem>`             | `[]`    | Ordered collection of items to render           |
-| ItemTemplate    | `RenderFragment<TItem>`    | —       | Template for each row                           |
-| OnOrderChanged  | `EventCallback<IList<TItem>>` | —    | Fires with the reordered list after a drop      |
-| Enabled         | `bool`                     | `true`  | Enable/disable drag interaction                 |
-| CssClass        | `string?`                  | `null`  | Extra CSS class(es) for the root `<ul>`         |
+| Items | `IList<TItem>` | `[]` | Ordered collection of items to render |
+| ItemTemplate | `RenderFragment<TItem>` | — | Template for each row |
+| OnOrderChanged | `EventCallback<IList<TItem>>` | — | Fires with the reordered list after a drop |
+| Enabled | `bool` | `true` | Enable/disable drag interaction |
+| CssClass | `string?` | `null` | Extra CSS class(es) for the root `<ul>` |
 
 ---
 
