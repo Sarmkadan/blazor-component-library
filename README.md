@@ -144,6 +144,33 @@ Toast.Show("Low disk space.", ToastType.Warning, durationMs: 0); // manual dismi
 
 ---
 
+## ToastContainerExtensions
+
+Provides extension methods for `ToastContainer` that offer convenient shortcuts for common toast notification scenarios. These methods wrap the underlying `IToastService` calls with pre-configured toast types and durations, reducing boilerplate code when working with toast notifications.
+
+```csharp
+@inject IToastService Toast
+
+// Show a success toast that auto-dismisses after 4 seconds
+<ToastContainer @ref="toastContainer" />
+
+toastContainer.ShowSuccess("Profile updated successfully!");
+
+// Show a warning toast that requires manual dismissal
+toastContainer.ShowWarning("Please review the changes before submitting.", durationMs: 0);
+
+// Show an error toast with custom duration
+toastContainer.ShowError("Failed to save document.", durationMs: 6000);
+
+// Show an informational toast (manual dismissal only)
+toastContainer.ShowInfo("Background task started...");
+
+// Dismiss all active toasts
+toastContainer.DismissAll();
+```
+
+---
+
 ### DragDropList&lt;TItem&gt;
 
 A drag-and-drop reorderable list powered by the HTML5 Drag and Drop API. Fires
