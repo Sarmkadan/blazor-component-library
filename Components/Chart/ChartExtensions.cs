@@ -3,6 +3,10 @@ namespace BlazorComponentLibrary.Components.Chart;
 /// <summary>
 /// Provides extension methods for working with chart components.
 /// </summary>
+/// <remarks>
+/// This static class contains fluent extension methods for <see cref="IChart{TData}"/>
+/// that simplify common chart operations like adding annotations, setting data, and configuring chart properties.
+/// </remarks>
 public static class ChartExtensions
 {
     /// <summary>
@@ -50,10 +54,7 @@ public static class ChartExtensions
             Tooltip = tooltip ?? $"Threshold at {value}"
         };
 
-        var annotations = chart.Annotations.ToList();
-        annotations.Add(annotation);
-        chart.Annotations = annotations;
-
+        chart.Annotations = chart.Annotations.Append(annotation).ToList();
         chart.Refresh();
         return annotation;
     }
@@ -87,10 +88,7 @@ public static class ChartExtensions
             Tooltip = tooltip ?? $"Event at position {position}"
         };
 
-        var annotations = chart.Annotations.ToList();
-        annotations.Add(annotation);
-        chart.Annotations = annotations;
-
+        chart.Annotations = chart.Annotations.Append(annotation).ToList();
         chart.Refresh();
         return annotation;
     }
@@ -103,7 +101,7 @@ public static class ChartExtensions
     /// <param name="startValue">The start value of the reference band.</param>
     /// <param name="endValue">The end value of the reference band.</param>
     /// <param name="label">Optional label for the reference band.</param>
-    /// <param name="color">Optional color for the reference band. Defaults to "#4bc0c0" with 30% opacity.</param>
+    /// <param name="color">Optional color for the reference band. Defaults to "#4bc0c080" (30% opacity).</param>
     /// <param name="tooltip">Optional tooltip text shown on hover.</param>
     /// <returns>The annotation that was added, allowing for method chaining.</returns>
     /// <exception cref="ArgumentNullException"><paramref name="chart"/> is <see langword="null"/>.</exception>
@@ -125,14 +123,11 @@ public static class ChartExtensions
             Value = startValue,
             EndValue = endValue,
             Label = label ?? string.Empty,
-            Color = color ?? "#4bc0c080", // 30% opacity
+            Color = color ?? "#4bc0c080",
             Tooltip = tooltip ?? $"Reference band from {startValue} to {endValue}"
         };
 
-        var annotations = chart.Annotations.ToList();
-        annotations.Add(annotation);
-        chart.Annotations = annotations;
-
+        chart.Annotations = chart.Annotations.Append(annotation).ToList();
         chart.Refresh();
         return annotation;
     }
@@ -147,7 +142,7 @@ public static class ChartExtensions
     {
         ArgumentNullException.ThrowIfNull(chart);
 
-        chart.Annotations = Enumerable.Empty<ChartAnnotation>();
+        chart.Annotations = [];
         chart.Refresh();
     }
 
@@ -158,6 +153,7 @@ public static class ChartExtensions
     /// <param name="chart">The chart instance.</param>
     /// <param name="title">The title to set.</param>
     /// <exception cref="ArgumentNullException"><paramref name="chart"/> is <see langword="null"/>.</exception>
+    /// <exception cref="ArgumentException"><paramref name="title"/> is <see langword="null"/> or empty.</exception>
     public static void SetTitle<TData>(
         this IChart<TData> chart,
         string title)
