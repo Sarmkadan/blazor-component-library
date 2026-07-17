@@ -638,7 +638,34 @@ var customSkeleton = Skeleton.AsRectangle("300px", "150px")
 
 ---
 
-## DragDropListExtensions
+## ModalExtensions
+
+Provides extension methods for `Modal` components that simplify common modal operations such as toggling visibility, configuring content, and implementing auto-hide behavior with callbacks. These methods provide a convenient way to manage modal states programmatically, reducing boilerplate code when working with modals in your applications.
+
+```csharp
+@using BlazorComponentLibrary.Components.Modal
+
+<Modal @ref="myModal" Title="Settings">
+    <p>Modal content</p>
+</Modal>
+
+@code {
+    private Modal myModal;
+
+    private async Task HandleAction()
+    {
+        // Toggle visibility
+        await myModal.ToggleAsync();
+
+        // Show with auto-hide after 3 seconds
+        await myModal.ShowWithAutoHideAsync(3000);
+
+        // Configure modal properties
+        myModal.SetCloseOnOverlayClick(true);
+    }
+}
+```
+
 
 Provides extension methods for `DragDropList<TItem>` that offer convenient utilities for manipulating and querying drag-and-drop lists programmatically. These methods simplify common operations like moving items to specific positions, swapping items, and checking list contents without manual index management.
 
