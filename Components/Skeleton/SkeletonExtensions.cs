@@ -157,7 +157,7 @@ public static class SkeletonExtensions
     }
 
     /// <summary>
-    /// Configures the skeleton with common avatar dimensions (circle with 40px size).
+    /// Configures the skeleton as a circular avatar with standard dimensions (40px × 40px).
     /// </summary>
     /// <param name="skeleton">The skeleton instance to configure.</param>
     /// <returns>The configured skeleton instance for method chaining.</returns>
@@ -170,7 +170,7 @@ public static class SkeletonExtensions
     }
 
     /// <summary>
-    /// Configures the skeleton with common button dimensions (rectangle with 120px width and 40px height).
+    /// Configures the skeleton as a standard button placeholder (120px × 40px rectangle).
     /// </summary>
     /// <param name="skeleton">The skeleton instance to configure.</param>
     /// <returns>The configured skeleton instance for method chaining.</returns>
@@ -183,7 +183,7 @@ public static class SkeletonExtensions
     }
 
     /// <summary>
-    /// Configures the skeleton with common card dimensions (rectangle with 100% width and 200px height).
+    /// Configures the skeleton as a standard card placeholder (100% width × 200px height).
     /// </summary>
     /// <param name="skeleton">The skeleton instance to configure.</param>
     /// <returns>The configured skeleton instance for method chaining.</returns>
