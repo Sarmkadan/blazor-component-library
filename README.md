@@ -215,6 +215,26 @@ A drag-and-drop reorderable list component that enables users to reorder items u
 
 ---
 
+## Skeleton
+
+A loading skeleton placeholder component that displays animated placeholders while content is being fetched or rendered. The skeleton provides visual feedback to users during asynchronous operations, improving perceived performance and reducing layout shifts.
+
+```razor
+<Skeleton Type="SkeletonType.Text" Width="200px" Height="24px" Lines="3" Animated="true" />
+```
+
+**Parameters**
+
+| Parameter | Type | Default | Description |
+|-----------|------|---------|-------------|
+| Type | `SkeletonType` | `Text` | Type of skeleton: Text, Circle, or Rectangle |
+| Width | `string` | `100%` | Width of the skeleton element |
+| Height | `string` | `auto` | Height of the skeleton element |
+| Lines | `int` | `3` | Number of text lines rendered when Type is Text. Ignored for Circle and Rectangle types |
+| Animated | `bool` | `true` | Apply pulse animation to indicate loading state |
+
+---
+
 ## DragDropListExtensions
 
 Provides extension methods for `DragDropList<TItem>` that offer convenient utilities for manipulating and querying drag-and-drop lists programmatically. These methods simplify common operations like moving items to specific positions, swapping items, and checking list contents without manual index management.
