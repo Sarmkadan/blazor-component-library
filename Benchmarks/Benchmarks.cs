@@ -9,6 +9,10 @@ using System.Linq;
 
 namespace Benchmarks;
 
+/// <summary>
+/// Contains benchmarks for various BlazorComponentLibrary operations including sorting algorithms,
+/// DataTable operations, and DragDropList reordering functionality.
+/// </summary>
 [MemoryDiagnoser]
 [GroupBenchmarksBy(BenchmarkLogicalGroupRule.ByCategory)]
 [CategoriesColumn]
@@ -20,6 +24,11 @@ public class LibraryBenchmarks
     private DataTable<DataItem> _dataTable = new();
     private DragDropList<string> _dragDropList = new();
 
+    /// <summary>
+    /// Sets up benchmark data for all benchmark methods.
+    /// Initializes test data with null values for sorting benchmarks, creates a large list for drag-and-drop benchmarks,
+    /// and populates a complex data collection with 5000 items containing various properties for DataTable benchmarks.
+    /// </summary>
     [GlobalSetup]
     public void Setup()
     {
@@ -49,6 +58,12 @@ public class LibraryBenchmarks
         _dragDropList.Items = _list;
     }
 
+    /// <summary>
+    /// Benchmarks the null-safe sorting algorithm using NullSafeComparer.Instance.
+    /// Measures the performance of sorting a list containing null values using the library's custom null-safe comparer.
+    /// This serves as the baseline comparison for other sorting approaches.
+    /// </summary>
+    /// <returns>A new list containing the sorted elements, with null values placed at the beginning.</returns>
     [BenchmarkCategory("Sorting")]
     [Benchmark(Baseline = true)]
     public List<string?> SortWithNullSafeComparer()
@@ -58,6 +73,12 @@ public class LibraryBenchmarks
             .ToList();
     }
 
+    /// <summary>
+    /// Benchmarks a traditional null-safe sorting approach using LINQ's OrderBy with null checks.
+    /// Measures the performance of sorting a list containing null values using standard LINQ operations
+    /// with explicit null handling via OrderBy(x => x != null).ThenBy(x => x).
+    /// </summary>
+    /// <returns>A new list containing the sorted elements, with non-null values first followed by null values.</returns>
     [BenchmarkCategory("Sorting")]
     [Benchmark]
     public List<string?> SortWithNullChecks()
@@ -68,6 +89,11 @@ public class LibraryBenchmarks
             .ToList();
     }
 
+    /// <summary>
+    /// Benchmarks sorting complex DataItem objects by their Id property.
+    /// Measures the performance of sorting 5000 DataItem objects by their integer Id field using LINQ's OrderBy.
+    /// </summary>
+    /// <returns>A new list containing DataItem objects sorted by their Id property in ascending order.</returns>
     [BenchmarkCategory("Sorting")]
     [Benchmark]
     public List<DataItem> SortComplexDataById()
@@ -77,6 +103,11 @@ public class LibraryBenchmarks
             .ToList();
     }
 
+    /// <summary>
+    /// Benchmarks sorting complex DataItem objects by their Name property.
+    /// Measures the performance of sorting 5000 DataItem objects by their string Name field using LINQ's OrderBy.
+    /// </summary>
+    /// <returns>A new list containing DataItem objects sorted by their Name property in ascending order.</returns>
     [BenchmarkCategory("Sorting")]
     [Benchmark]
     public List<DataItem> SortComplexDataByName()
@@ -86,6 +117,11 @@ public class LibraryBenchmarks
             .ToList();
     }
 
+    /// <summary>
+    /// Benchmarks sorting complex DataItem objects by their Status property.
+    /// Measures the performance of sorting 5000 DataItem objects by their string Status field using LINQ's OrderBy.
+    /// </summary>
+    /// <returns>A new list containing DataItem objects sorted by their Status property in ascending order.</returns>
     [BenchmarkCategory("Sorting")]
     [Benchmark]
     public List<DataItem> SortComplexDataByStatus()
@@ -95,6 +131,10 @@ public class LibraryBenchmarks
             .ToList();
     }
 
+    /// <summary>
+    /// Benchmarks the DataTable.SetData method for populating the DataTable with complex data.
+    /// Measures the performance of setting data on a DataTable component with 5000 DataItem objects.
+    /// </summary>
     [BenchmarkCategory("DataTable")]
     [Benchmark]
     public void DataTableSetData()
@@ -102,6 +142,10 @@ public class LibraryBenchmarks
         _dataTable.SetData(_complexData);
     }
 
+    /// <summary>
+    /// Benchmarks sorting a DataTable by the Id property of DataItem objects.
+    /// Measures the performance of sorting DataTable contents by the integer Id field using the DataTable.SortBy method.
+    /// </summary>
     [BenchmarkCategory("DataTable")]
     [Benchmark]
     public void DataTableSortById()
@@ -109,6 +153,10 @@ public class LibraryBenchmarks
         _dataTable.SortBy(x => x.Id);
     }
 
+    /// <summary>
+    /// Benchmarks sorting a DataTable by the Name property of DataItem objects.
+    /// Measures the performance of sorting DataTable contents by the string Name field using the DataTable.SortBy method.
+    /// </summary>
     [BenchmarkCategory("DataTable")]
     [Benchmark]
     public void DataTableSortByName()
@@ -116,6 +164,10 @@ public class LibraryBenchmarks
         _dataTable.SortBy(x => x.Name);
     }
 
+    /// <summary>
+    /// Benchmarks sorting a DataTable by the Status property of DataItem objects.
+    /// Measures the performance of sorting DataTable contents by the string Status field using the DataTable.SortBy method.
+    /// </summary>
     [BenchmarkCategory("DataTable")]
     [Benchmark]
     public void DataTableSortByStatus()
@@ -123,6 +175,11 @@ public class LibraryBenchmarks
         _dataTable.SortBy(x => x.Status);
     }
 
+    /// <summary>
+    /// Benchmarks reordering items in a DragDropList with a small move operation.
+    /// Measures the performance of moving an item from position 10 to position 50 in a list of 1000 items.
+    /// </summary>
+    /// <returns>A new list containing the reordered items.</returns>
     [BenchmarkCategory("DragDropList")]
     [Benchmark]
     public List<string> DragDropListReorderSmall()
@@ -130,6 +187,11 @@ public class LibraryBenchmarks
         return DragDropList<string>.Reorder(_list, 10, 50);
     }
 
+    /// <summary>
+    /// Benchmarks reordering items in a DragDropList with a large move operation.
+    /// Measures the performance of moving an item from position 100 to position 500 in a list of 1000 items.
+    /// </summary>
+    /// <returns>A new list containing the reordered items.</returns>
     [BenchmarkCategory("DragDropList")]
     [Benchmark]
     public List<string> DragDropListReorderLarge()
@@ -137,6 +199,11 @@ public class LibraryBenchmarks
         return DragDropList<string>.Reorder(_list, 100, 500);
     }
 
+    /// <summary>
+    /// Benchmarks reordering items in a DragDropList by moving the first item to the last position.
+    /// Measures the performance of moving the first item (position 0) to the last position in a list of 1000 items.
+    /// </summary>
+    /// <returns>A new list containing the reordered items.</returns>
     [BenchmarkCategory("DragDropList")]
     [Benchmark]
     public List<string> DragDropListReorderFirstToLast()
@@ -144,6 +211,11 @@ public class LibraryBenchmarks
         return DragDropList<string>.Reorder(_list, 0, _list.Count - 1);
     }
 
+    /// <summary>
+    /// Benchmarks reordering items in a DragDropList by moving the last item to the first position.
+    /// Measures the performance of moving the last item to the first position in a list of 1000 items.
+    /// </summary>
+    /// <returns>A new list containing the reordered items.</returns>
     [BenchmarkCategory("DragDropList")]
     [Benchmark]
     public List<string> DragDropListReorderLastToFirst()
