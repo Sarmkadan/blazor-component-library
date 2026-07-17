@@ -171,6 +171,28 @@ toastContainer.DismissAll();
 
 ---
 
+## ToastService
+
+The `ToastService` manages the lifecycle of notification alerts within the application, providing programmatic control over displaying and removing toasts. It handles the automatic scheduling of dismissals for temporary alerts, ensuring notifications are cleaned up efficiently.
+
+```csharp
+using BlazorComponentLibrary.Services;
+
+// Create a new ToastService instance
+var toastService = new ToastService();
+
+// Show a success toast notification
+toastService.Show("Task completed successfully!", ToastType.Success, durationMs: 5000);
+
+// Dismiss all active toasts
+toastService.DismissAll();
+
+// Dispose of the service to clean up timer resources
+toastService.Dispose();
+```
+
+---
+
 ## ToastServiceTests
 The `ToastServiceTests` class provides comprehensive unit tests for `ToastService`, validating its core behavior such as toast creation, event triggering, and dismissal functionality. These tests ensure that the service correctly manages its active toast list and handles edge cases, such as empty messages or unknown IDs.
 
