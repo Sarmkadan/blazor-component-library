@@ -444,6 +444,34 @@ bool hasLabel = annotation.HasLabel();
 
 ---
 
+## ThemeServiceTests
+
+The `ThemeServiceTests` class provides comprehensive unit tests for `ThemeService`, validating its core behavior such as theme initialization, theme switching, and event triggering. These tests ensure that the service correctly manages its current theme state and handles edge cases like null dependencies.
+
+```csharp
+// Create a ThemeService instance with a mock IJSRuntime
+var jsRuntimeMock = new Mock<IJSRuntime>();
+var service = new ThemeService(jsRuntimeMock.Object);
+
+// Verify the default theme is System
+Assert.Equal(ThemeMode.System, service.CurrentTheme);
+
+// Set theme to Dark and verify it updates
+service.SetTheme(ThemeMode.Dark);
+Assert.Equal(ThemeMode.Dark, service.CurrentTheme);
+
+// Subscribe to theme changes and verify event is raised
+ThemeMode? raisedMode = null;
+service.ThemeChanged += mode => raisedMode = mode;
+service.SetTheme(ThemeMode.Light);
+Assert.Equal(ThemeMode.Light, raisedMode);
+
+// Verify null IJSRuntime throws ArgumentNullException
+Assert.Throws<ArgumentNullException>(() => new ThemeService(null!));
+```
+
+---
+
 ## NullSafeComparer
 
 A null-safe comparer that implements `IComparer<object?>` and places `null` values after non-null values. This comparer is particularly useful for sorting data tables and collections where some values may be null, ensuring consistent and predictable sorting behavior without throwing `NullReferenceException`.
