@@ -11,12 +11,12 @@ public static class DragDropListExtensions
     /// <typeparam name="TItem">The type of items in the list.</typeparam>
     /// <param name="list">The <see cref="DragDropList{TItem}"/> instance.</param>
     /// <param name="item">The item to move.</param>
-    /// <param name="fromIndex">The current index of the item.</param>
-    /// <param name="toIndex">The target index where the item should be moved.</param>
-    /// <exception cref="ArgumentNullException">Thrown when <paramref name="list"/> is null.</exception>
-    /// <exception cref="ArgumentNullException">Thrown when <paramref name="item"/> is null.</exception>
+    /// <param name="fromIndex">The current zero-based index of the item.</param>
+    /// <param name="toIndex">The target zero-based index where the item should be moved.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="list"/> is <see langword="null"/>.</exception>
+    /// <exception cref="ArgumentNullException"><paramref name="item"/> is <see langword="null"/>.</exception>
     /// <exception cref="ArgumentOutOfRangeException">
-    /// Thrown when <paramref name="fromIndex"/> or <paramref name="toIndex"/> is outside the bounds of the list.
+    /// <paramref name="fromIndex"/> or <paramref name="toIndex"/> is outside the bounds of the list.
     /// </exception>
     public static void MoveItem<TItem>(this DragDropList<TItem> list, TItem item, int fromIndex, int toIndex)
     {
@@ -45,8 +45,8 @@ public static class DragDropListExtensions
     /// <typeparam name="TItem">The type of items in the list.</typeparam>
     /// <param name="list">The <see cref="DragDropList{TItem}"/> instance.</param>
     /// <param name="item">The item to move to the beginning.</param>
-    /// <exception cref="ArgumentNullException">Thrown when <paramref name="list"/> is null.</exception>
-    /// <exception cref="ArgumentNullException">Thrown when <paramref name="item"/> is null.</exception>
+    /// <exception cref="ArgumentNullException"><paramref name="list"/> is <see langword="null"/>.</exception>
+    /// <exception cref="ArgumentNullException"><paramref name="item"/> is <see langword="null"/>.</exception>
     public static void MoveToBeginning<TItem>(this DragDropList<TItem> list, TItem item)
     {
         ArgumentNullException.ThrowIfNull(list);
@@ -65,8 +65,8 @@ public static class DragDropListExtensions
     /// <typeparam name="TItem">The type of items in the list.</typeparam>
     /// <param name="list">The <see cref="DragDropList{TItem}"/> instance.</param>
     /// <param name="item">The item to move to the end.</param>
-    /// <exception cref="ArgumentNullException">Thrown when <paramref name="list"/> is null.</exception>
-    /// <exception cref="ArgumentNullException">Thrown when <paramref name="item"/> is null.</exception>
+    /// <exception cref="ArgumentNullException"><paramref name="list"/> is <see langword="null"/>.</exception>
+    /// <exception cref="ArgumentNullException"><paramref name="item"/> is <see langword="null"/>.</exception>
     public static void MoveToEnd<TItem>(this DragDropList<TItem> list, TItem item)
     {
         ArgumentNullException.ThrowIfNull(list);
@@ -84,11 +84,11 @@ public static class DragDropListExtensions
     /// </summary>
     /// <typeparam name="TItem">The type of items in the list.</typeparam>
     /// <param name="list">The <see cref="DragDropList{TItem}"/> instance.</param>
-    /// <param name="index1">The first index.</param>
-    /// <param name="index2">The second index.</param>
-    /// <exception cref="ArgumentNullException">Thrown when <paramref name="list"/> is null.</exception>
+    /// <param name="index1">The first zero-based index.</param>
+    /// <param name="index2">The second zero-based index.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="list"/> is <see langword="null"/>.</exception>
     /// <exception cref="ArgumentOutOfRangeException">
-    /// Thrown when <paramref name="index1"/> or <paramref name="index2"/> is outside the bounds of the list.
+    /// <paramref name="index1"/> or <paramref name="index2"/> is outside the bounds of the list.
     /// </exception>
     public static void SwapItems<TItem>(this DragDropList<TItem> list, int index1, int index2)
     {
@@ -117,8 +117,8 @@ public static class DragDropListExtensions
     /// <param name="list">The <see cref="DragDropList{TItem}"/> instance.</param>
     /// <param name="item">The item to find.</param>
     /// <returns>The zero-based index of the item, or -1 if not found.</returns>
-    /// <exception cref="ArgumentNullException">Thrown when <paramref name="list"/> is null.</exception>
-    /// <exception cref="ArgumentNullException">Thrown when <paramref name="item"/> is null.</exception>
+    /// <exception cref="ArgumentNullException"><paramref name="list"/> is <see langword="null"/>.</exception>
+    /// <exception cref="ArgumentNullException"><paramref name="item"/> is <see langword="null"/>.</exception>
     public static int IndexOf<TItem>(this DragDropList<TItem> list, TItem item)
     {
         ArgumentNullException.ThrowIfNull(list);
@@ -134,8 +134,8 @@ public static class DragDropListExtensions
     /// <param name="list">The <see cref="DragDropList{TItem}"/> instance.</param>
     /// <param name="item">The item to check.</param>
     /// <returns>True if the item is in the list; otherwise, false.</returns>
-    /// <exception cref="ArgumentNullException">Thrown when <paramref name="list"/> is null.</exception>
-    /// <exception cref="ArgumentNullException">Thrown when <paramref name="item"/> is null.</exception>
+    /// <exception cref="ArgumentNullException"><paramref name="list"/> is <see langword="null"/>.</exception>
+    /// <exception cref="ArgumentNullException"><paramref name="item"/> is <see langword="null"/>.</exception>
     public static bool Contains<TItem>(this DragDropList<TItem> list, TItem item)
     {
         ArgumentNullException.ThrowIfNull(list);
@@ -150,7 +150,7 @@ public static class DragDropListExtensions
     /// <typeparam name="TItem">The type of items in the list.</typeparam>
     /// <param name="list">The <see cref="DragDropList{TItem}"/> instance.</param>
     /// <returns>The number of items in the list.</returns>
-    /// <exception cref="ArgumentNullException">Thrown when <paramref name="list"/> is null.</exception>
+    /// <exception cref="ArgumentNullException"><paramref name="list"/> is <see langword="null"/>.</exception>
     public static int Count<TItem>(this DragDropList<TItem> list)
     {
         ArgumentNullException.ThrowIfNull(list);
@@ -163,7 +163,7 @@ public static class DragDropListExtensions
     /// <typeparam name="TItem">The type of items in the list.</typeparam>
     /// <param name="list">The <see cref="DragDropList{TItem}"/> instance.</param>
     /// <returns>An <see cref="IReadOnlyList{T}"/> of items.</returns>
-    /// <exception cref="ArgumentNullException">Thrown when <paramref name="list"/> is null.</exception>
+    /// <exception cref="ArgumentNullException"><paramref name="list"/> is <see langword="null"/>.</exception>
     public static IReadOnlyList<TItem> AsReadOnly<TItem>(this DragDropList<TItem> list)
     {
         ArgumentNullException.ThrowIfNull(list);
