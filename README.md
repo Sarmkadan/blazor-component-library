@@ -337,6 +337,52 @@ chart.ClearAnnotations();
 ---
 
 
+## ChartAnnotation
+
+Represents a contextual annotation overlaid on a chart, such as a threshold line, event marker, or shaded reference band. Annotations help highlight important data points, thresholds, or ranges to provide additional context to chart viewers.
+
+
+
+```csharp
+// Create a threshold line annotation at value 75 with a label and custom color
+var thresholdAnnotation = new ChartAnnotation
+{
+    Type = ChartAnnotationType.ThresholdLine,
+    Value = 75,
+    Label = "Target Sales",
+    Color = "#ff0000",
+    Tooltip = "Goal: $75,000 per quarter"
+};
+
+// Create an event marker annotation at position 2.5 with a label
+var eventMarker = new ChartAnnotation
+{
+    Type = ChartAnnotationType.EventMarker,
+    Value = 2.5,
+    Label = "Product Launch",
+    Color = "#ffcd56",
+    Tooltip = "Launched Q2 2025"
+};
+
+// Create a reference band annotation between values 50 and 90
+var referenceBand = new ChartAnnotation
+{
+    Type = ChartAnnotationType.ReferenceBand,
+    Value = 50,
+    EndValue = 90,
+    Label = "Acceptable Range",
+    Color = "#4bc0c080", // 50% opacity
+    Tooltip = "Range: $50K - $90K"
+};
+
+// Add annotations to a chart
+var chart = new Chart<object>();
+chart.Annotations = new List<ChartAnnotation> { thresholdAnnotation, eventMarker, referenceBand };
+```
+
+---
+
+
 ## Skeleton
 
 A loading skeleton placeholder component that displays animated placeholders while content is being fetched or rendered. The skeleton provides visual feedback to users during asynchronous operations, improving perceived performance and reducing layout shifts.
