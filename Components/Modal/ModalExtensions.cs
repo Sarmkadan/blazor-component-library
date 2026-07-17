@@ -175,5 +175,4 @@ public static class ModalExtensions
         ArgumentNullException.ThrowIfNull(modal);
         modal.CloseOnOverlayClick = closeOnOverlayClick;
     }
-
 }
