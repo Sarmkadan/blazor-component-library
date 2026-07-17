@@ -44,11 +44,15 @@ public static class ToastContainerJsonExtensions
     /// Deserializes a <see cref="ToastContainer"/> instance from a JSON string.
     /// </summary>
     /// <param name="json">The JSON string to deserialize.</param>
-    /// <returns>A deserialized <see cref="ToastContainer"/> instance, or <see langword="null"/> if the JSON is empty or whitespace.</returns>
+    /// <returns>A deserialized <see cref="ToastContainer"/> instance, or <see langword="null"/> if <paramref name="json"/> is <see langword="null"/>, empty, or whitespace.</returns>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="json"/> is <see langword="null"/>.</exception>
     /// <exception cref="JsonException">Thrown when the JSON is invalid or cannot be deserialized.</exception>
-    public static ToastContainer? FromJson(string json)
+    public static ToastContainer? FromJson(string? json)
     {
-        ArgumentException.ThrowIfNullOrEmpty(json);
+        if (string.IsNullOrWhiteSpace(json))
+        {
+            return null;
+        }
 
         return JsonSerializer.Deserialize<ToastContainer>(json, _jsonOptions);
     }
@@ -59,9 +63,10 @@ public static class ToastContainerJsonExtensions
     /// <param name="json">The JSON string to deserialize.</param>
     /// <param name="value">Receives the deserialized <see cref="ToastContainer"/> instance if successful.</param>
     /// <returns><see langword="true"/> if deserialization succeeds; otherwise, <see langword="false"/>.</returns>
-    public static bool TryFromJson(string json, out ToastContainer? value)
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="json"/> is <see langword="null"/>.</exception>
+    public static bool TryFromJson(string? json, out ToastContainer? value)
     {
-        ArgumentException.ThrowIfNullOrEmpty(json);
+        ArgumentNullException.ThrowIfNull(json);
 
         try
         {
