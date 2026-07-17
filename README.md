@@ -337,6 +337,60 @@ chart.ClearAnnotations();
 ---
 
 
+## ChartAnnotationExtensions
+
+Provides extension methods for working with `ChartAnnotation` instances that simplify common annotation operations. These methods offer convenient utilities for creating formatted display text, validating annotations, cloning annotations for modifications, and updating annotation properties like color and tooltip text. This reduces boilerplate code when working with chart annotations programmatically.
+
+```csharp
+@using BlazorComponentLibrary.Components.Chart
+
+// Create a chart annotation
+var annotation = new ChartAnnotation
+{
+    Type = ChartAnnotationType.ThresholdLine,
+    Value = 75,
+    Label = "Target Sales",
+    Color = "#ff0000",
+    Tooltip = "Goal: $75,000 per quarter"
+};
+
+// Get formatted display text for the annotation
+string displayText = annotation.GetDisplayText();
+// Returns: "Target Sales"
+
+// Check if the annotation is valid for rendering
+bool isValid = annotation.IsValid();
+// Returns: true
+
+// Clone the annotation to modify without affecting the original
+var clonedAnnotation = annotation.Clone();
+clonedAnnotation.SetColor("#00ff00"); // Change to green
+
+// Update the annotation's tooltip
+annotation.SetTooltip("Updated goal: $80,000 per quarter");
+
+// Get the formatted value text
+string valueText = annotation.GetValueText();
+// Returns: "75"
+
+// Check if the annotation has a label
+bool hasLabel = annotation.HasLabel();
+// Returns: true
+```
+
+**Available Methods:**
+
+- `GetDisplayText()` – Gets the display text for the annotation based on its type and configuration
+- `IsValid()` – Determines whether the annotation has a valid configuration for rendering
+- `Clone()` – Creates a deep copy of the annotation to allow modifications without affecting the original
+- `SetColor(string color)` – Updates the annotation's color while preserving its other properties
+- `SetTooltip(string tooltip)` – Updates the annotation's tooltip text while preserving its other properties
+- `GetValueText()` – Gets the annotation's value as a formatted string using invariant culture
+- `HasLabel()` – Determines whether the annotation has a label set
+
+
+---
+
 ## ChartAnnotation
 
 Represents a contextual annotation overlaid on a chart, such as a threshold line, event marker, or shaded reference band. Annotations help highlight important data points, thresholds, or ranges to provide additional context to chart viewers.
