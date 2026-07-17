@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Globalization;
 using System.Linq;
-using System.Threading.Tasks;
+using System.Reflection;
 
 /// <summary>
 /// Provides extension methods for working with <see cref="Form{TModel}"/> components.
@@ -20,15 +20,15 @@ public static class FormExtensions
     /// <param name="propertyName">Name of the property to check.</param>
     /// <returns>The first validation error message, or null if valid.</returns>
     /// <exception cref="ArgumentNullException"><paramref name="form"/> is null.</exception>
+    /// <exception cref="ArgumentException"><paramref name="propertyName"/> is null or empty.</exception>
     public static string? GetValidationError<TModel>(this Form<TModel> form, string propertyName) where TModel : new()
     {
         ArgumentNullException.ThrowIfNull(form);
         ArgumentException.ThrowIfNullOrEmpty(propertyName);
 
         return form.ValidationErrors
-            .Where(v => v.MemberNames.Contains(propertyName, StringComparer.Ordinal))
-            .Select(v => v.ErrorMessage)
-            .FirstOrDefault();
+            .FirstOrDefault(v => v.MemberNames.Contains(propertyName, StringComparer.Ordinal))
+            ?.ErrorMessage;
     }
 
     /// <summary>
@@ -39,6 +39,7 @@ public static class FormExtensions
     /// <param name="propertyName">Name of the property to check.</param>
     /// <returns>Read-only list of validation error messages.</returns>
     /// <exception cref="ArgumentNullException"><paramref name="form"/> is null.</exception>
+    /// <exception cref="ArgumentException"><paramref name="propertyName"/> is null or empty.</exception>
     public static IReadOnlyList<string> GetValidationErrors<TModel>(this Form<TModel> form, string propertyName) where TModel : new()
     {
         ArgumentNullException.ThrowIfNull(form);
