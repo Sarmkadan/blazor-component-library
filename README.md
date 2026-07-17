@@ -944,6 +944,30 @@ Key benchmarks include:
 For detailed results, run the benchmarks locally and review the generated report in the `BenchmarkDotNet.Artifacts` directory.
 
 
+## LibraryBenchmarks
+
+`LibraryBenchmarks` is a performance testing class that utilizes BenchmarkDotNet to measure the efficiency of core library operations, including sorting algorithms, `DataTable` data management, and `DragDropList` reordering. It provides baseline comparisons for various approaches and helps ensure optimal performance for critical library features as the codebase evolves.
+
+```csharp
+using Benchmarks;
+using BenchmarkDotNet.Running;
+
+// Run all library benchmarks
+var summary = BenchmarkRunner.Run<LibraryBenchmarks>();
+
+// Example: Using specific benchmark members
+var benchmarks = new LibraryBenchmarks();
+benchmarks.Setup();
+
+// Sort using null-safe comparer
+var sortedData = benchmarks.SortWithNullSafeComparer();
+
+// Sort complex data by Name
+var sortedComplex = benchmarks.SortComplexDataByName();
+```
+
+---
+
 ## License
 
 MIT License. See [LICENSE](LICENSE) for details.
