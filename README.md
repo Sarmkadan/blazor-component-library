@@ -172,7 +172,6 @@ toastContainer.DismissAll();
 ---
 
 ## ToastServiceTests
-
 The `ToastServiceTests` class provides comprehensive unit tests for `ToastService`, validating its core behavior such as toast creation, event triggering, and dismissal functionality. These tests ensure that the service correctly manages its active toast list and handles edge cases, such as empty messages or unknown IDs.
 
 ```csharp
@@ -200,7 +199,32 @@ public void DismissAll_ClearsActiveToasts()
 
 ---
 
+## FormTests
+
+The `FormTests` class validates the `Form` component's functionality, ensuring proper model binding, validation handling, and state management. These tests verify key behaviors such as the form's handling of models with `Name` and `Age` properties, validating models against data annotations, and resetting the validation state when a new model is set.
+
+```csharp
+[Fact]
+public async Task Validate_InvalidModel_ReturnsFalseAndExposesErrors()
+{
+    // Arrange: Setup model with invalid properties
+    var form = new Form<ValidatedModel>();
+    form.SetModel(new ValidatedModel { Name = null, Age = 0 });
+
+    // Act
+    var result = await form.Validate();
+
+    // Assert
+    Assert.False(result);
+    Assert.False(form.IsValid);
+    Assert.NotEmpty(form.ValidationErrors);
+}
+```
+
+---
+
 ## DragDropList
+
 
 A drag-and-drop reorderable list component that enables users to reorder items using the HTML5 Drag and Drop API. The component maintains the order of items and fires the `OnOrderChanged` event whenever the list is reordered through drag-and-drop interactions.
 
