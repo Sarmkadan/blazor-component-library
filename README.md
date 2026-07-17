@@ -284,6 +284,59 @@ private void UpdateChartData()
 ---
 
 
+## ChartExtensions
+
+
+Provides extension methods for chart components that simplify common chart operations such as adding annotations, setting data, and configuring chart properties. These methods offer a fluent API for enhancing charts with threshold lines, event markers, reference bands, and dynamic updates, reducing boilerplate code when working with chart visualizations.
+
+
+
+
+```csharp
+@using BlazorComponentLibrary.Components.Chart
+
+// Create a chart with sample data
+var chart = new Chart<object>();
+var data = new List<double> { 10, 20, 30, 40, 50 };
+
+// Set data and refresh in one operation
+chart.SetDataAndRefresh(data);
+
+// Add a threshold line at value 35 with a label
+var threshold = chart.AddThresholdLine(35, "Target", color: "#ff0000");
+
+// Add an event marker at position 2.5
+var eventMarker = chart.AddEventMarker(2.5, "Launch", color: "#ffcd56");
+
+// Add a reference band from 15 to 45
+var referenceBand = chart.AddReferenceBand(15, 45, "Acceptable Range", color: "#4bc0c080");
+
+// Set a custom title
+chart.SetTitle("Sales Performance - Q2 2025");
+
+// Change chart type
+chart.SetChartType(ChartType.Line);
+
+// Clear all annotations
+chart.ClearAnnotations();
+```
+
+**Available Methods:**
+
+- `SetDataAndRefresh<TData>(IEnumerable<TData> data)` – Sets the chart data and refreshes the chart in a single operation
+- `AddThresholdLine<TData>(double value, string? label = null, string? color = null, string? tooltip = null)` – Adds a threshold line annotation at the specified value
+- `AddEventMarker<TData>(double position, string? label = null, string? color = null, string? tooltip = null)` – Adds an event marker annotation at the specified position
+- `AddReferenceBand<TData>(double startValue, double endValue, string? label = null, string? color = null, string? tooltip = null)` – Adds a reference band annotation between two values
+- `ClearAnnotations<TData>()` – Clears all annotations from the chart
+- `SetTitle<TData>(string title)` – Sets the chart title
+- `SetChartType<TData>(ChartType chartType)` – Sets the chart type
+
+
+
+
+---
+
+
 ## Skeleton
 
 A loading skeleton placeholder component that displays animated placeholders while content is being fetched or rendered. The skeleton provides visual feedback to users during asynchronous operations, improving perceived performance and reducing layout shifts.
