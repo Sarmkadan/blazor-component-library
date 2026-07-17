@@ -44,18 +44,18 @@ public static class ChartAnnotationExtensions
     {
         ArgumentNullException.ThrowIfNull(annotation);
 
-        return annotation.Type switch
-        {
-            ChartAnnotationType.ThresholdLine or ChartAnnotationType.EventMarker =>
-                !double.IsNaN(annotation.Value) && !double.IsInfinity(annotation.Value),
-            ChartAnnotationType.ReferenceBand =>
-                !double.IsNaN(annotation.Value) &&
-                !double.IsNaN(annotation.EndValue ?? double.NaN) &&
-                !double.IsInfinity(annotation.Value) &&
-                !double.IsInfinity(annotation.EndValue ?? double.NaN) &&
-                annotation.EndValue.HasValue,
-            _ => false
-        };
+    static bool IsValidValue(double value) => !double.IsNaN(value) && !double.IsInfinity(value);
+
+    return annotation.Type switch
+    {
+        ChartAnnotationType.ThresholdLine or ChartAnnotationType.EventMarker =>
+            IsValidValue(annotation.Value),
+        ChartAnnotationType.ReferenceBand =>
+            IsValidValue(annotation.Value) &&
+            IsValidValue(annotation.EndValue ?? double.NaN) &&
+            annotation.EndValue.HasValue,
+        _ => false
+    };
     }
 
     /// <summary>
