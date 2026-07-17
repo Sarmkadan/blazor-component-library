@@ -2,7 +2,7 @@ namespace BlazorComponentLibrary.Components.Chart;
 
 using System;
 using System.Collections.Generic;
-using System.Globalization;
+using System.Linq;
 
 /// <summary>
 /// Provides validation helpers for chart components.
@@ -71,10 +71,7 @@ public static class ChartValidation
     /// <param name="value">The chart instance to check.</param>
     /// <returns><see langword="true"/> if the chart is valid; otherwise, <see langword="false"/>.</returns>
     /// <exception cref="ArgumentNullException"><paramref name="value"/> is <see langword="null"/>.</exception>
-    public static bool IsValid(this IChart<object> value)
-    {
-        return Validate(value).Count == 0;
-    }
+    public static bool IsValid(this IChart<object> value) => Validate(value).Count == 0;
 
     /// <summary>
     /// Ensures that a chart instance is valid, throwing an exception if it is not.
@@ -95,8 +92,17 @@ public static class ChartValidation
         }
     }
 
+    /// <summary>
+    /// Validates that a collection of strings contains no null or whitespace entries.
+    /// </summary>
+    /// <param name="collection">The collection to validate.</param>
+    /// <param name="itemTypeName">The type of items in the collection (used in error messages).</param>
+    /// <returns>An enumerable of validation problems; empty if the collection is valid.</returns>
+    /// <exception cref="ArgumentNullException"><paramref name="collection"/> is <see langword="null"/>.</exception>
     private static IReadOnlyList<string> ValidateStringCollection(IEnumerable<string> collection, string itemTypeName)
     {
+        ArgumentNullException.ThrowIfNull(collection);
+
         var problems = new List<string>();
 
         var index = 0;
@@ -113,8 +119,16 @@ public static class ChartValidation
         return problems.AsReadOnly();
     }
 
+    /// <summary>
+    /// Validates chart annotations for correctness.
+    /// </summary>
+    /// <param name="annotations">The annotations to validate.</param>
+    /// <returns>An enumerable of validation problems; empty if the annotations are valid.</returns>
+    /// <exception cref="ArgumentNullException"><paramref name="annotations"/> is <see langword="null"/>.</exception>
     private static IReadOnlyList<string> ValidateAnnotations(IEnumerable<ChartAnnotation> annotations)
     {
+        ArgumentNullException.ThrowIfNull(annotations);
+
         var problems = new List<string>();
 
         var index = 0;
