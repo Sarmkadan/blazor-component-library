@@ -55,10 +55,7 @@ public static class DragDropListValidation
     /// <param name="value">The <see cref="DragDropList{TItem}"/> instance to check.</param>
     /// <returns><see langword="true"/> if valid; otherwise, <see langword="false"/>.</returns>
     /// <exception cref="ArgumentNullException">Thrown when <paramref name="value"/> is null.</exception>
-    public static bool IsValid<TItem>(this DragDropList<TItem> value)
-    {
-        return Validate(value).Count == 0;
-    }
+    public static bool IsValid<TItem>(this DragDropList<TItem> value) => Validate(value).Count == 0;
 
     /// <summary>
     /// Ensures that a <see cref="DragDropList{TItem}"/> instance is valid, throwing an exception if not.
