@@ -171,6 +171,35 @@ toastContainer.DismissAll();
 
 ---
 
+## ToastServiceTests
+
+The `ToastServiceTests` class provides comprehensive unit tests for `ToastService`, validating its core behavior such as toast creation, event triggering, and dismissal functionality. These tests ensure that the service correctly manages its active toast list and handles edge cases, such as empty messages or unknown IDs.
+
+```csharp
+[Fact]
+public void Show_AddsToastToActiveList()
+{
+    var service = new ToastService();
+    service.Show("Hello world");
+    Assert.Single(service.ActiveToasts);
+}
+
+[Fact]
+public void DismissAll_ClearsActiveToasts()
+{
+    var service = new ToastService();
+    service.Show("A");
+    service.Show("B");
+    service.Show("C");
+
+    service.DismissAll();
+
+    Assert.Empty(service.ActiveToasts);
+}
+```
+
+---
+
 ## DragDropList
 
 A drag-and-drop reorderable list component that enables users to reorder items using the HTML5 Drag and Drop API. The component maintains the order of items and fires the `OnOrderChanged` event whenever the list is reordered through drag-and-drop interactions.
