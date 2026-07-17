@@ -235,6 +235,53 @@ A loading skeleton placeholder component that displays animated placeholders whi
 
 ---
 
+## SkeletonExtensions
+
+Provides extension methods for `Skeleton` components that enable fluent configuration through method chaining. These utilities simplify the creation of skeleton placeholders with common patterns like avatars, buttons, and cards, while also allowing fine-grained control over dimensions, line counts, and animation states.
+
+
+
+```csharp
+@using BlazorComponentLibrary.Components.Skeleton
+
+// Create a text skeleton with 3 lines
+var textSkeleton = Skeleton.AsText(3)
+    .WithWidth("200px")
+    .WithHeight("24px")
+    .Animated();
+
+// Create a circular avatar skeleton
+var avatarSkeleton = Skeleton.AsAvatar();
+
+// Create a button placeholder skeleton
+var buttonSkeleton = Skeleton.AsButton();
+
+// Create a card placeholder skeleton
+var cardSkeleton = Skeleton.AsCard();
+
+// Create a custom rectangle skeleton
+var customSkeleton = Skeleton.AsRectangle("300px", "150px")
+    .WithLines(5)
+    .Static();
+```
+
+**Available Methods:**
+
+- `AsText(int lines = 3)` – Configures the skeleton as a text placeholder with the specified number of lines
+- `AsCircle(string size = "40px")` – Configures the skeleton as a circle with equal width and height
+- `AsRectangle(string width = "100%", string height = "auto")` – Configures the skeleton as a rectangle with custom dimensions
+- `WithWidth(string width)` – Sets the width of the skeleton
+- `WithHeight(string height)` – Sets the height of the skeleton
+- `WithLines(int lines)` – Sets the number of lines for text skeleton types
+- `WithAnimation(bool animated)` – Enables or disables the animation effect
+- `Animated()` – Sets the skeleton to be animated
+- `Static()` – Sets the skeleton to be static (no animation)
+- `AsAvatar()` – Configures the skeleton as a circular avatar (40px × 40px)
+- `AsButton()` – Configures the skeleton as a standard button placeholder (120px × 40px)
+- `AsCard()` – Configures the skeleton as a standard card placeholder (100% width × 200px height)
+
+---
+
 ## DragDropListExtensions
 
 Provides extension methods for `DragDropList<TItem>` that offer convenient utilities for manipulating and querying drag-and-drop lists programmatically. These methods simplify common operations like moving items to specific positions, swapping items, and checking list contents without manual index management.
