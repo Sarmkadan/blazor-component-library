@@ -391,6 +391,71 @@ bool hasLabel = annotation.HasLabel();
 
 ---
 
+## NullSafeComparerExtensions
+
+Provides extension methods for null-safe comparison that enable advanced sorting, filtering, and collection operations with null-safe comparison semantics. These methods treat `null` values as less than any non-null value, ensuring consistent and predictable sorting behavior when working with collections that may contain null elements.
+
+```csharp
+@using BlazorComponentLibrary.Components.DataTable
+
+// Sample data with null values
+var users = new List<User>
+{
+    new User { Id = 1, Name = "Alice", Age = 30 },
+    new User { Id = 2, Name = "Bob" }, // Age is null
+    new User { Id = 3, Name = "Charlie", Age = 25 },
+    new User { Id = 4, Name = "Diana" }, // Age is null
+    new User { Id = 5, Name = "Eve", Age = 35 }
+};
+
+// Sort users by age in ascending order (nulls come first)
+var sortedAscending = users.OrderByNullSafe(u => u.Age).ToList();
+// Result: [Bob (null), Diana (null), Charlie (25), Alice (30), Eve (35)]
+
+// Sort users by age in descending order (nulls come first)
+var sortedDescending = users.OrderByDescendingNullSafe(u => u.Age).ToList();
+// Result: [Bob (null), Diana (null), Eve (35), Alice (30), Charlie (25)]
+
+// Find the user with the minimum age (ignoring nulls)
+var youngest = users.Min(u => u.Age);
+// Returns: 25
+
+// Find the user with the maximum age (ignoring nulls)
+var oldest = users.Max(u => u.Age);
+// Returns: 35
+
+// Sort by age with explicit direction
+var sortedByDirection = users.SortBy(u => u.Age, SortDirection.Ascending).ToList();
+
+// Filter out null ages
+var usersWithAges = users.WhereNotNull(u => u.Age).ToList();
+// Returns: [Alice, Charlie, Eve]
+
+public class User
+{
+    public int Id { get; set; }
+    public string Name { get; set; }
+    public int? Age { get; set; }
+}
+```
+
+**Available Methods:**
+
+- `OrderByNullSafe<TSource, TKey>(this IEnumerable<TSource> source, Func<TSource, TKey> keySelector)` – Sorts elements in ascending order by the specified key using null-safe comparison
+- `OrderByDescendingNullSafe<TSource, TKey>(this IEnumerable<TSource> source, Func<TSource, TKey> keySelector)` – Sorts elements in descending order by the specified key using null-safe comparison  
+- `Min<TSource>(this IEnumerable<TSource> source)` – Returns the minimum value in a sequence using null-safe comparison (ignores nulls)
+- `Max<TSource>(this IEnumerable<TSource> source)` – Returns the maximum value in a sequence using null-safe comparison (ignores nulls)
+- `SortBy<TSource, TKey>(this IEnumerable<TSource> source, Func<TSource, TKey> keySelector, SortDirection direction = SortDirection.Ascending)` – Convenience method to sort by direction with null-safe comparison
+- `WhereNotNull<TSource>(this IEnumerable<TSource> source)` – Filters out null values from a sequence
+- `WhereNotNull<TSource>(this IEnumerable<TSource?> source)` – Filters out null values from a sequence of nullable value types
+
+**SortDirection:**
+
+- `SortDirection.Ascending` – Sort in ascending order (default)
+- `SortDirection.Descending` – Sort in descending order
+
+---
+
 ## Form
 
 A generic form component for Blazor that provides model binding, validation, and submission handling. The Form component supports two-way data binding with any model type, automatic validation, and customizable submission logic.
