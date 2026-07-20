@@ -1,0 +1,30 @@
+@if (Items != null && Items.Any())
+{
+    <nav class="@Class" style="@Style" aria-label="Breadcrumb">
+        <ol class="bcl-breadcrumbs">
+            @for (int i = 0; i < Items.Count; i++)
+            {
+                var item = Items[i];
+                var isLast = i == Items.Count - 1;
+
+                <li class="bcl-breadcrumbs__item">
+                    @if (item.Href != null && !isLast)
+                    {
+                        <a href="@item.Href" class="bcl-breadcrumbs__link">@item.Text</a>
+                    }
+                    else
+                    {
+                        <span class="bcl-breadcrumbs__current" aria-current="page">@item.Text</span>
+                    }
+
+                    @if (!isLast)
+                    {
+                        <span class="bcl-breadcrumbs__separator">
+                            @SeparatorTemplate
+                        </span>
+                    }
+                </li>
+            }
+        </ol>
+    </nav>
+}
