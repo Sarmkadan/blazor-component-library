@@ -45,6 +45,11 @@ public interface IDataTable<TItem>
     void SortBy(Func<TItem, object?> keySelector, SortDirection direction = SortDirection.Ascending);
 
     /// <summary>
+    /// Clears all sort keys and returns to the original data order.
+    /// </summary>
+    void ClearSort();
+
+    /// <summary>
     /// Event callback for when a row in the data table is clicked.
     /// </summary>
     EventCallback<TItem> OnRowClick { get; set; }
