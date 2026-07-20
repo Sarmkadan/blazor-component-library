@@ -8,7 +8,7 @@
     <div class="bcl-toast bcl-toast--@toast.Type.ToString().ToLower()" role="alert"
          @onmouseover="() => ToastService.PauseTimer(toastId)"
          @onmouseout="() => ToastService.ResumeTimer(toastId, toastDuration)">
-        <span class="bcl-toast__icon" aria-hidden="true">@IconFor(toast.Type)</span>
+        <span class="bcl-toast__icon" aria-hidden="true">@GetToastIcon(toast)</span>
         <span class="bcl-toast__message">@toast.Message</span>
         <button type="button"
                 class="bcl-toast__close"
