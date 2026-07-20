@@ -1,5 +1,9 @@
 namespace BlazorComponentLibrary.Components.Chart;
 
+using Microsoft.AspNetCore.Components;
+using System.Collections.Generic;
+using System.Linq;
+
 /// <summary>
 /// Provides extension methods for working with chart components.
 /// </summary>
@@ -179,6 +183,25 @@ public static class ChartExtensions
         ArgumentNullException.ThrowIfNull(chart);
 
         chart.ChartType = chartType;
+        chart.Refresh();
+    }
+
+    /// <summary>
+    /// Sets the visibility of a series in the chart.
+    /// </summary>
+    /// <typeparam name="TData">The type of data in the chart.</typeparam>
+    /// <param name="chart">The chart instance.</param>
+    /// <param name="seriesIndex">The index of the series to toggle.</param>
+    /// <param name="visible">Whether the series should be visible.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="chart"/> is <see langword="null"/>.</exception>
+    public static void SetSeriesVisibility<TData>(
+        this IChart<TData> chart,
+        int seriesIndex,
+        bool visible)
+    {
+        ArgumentNullException.ThrowIfNull(chart);
+
+        chart.SetSeriesVisibility(seriesIndex, visible);
         chart.Refresh();
     }
 }
