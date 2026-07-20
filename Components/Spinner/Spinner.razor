@@ -1,0 +1,75 @@
+@using Microsoft.AspNetCore.Components
+
+<div class="spinner @SizeClass"
+     style="color:@Color"
+     role="status"
+     aria-label="@Label">
+</div>
+
+@code {
+    /// <summary>
+    /// The size of the spinner.
+    /// </summary>
+    public enum SpinnerSize
+    {
+        Small,
+        Medium,
+        Large
+    }
+
+    /// <summary>
+    /// Size of the spinner. Defaults to <see cref="SpinnerSize.Medium"/>.
+    /// </summary>
+    [Parameter]
+    public SpinnerSize Size { get; set; } = SpinnerSize.Medium;
+
+    /// <summary>
+    /// CSS colour of the spinner. Accepts any valid CSS colour string.
+    /// Defaults to <c>currentColor</c>.
+    /// </summary>
+    [Parameter]
+    public string Color { get; set; } = "currentColor";
+
+    /// <summary>
+    /// Accessible label for the spinner. If not provided, the spinner will be
+    /// announced as a generic status element.
+    /// </summary>
+    [Parameter]
+    public string? Label { get; set; }
+
+    private string SizeClass => Size.ToString().ToLower();
+}
+
+<style>
+    .spinner {
+        display: inline-block;
+        border: 2px solid currentColor;
+        border-top-color: transparent;
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+    }
+
+    .spinner.small {
+        width: 1rem;
+        height: 1rem;
+        border-width: 2px;
+    }
+
+    .spinner.medium {
+        width: 2rem;
+        height: 2rem;
+        border-width: 2px;
+    }
+
+    .spinner.large {
+        width: 3rem;
+        height: 3rem;
+        border-width: 3px;
+    }
+
+    @keyframes spin {
+        to {
+            transform: rotate(360deg);
+        }
+    }
+</style>
