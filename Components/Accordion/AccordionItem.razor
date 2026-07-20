@@ -1,0 +1,70 @@
+@using Microsoft.AspNetCore.Components
+@using System
+
+@implements IDisposable
+
+<div class="accordion-item">
+    <div class="accordion-header" @onclick="Toggle">
+        @Header
+    </div>
+    @if (IsExpanded)
+    {
+        <div class="accordion-body">
+            @ChildContent
+        </div>
+    }
+</div>
+
+@code {
+    [CascadingParameter] private Accordion? Parent { get; set; }
+
+    /// <summary>
+    /// Header content of the accordion item.
+    /// </summary>
+    [Parameter] public RenderFragment? Header { get; set; }
+
+    /// <summary>
+    /// Body content of the accordion item.
+    /// </summary>
+    [Parameter] public RenderFragment? ChildContent { get; set; }
+
+    /// <summary>
+    /// Determines whether the item is initially expanded when the accordion is first rendered.
+    /// </summary>
+    [Parameter] public bool Expanded { get; set; }
+
+    // Internal state used by the parent accordion.
+    internal bool IsExpanded => _expanded;
+    internal bool IsInitiallyExpanded => Expanded;
+
+    private bool _expanded;
+
+    protected override void OnInitialized()
+    {
+        // Initialise internal state from the parameter.
+        _expanded = Expanded;
+        Parent?.RegisterItem(this);
+    }
+
+    /// <summary>
+    /// Called by the parent accordion to change the expanded state.
+    /// </summary>
+    internal void SetExpanded(bool value)
+    {
+        if (_expanded != value)
+        {
+            _expanded = value;
+            StateHasChanged();
+        }
+    }
+
+    private void Toggle()
+    {
+        Parent?.ToggleItem(this);
+    }
+
+    public void Dispose()
+    {
+        Parent?.UnregisterItem(this);
+    }
+}
