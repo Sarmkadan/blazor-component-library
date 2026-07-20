@@ -23,7 +23,10 @@ public enum ToastType
 /// <param name="DurationMs">
 /// Auto-dismiss delay in milliseconds. Set to <c>0</c> to require manual dismissal.
 /// </param>
-public sealed record ToastMessage(Guid Id, string Message, ToastType Type, int DurationMs);
+/// <param name="Icon">
+/// The icon to display for this toast. If null, the default icon for the toast type will be used.
+/// </param>
+public sealed record ToastMessage(Guid Id, string Message, ToastType Type, int DurationMs, string? Icon = null);
 
 /// <summary>Service for queuing and managing toast notification messages.</summary>
 public interface IToastService
@@ -44,7 +47,7 @@ public interface IToastService
     /// Auto-dismiss delay in milliseconds. Defaults to 4 000 ms. Use <c>0</c> to
     /// require the user to manually dismiss the notification.
     /// </param>
-    void Show(string message, ToastType type = ToastType.Info, int durationMs = 4000);
+    void Show(string message, ToastType type = ToastType.Info, int durationMs = 4000, string? icon = null);
 
     /// <summary>Removes the toast with the specified identifier.</summary>
     /// <param name="id">The unique identifier of the toast to dismiss.</param>

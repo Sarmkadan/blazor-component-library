@@ -39,7 +39,7 @@ public sealed class ToastService : IToastService, IDisposable
     /// <inheritdoc/>
     /// <exception cref="ToastServiceException">Thrown when the message is null or whitespace,
     /// or when <paramref name="durationMs"/> is negative.</exception>
-    public void Show(string message, ToastType type = ToastType.Info, int durationMs = 4000)
+    public void Show(string message, ToastType type = ToastType.Info, int durationMs = 4000, string? icon = null)
     {
         _logger.LogDebug("Showing toast with message: '{Message}', type: {ToastType}, duration: {DurationMs}ms", message, type, durationMs);
 
@@ -55,7 +55,7 @@ public sealed class ToastService : IToastService, IDisposable
             throw new ToastServiceException("DurationMs cannot be negative.");
         }
 
-        var toast = new ToastMessage(Guid.NewGuid(), message, type, durationMs);
+        var toast = new ToastMessage(Guid.NewGuid(), message, type, durationMs, icon);
 
         lock (_lock)
         {

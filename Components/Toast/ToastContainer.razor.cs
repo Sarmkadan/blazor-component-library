@@ -43,6 +43,11 @@ public sealed partial class ToastContainer : ComponentBase, IToastContainer, IDi
         _                 => "ℹ",
     };
 
+    /// <summary>Gets the icon to display for the given toast message.</summary>
+    /// <param name="toast">The toast message.</param>
+    /// <returns>The icon to display, or null if no icon should be displayed.</returns>
+    public static string? GetToastIcon(ToastMessage toast) => toast.Icon ?? IconFor(toast.Type);
+
     private static string PositionCss(ToastPosition position) => position switch
     {
         ToastPosition.TopLeft      => "top-left",
