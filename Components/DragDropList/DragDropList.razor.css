@@ -32,6 +32,12 @@
     border-color: var(--bcl-dnd-over-border, #3b82f6);
 }
 
+.bcl-dnd-item--invalid-drop {
+    opacity: 0.6;
+    filter: grayscale(30%);
+    cursor: not-allowed;
+}
+
 .bcl-dnd-handle {
     color: var(--bcl-dnd-handle-color, #94a3b8);
     cursor: grab;
