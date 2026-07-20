@@ -16,6 +16,8 @@ public enum ModalSize
 public sealed partial class Modal : ComponentBase, IModal
 {
     private bool _isVisible = false;
+    private ElementReference _dialogElement;
+    private ElementReference? _triggerElement;
 
     [Inject]
     private IJSRuntime JSRuntime { get; set; } = default!;
@@ -62,22 +64,21 @@ public sealed partial class Modal : ComponentBase, IModal
     /// <exception cref="ModalException">Thrown when there is an error showing the modal.</exception>
     public async Task Show()
     {
-        if (JSRuntime is null)
-        {
-            throw new ModalException("JavaScript runtime is not available.");
-        }
+        // Save the currently focused element before showing the modal
+        _triggerElement = await GetActiveElementReference();
 
+        _isVisible = true;
+        StateHasChanged();
+
+        // Focus the dialog after it renders
+        await Task.Delay(100); // Allow time for the dialog to render
         try
         {
-            // No ConfigureAwait(false) here: StateHasChanged must run on the
-            // component's dispatcher (sync context), otherwise Blazor Server throws.
-            await JSRuntime.InvokeVoidAsync("eval", "window.__bclModalTrigger = document.activeElement");
-            _isVisible = true;
-            StateHasChanged();
+            await _dialogElement.FocusAsync();
         }
-        catch (Exception ex) when (ex is not ModalException)
+        catch
         {
-            throw new ModalException("Failed to show modal", ex);
+            // Ignore focus errors (element might not be ready)
         }
     }
 
@@ -89,24 +90,40 @@ public sealed partial class Modal : ComponentBase, IModal
     {
         _isVisible = false;
         StateHasChanged();
+
         if (OnClose.HasDelegate)
         {
             await OnClose.InvokeAsync().ConfigureAwait(false);
         }
 
-        if (JSRuntime is not null)
+        // Restore focus to the trigger element
+        if (_triggerElement.HasValue)
         {
             try
             {
-                await JSRuntime.InvokeVoidAsync(
-                    "eval",
-                    "if (window.__bclModalTrigger && typeof window.__bclModalTrigger.focus === 'function') { window.__bclModalTrigger.focus(); window.__bclModalTrigger = null; }"
-                ).ConfigureAwait(false);
+                await _triggerElement.Value.FocusAsync();
             }
-            catch (Exception ex) when (ex is not ModalException)
+            catch
             {
-                throw new ModalException("Failed to restore focus after hiding modal", ex);
+                // Ignore focus errors (element might be disposed)
             }
+        }
+    }
+
+    /// <summary>
+    /// Gets a reference to the currently focused element.
+    /// </summary>
+    /// <returns>ElementReference to the active element, or default if none.</returns>
+    private async Task<ElementReference> GetActiveElementReference()
+    {
+        try
+        {
+            return await JSRuntime.InvokeAsync<ElementReference>("getActiveElement");
+        }
+        catch
+        {
+            // Fallback to default if JS interop fails
+            return default;
         }
     }
 
