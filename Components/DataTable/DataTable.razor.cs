@@ -47,6 +47,9 @@ public sealed partial class DataTable<TItem> : ComponentBase, IDataTable<TItem>
     public EventCallback<TItem> OnRowClick { get; set; }
 
     [Parameter]
+    public RenderFragment? EmptyTemplate { get; set; } = EmptyContent;
+
+    [Parameter]
     public bool IsSortable { get; set; } = false;
 
     [Parameter]
@@ -229,4 +232,16 @@ public sealed partial class DataTable<TItem> : ComponentBase, IDataTable<TItem>
             _isShiftKeyPressed = false;
         }
     }
+
+    /// <summary>
+    /// Default content to render when the data table has no items to display.
+    /// Shows a "No data" message spanning all columns.
+    /// </summary>
+    private static RenderFragment EmptyContent => builder =>
+    {
+        builder.OpenElement(0, "tr");
+        builder.AddAttribute(1, "colspan", "100%");
+        builder.AddContent(2, "No data");
+        builder.CloseElement();
+    };
 }

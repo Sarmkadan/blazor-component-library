@@ -1,7 +1,10 @@
+@using Microsoft.AspNetCore.Components
 @using Microsoft.AspNetCore.Components.Web
 @typeparam TItem
 
 <div @onkeydown="OnKeyDown" @onkeyup="OnKeyUp" tabindex="0" style="outline: none;">
+@if (_currentViewData.Any())
+{
 <table class="bcl-data-table">
 <thead>
 <tr>
@@ -17,6 +20,11 @@
 }
 </tbody>
 </table>
+}
+else
+{
+@EmptyTemplate
+}
 </div>
 
 @code {
