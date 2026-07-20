@@ -2,6 +2,7 @@ namespace BlazorComponentLibrary.Components.DataTable;
 
 using BlazorComponentLibrary.Exceptions;
 using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Web;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -32,8 +33,8 @@ public sealed partial class DataTable<TItem> : ComponentBase, IDataTable<TItem>
 {
     private IEnumerable<TItem> _data = Enumerable.Empty<TItem>();
     private IEnumerable<TItem> _currentViewData = Enumerable.Empty<TItem>();
-    private Func<TItem, object?>? _sortSelector;
-    private SortDirection _sortDirection = SortDirection.Ascending;
+    private List<(Func<TItem, object?> KeySelector, SortDirection Direction)> _sortKeys = new();
+    private bool _isShiftKeyPressed = false;
 
     [Parameter]
     public RenderFragment TableHeader { get; set; }
@@ -91,8 +92,30 @@ public sealed partial class DataTable<TItem> : ComponentBase, IDataTable<TItem>
     /// <param name="direction">The sort direction.</param>
     public void SortBy(Func<TItem, object?> keySelector, SortDirection direction = SortDirection.Ascending)
     {
-        _sortSelector = keySelector;
-        _sortDirection = direction;
+        _sortKeys.Clear();
+        _sortKeys.Add((keySelector, direction));
+        ApplyView();
+        NotifyStateChanged();
+    }
+
+    /// <summary>
+    /// Adds a secondary sort key to the existing sort keys.
+    /// </summary>
+    /// <param name="keySelector">A function that extracts the sort key from a row item.</param>
+    /// <param name="direction">The sort direction.</param>
+    public void AddSortKey(Func<TItem, object?> keySelector, SortDirection direction = SortDirection.Ascending)
+    {
+        _sortKeys.Add((keySelector, direction));
+        ApplyView();
+        NotifyStateChanged();
+    }
+
+    /// <summary>
+    /// Clears all sort keys and returns to the original data order.
+    /// </summary>
+    public void ClearSort()
+    {
+        _sortKeys.Clear();
         ApplyView();
         NotifyStateChanged();
     }
@@ -122,11 +145,27 @@ public sealed partial class DataTable<TItem> : ComponentBase, IDataTable<TItem>
     {
         IEnumerable<TItem> result = _data;
 
-        if (_sortSelector != null)
+        if (_sortKeys.Count > 0)
         {
-            result = _sortDirection == SortDirection.Ascending
-                ? result.OrderBy(_sortSelector, NullSafeComparer.Instance)
-                : result.OrderByDescending(_sortSelector, NullSafeComparer.Instance);
+            IOrderedEnumerable<TItem>? ordered = null;
+
+            foreach (var (keySelector, direction) in _sortKeys)
+            {
+                if (ordered == null)
+                {
+                    ordered = direction == SortDirection.Ascending
+                        ? result.OrderBy(keySelector, NullSafeComparer.Instance)
+                        : result.OrderByDescending(keySelector, NullSafeComparer.Instance);
+                }
+                else
+                {
+                    ordered = direction == SortDirection.Ascending
+                        ? ordered.ThenBy(keySelector, NullSafeComparer.Instance)
+                        : ordered.ThenByDescending(keySelector, NullSafeComparer.Instance);
+                }
+            }
+
+            result = ordered ?? result;
         }
 
         // When virtualization is enabled, expose all rows — the Virtualize component
@@ -139,6 +178,22 @@ public sealed partial class DataTable<TItem> : ComponentBase, IDataTable<TItem>
         if (OnRowClick.HasDelegate)
         {
             await OnRowClick.InvokeAsync(item);
+        }
+    }
+
+    protected void OnKeyDown(KeyboardEventArgs args)
+    {
+        if (args.Key == "Shift")
+        {
+            _isShiftKeyPressed = true;
+        }
+    }
+
+    protected void OnKeyUp(KeyboardEventArgs args)
+    {
+        if (args.Key == "Shift")
+        {
+            _isShiftKeyPressed = false;
         }
     }
 }
