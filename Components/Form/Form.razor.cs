@@ -1,6 +1,7 @@
 namespace BlazorComponentLibrary.Components.Form;
 
 using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Forms;
 using System.ComponentModel.DataAnnotations;
 using System.Threading.Tasks;
 
@@ -13,6 +14,8 @@ public sealed partial class Form<TModel> : ComponentBase, IForm<TModel> where TM
 {
     private TModel _model = new();
     private IReadOnlyList<ValidationResult> _validationErrors = Array.Empty<ValidationResult>();
+    private bool _isDirty;
+    private EditContext? _editContext;
 
     /// <summary>Gets or sets the content rendered inside the form element.</summary>
     [Parameter]
@@ -40,6 +43,17 @@ public sealed partial class Form<TModel> : ComponentBase, IForm<TModel> where TM
     public IReadOnlyList<ValidationResult> ValidationErrors => _validationErrors;
 
     /// <summary>
+    /// Gets a value indicating whether any field in the form has been modified.
+    /// </summary>
+    public bool IsDirty => _isDirty;
+
+    /// <summary>
+    /// Event callback invoked when any field in the form is modified.
+    /// </summary>
+    [Parameter]
+    public EventCallback FieldsChanged { get; set; }
+
+    /// <summary>
     /// Sets the data model for the form.
     /// </summary>
     /// <param name="model">The model instance to bind to the form.</param>
@@ -47,6 +61,8 @@ public sealed partial class Form<TModel> : ComponentBase, IForm<TModel> where TM
     {
         _model = model ?? new TModel();
         _validationErrors = Array.Empty<ValidationResult>();
+        _isDirty = false;
+        _editContext = null;
         NotifyStateChanged(); // Notify Blazor that the component state has changed
     }
 
@@ -62,6 +78,30 @@ public sealed partial class Form<TModel> : ComponentBase, IForm<TModel> where TM
         catch (InvalidOperationException)
         {
             // Ignore if the component is not attached to a renderer (e.g. unit tests).
+        }
+    }
+
+    /// <summary>
+    /// Handles field changes and marks the form as dirty.
+    /// </summary>
+    private void HandleFieldChanged(object? sender, FieldChangedEventArgs e)
+    {
+        _isDirty = true;
+        FieldsChanged.InvokeAsync();
+        NotifyStateChanged();
+    }
+
+    /// <summary>
+    /// Overrides the base method to initialize the EditContext for field change tracking.
+    /// </summary>
+    protected override void OnParametersSet()
+    {
+        base.OnParametersSet();
+
+        if (_editContext == null || !object.Equals(_model, _editContext.Model))
+        {
+            _editContext = new EditContext(_model);
+            _editContext.OnFieldChanged += HandleFieldChanged;
         }
     }
 
@@ -91,7 +131,17 @@ public sealed partial class Form<TModel> : ComponentBase, IForm<TModel> where TM
     {
         if (await Validate())
         {
+            _isDirty = false;
             await OnSubmit.InvokeAsync(_model);
         }
+    }
+
+    /// <summary>
+    /// Resets the form to its initial state, clearing any modifications.
+    /// </summary>
+    public void Reset()
+    {
+        _isDirty = false;
+        NotifyStateChanged();
     }
 }

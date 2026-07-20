@@ -27,6 +27,16 @@ public interface IForm<TModel>
     bool IsValid { get; }
 
     /// <summary>
+    /// Gets a value indicating whether any field in the form has been modified.
+    /// </summary>
+    bool IsDirty { get; }
+
+    /// <summary>
+    /// Event callback invoked when any field in the form is modified.
+    /// </summary>
+    EventCallback FieldsChanged { get; set; }
+
+    /// <summary>
     /// Triggers validation for all fields in the form.
     /// </summary>
     /// <returns>True if the form is valid, false otherwise.</returns>
