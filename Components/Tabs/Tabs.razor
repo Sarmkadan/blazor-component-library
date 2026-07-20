@@ -1,0 +1,145 @@
+@using Microsoft.AspNetCore.Components
+
+<CascadingValue Value="this">
+    <div class="tabs" @ref="_element" tabindex="0" @onkeydown="HandleKeyDown">
+        <div class="tab-header">
+            @foreach (var tab in _tabPanels)
+            {
+                <button type="button"
+                        class="tab-button @(tab.IsActive ? "active" : "")
+                        @(tab.IsActive ? " aria-current=\"page\"" : "")"
+                        @onclick="() => ActivateTab(tab.Index)">
+                    @tab.Label
+                </button>
+            }
+        </div>
+        <div class="tab-content">
+            @ChildContent
+        </div>
+    </div>
+</CascadingValue>
+
+@code {
+    private ElementReference _element;
+    private readonly List<TabPanel> _tabPanels = new();
+
+    /// <summary>
+    /// The currently active tab index (two-way binding).
+    /// </summary>
+    [Parameter]
+    public int ActiveIndex { get; set; }
+
+    /// <summary>
+    /// Callback for when the active tab changes.
+    /// </summary>
+    [Parameter]
+    public EventCallback<int> ActiveIndexChanged { get; set; }
+
+    /// <summary>
+    /// Content that contains one or more <see cref="TabPanel"/> components.
+    /// </summary>
+    [Parameter]
+    public RenderFragment? ChildContent { get; set; }
+
+    /// <summary>
+    /// Fires when the active tab changes.
+    /// </summary>
+    [Parameter]
+    public EventCallback<int> OnActiveIndexChanged { get; set; }
+
+    internal void RegisterTabPanel(TabPanel tabPanel)
+    {
+        if (!_tabPanels.Contains(tabPanel))
+        {
+            _tabPanels.Add(tabPanel);
+            // If this is the first tab and ActiveIndex wasn't set, default to 0
+            if (_tabPanels.Count == 1 && ActiveIndex < 0)
+            {
+                ActiveIndex = 0;
+            }
+        }
+    }
+
+    internal void UnregisterTabPanel(TabPanel tabPanel) => _tabPanels.Remove(tabPanel);
+
+    private async Task ActivateTab(int index)
+    {
+        if (ActiveIndex != index)
+        {
+            ActiveIndex = index;
+            await ActiveIndexChanged.InvokeAsync(ActiveIndex);
+            await OnActiveIndexChanged.InvokeAsync(ActiveIndex);
+            StateHasChanged();
+        }
+    }
+
+    private async Task HandleKeyDown(KeyboardEventArgs args)
+    {
+        if (args.Key == "ArrowLeft")
+        {
+            await NavigateTabs(-1);
+        }
+        else if (args.Key == "ArrowRight")
+        {
+            await NavigateTabs(1);
+        }
+        else if (args.Key == "Home")
+        {
+            await NavigateTabs(int.MinValue);
+        }
+        else if (args.Key == "End")
+        {
+            await NavigateTabs(int.MaxValue);
+        }
+    }
+
+    private async Task NavigateTabs(int direction)
+    {
+        if (_tabPanels.Count == 0)
+        {
+            return;
+        }
+
+        int newIndex;
+        if (direction == int.MinValue)
+        {
+            // Home - first tab
+            newIndex = 0;
+        }
+        else if (direction == int.MaxValue)
+        {
+            // End - last tab
+            newIndex = _tabPanels.Count - 1;
+        }
+        else
+        {
+            // Arrow navigation - wrap around
+            newIndex = ActiveIndex + direction;
+            if (newIndex < 0)
+            {
+                newIndex = _tabPanels.Count - 1;
+            }
+            else if (newIndex >= _tabPanels.Count)
+            {
+                newIndex = 0;
+            }
+        }
+
+        await ActivateTab(newIndex);
+
+        // Focus the newly activated tab button for better accessibility
+        try
+        {
+            await _element.
+#if NET8_0_OR_GREATER
+                FocusAsync();
+#else
+                Focus();
+#endif
+        }
+        catch
+        {
+            // Ignore focus errors
+        }
+    }
+}

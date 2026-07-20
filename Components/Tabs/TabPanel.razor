@@ -1,0 +1,39 @@
+@using Microsoft.AspNetCore.Components
+
+@using BlazorComponentLibrary.Components.Tabs
+
+@implements IDisposable
+
+<div class="tab-panel" style="display: @(IsActive ? "block" : "none")>">
+    @ChildContent
+</div>
+
+@code {
+    [CascadingParameter]
+    private Tabs? Parent { get; set; }
+
+    /// <summary>
+    /// Content of the tab panel.
+    /// </summary>
+    [Parameter]
+    public RenderFragment? ChildContent { get; set; }
+
+    /// <summary>
+    /// The label/title of the tab.
+    /// </summary>
+    [Parameter]
+    public string? Label { get; set; }
+
+    /// <summary>
+    /// The index of this tab panel.
+    /// </summary>
+    [Parameter]
+    public int Index { get; set; }
+
+    internal bool IsActive => Parent?.ActiveIndex == Index;
+
+    protected override void OnInitialized()
+    {
+        Parent?.RegisterTabPanel(this);
+    }
+}
