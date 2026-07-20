@@ -24,7 +24,7 @@
 }
 
 @keyframes bcl-skeleton-pulse {
-    0%   { transform: translateX(0); }
+    0% { transform: translateX(0); }
     100% { transform: translateX(50%); }
 }
 
@@ -71,6 +71,11 @@
 /* Circle variant */
 .bcl-skeleton--circle {
     border-radius: 50%;
+}
+
+/* Card variant */
+.bcl-skeleton--card {
+    border-radius: var(--bcl-skeleton-radius, 8px);
 }
 
 /* Dark mode */

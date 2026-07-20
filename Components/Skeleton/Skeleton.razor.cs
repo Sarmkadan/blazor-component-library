@@ -4,28 +4,46 @@ using Microsoft.AspNetCore.Components;
 
 public sealed partial class Skeleton : ComponentBase, ISkeleton
 {
-    [Parameter]
-    public SkeletonType Type { get; set; } = SkeletonType.Text;
+[Parameter]
+public SkeletonType Type { get; set; } = SkeletonType.Text;
 
-    [Parameter]
-    public string Width { get; set; } = "100%";
+[Parameter]
+public SkeletonShape Shape { get; set; } = SkeletonShape.Rect;
 
-    [Parameter]
-    public string Height { get; set; } = "auto";
+[Parameter]
+public string Width { get; set; } = "100%";
 
-    /// <summary>
-    /// Number of text lines rendered when <see cref="Type"/> is <see cref="SkeletonType.Text"/>.
-    /// Ignored for Circle and Rectangle types.
-    /// </summary>
-    [Parameter]
-    public int Lines { get; set; } = 3;
+[Parameter]
+public string Height { get; set; } = "auto";
 
-    /// <summary>
-    /// When true, a CSS pulse animation is applied to the placeholder to indicate
-    /// that content is loading.
-    /// </summary>
-    [Parameter]
-    public bool Animated { get; set; } = true;
+/// <summary>
+/// Number of text lines rendered when <see cref="Type"/> is <see cref="SkeletonType.Text"/>.
+/// Ignored for Circle and Rectangle types.
+/// </summary>
+[Parameter]
+public int Lines { get; set; } = 3;
 
-    private string CssClass => Animated ? "bcl-skeleton bcl-skeleton--animated" : "bcl-skeleton";
+/// <summary>
+/// When true, a CSS pulse animation is applied to the placeholder to indicate
+/// that content is loading.
+/// </summary>
+[Parameter]
+public bool Animated { get; set; } = true;
+
+private string CssClass => Animated ? "bcl-skeleton bcl-skeleton--animated" : "bcl-skeleton";
+
+private string ShapeClass
+{
+get
+{
+return Shape switch
+{
+SkeletonShape.Text => "bcl-skeleton--text",
+SkeletonShape.Circle => "bcl-skeleton--circle",
+SkeletonShape.Rect => "bcl-skeleton--rectangle",
+SkeletonShape.Card => "bcl-skeleton--card",
+_ => "bcl-skeleton--rectangle"
+};
+}
+}
 }

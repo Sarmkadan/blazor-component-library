@@ -1,26 +1,32 @@
 @if (Type == SkeletonType.Text)
 {
-    <div class="@CssClass bcl-skeleton--text" style="width: @Width;" role="status" aria-label="Loading…">
-        @for (int i = 0; i < Lines; i++)
-        {
-            var lineIndex = i;
-            <div class="bcl-skeleton__line @(lineIndex == Lines - 1 ? "bcl-skeleton__line--short" : "")"></div>
-        }
-    </div>
+<div class="@CssClass @ShapeClass" style="width: @Width;" role="status" aria-label="Loading…">
+@for (int i = 0; i < Lines; i++)
+{
+var lineIndex = i;
+<div class="bcl-skeleton__line @(lineIndex == Lines - 1 ? "bcl-skeleton__line--short" : "")"></div>
+}
+</div>
 }
 else if (Type == SkeletonType.Circle)
 {
-    <div class="@CssClass bcl-skeleton--circle"
-         style="width: @Width; height: @(Height == "auto" ? Width : Height);"
-         role="status" aria-label="Loading…"></div>
+<div class="@CssClass @ShapeClass"
+style="width: @Width; height: @(Height == "auto" ? Width : Height);"
+role="status" aria-label="Loading…"></div>
+}
+else if (Type == SkeletonType.Rectangle)
+{
+<div class="@CssClass @ShapeClass"
+style="width: @Width; height: @(Height == "auto" ? "1.5rem" : Height);"
+role="status" aria-label="Loading…"></div>
 }
 else
 {
-    <div class="@CssClass bcl-skeleton--rectangle"
-         style="width: @Width; height: @(Height == "auto" ? "1.5rem" : Height);"
-         role="status" aria-label="Loading…"></div>
+<div class="@CssClass @ShapeClass"
+style="width: @Width; height: @(Height == "auto" ? "1.5rem" : Height);"
+role="status" aria-label="Loading…"></div>
 }
 
 @code {
-    // Logic is in Skeleton.razor.cs
+// Logic is in Skeleton.razor.cs
 }

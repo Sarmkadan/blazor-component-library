@@ -194,4 +194,19 @@ public static class SkeletonExtensions
 
         return skeleton.AsRectangle("100%", "200px");
     }
+
+    /// <summary>
+    /// Sets the shape of the skeleton.
+    /// </summary>
+    /// <param name="skeleton">The skeleton instance to configure.</param>
+    /// <param name="shape">The shape to use for the skeleton.</param>
+    /// <returns>The configured skeleton instance for method chaining.</returns>
+    /// <exception cref="ArgumentNullException"><paramref name="skeleton"/> is <see langword="null"/></exception>
+    public static Skeleton WithShape(this Skeleton skeleton, SkeletonShape shape)
+    {
+        ArgumentNullException.ThrowIfNull(skeleton);
+
+        skeleton.Shape = shape;
+        return skeleton;
+    }
 }
