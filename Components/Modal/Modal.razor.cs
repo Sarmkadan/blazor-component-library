@@ -5,6 +5,14 @@ using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
 using System.Threading.Tasks;
 
+public enum ModalSize
+{
+    Small,
+    Medium,
+    Large,
+    FullScreen
+}
+
 public sealed partial class Modal : ComponentBase, IModal
 {
     private bool _isVisible = false;
@@ -27,10 +35,25 @@ public sealed partial class Modal : ComponentBase, IModal
     [Parameter]
     public bool CloseOnOverlayClick { get; set; } = true;
 
+    [Parameter]
+    public ModalSize Size { get; set; } = ModalSize.Medium;
+
     /// <summary>
     /// Gets a value indicating whether the modal is currently visible.
     /// </summary>
     public bool IsVisible => _isVisible;
+
+    /// <summary>
+    /// Gets the CSS class string corresponding to the current <see cref="Size"/>.
+    /// </summary>
+    public string SizeClass => Size switch
+    {
+        ModalSize.Small => "modal-small",
+        ModalSize.Medium => "modal-medium",
+        ModalSize.Large => "modal-large",
+        ModalSize.FullScreen => "modal-fullscreen",
+        _ => "modal-medium"
+    };
 
     /// <summary>
     /// Shows the modal dialog. Saves the currently focused element so it can be
