@@ -35,6 +35,7 @@ public sealed partial class DataTable<TItem> : ComponentBase, IDataTable<TItem>
     private IEnumerable<TItem> _currentViewData = Enumerable.Empty<TItem>();
     private List<(Func<TItem, object?> KeySelector, SortDirection Direction)> _sortKeys = new();
     private bool _isShiftKeyPressed = false;
+    private ISet<string> _hiddenColumns = new HashSet<string>();
 
     [Parameter]
     public RenderFragment TableHeader { get; set; }
@@ -61,6 +62,16 @@ public sealed partial class DataTable<TItem> : ComponentBase, IDataTable<TItem>
     /// </summary>
     [Parameter]
     public bool EnableVirtualization { get; set; } = false;
+
+    /// <summary>
+    /// Gets or sets the names of columns that should be hidden.
+    /// </summary>
+    [Parameter]
+    public ISet<string> HiddenColumns
+    {
+        get => _hiddenColumns;
+        set => _hiddenColumns = value ?? new HashSet<string>();
+    }
 
     /// <summary>
     /// Sets the data source for the data table.
@@ -116,6 +127,28 @@ public sealed partial class DataTable<TItem> : ComponentBase, IDataTable<TItem>
     public void ClearSort()
     {
         _sortKeys.Clear();
+        ApplyView();
+        NotifyStateChanged();
+    }
+
+    /// <summary>
+    /// Toggles the visibility of a column by name.
+    /// If the column is currently hidden, it will be shown. If it is currently shown, it will be hidden.
+    /// </summary>
+    /// <param name="columnName">The name of the column to toggle.</param>
+    public void ToggleColumn(string columnName)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(columnName);
+
+        if (_hiddenColumns.Contains(columnName))
+        {
+            _hiddenColumns.Remove(columnName);
+        }
+        else
+        {
+            _hiddenColumns.Add(columnName);
+        }
+
         ApplyView();
         NotifyStateChanged();
     }
