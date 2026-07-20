@@ -1,0 +1,83 @@
+@* Pagination component with ellipsis logic and keyboard navigation *@
+
+@if (TotalPages > 1)
+{
+    <nav class="bcl-pagination @Class" style="@Style" aria-label="Pagination">
+        <ul class="bcl-pagination__list">
+            @if (ShowFirstPage)
+            {
+                <li class="bcl-pagination__item">
+                    <button type="button"
+                            class="bcl-pagination__button"
+                            disabled="@(CurrentPage <= 1)"
+                            @onclick="() => NavigateToPage(1)"
+                            aria-label="Go to first page">
+                        «
+                    </button>
+                </li>
+            }
+
+            @if (ShowPreviousPage)
+            {
+                <li class="bcl-pagination__item">
+                    <button type="button"
+                            class="bcl-pagination__button"
+                            disabled="@(CurrentPage <= 1)"
+                            @onclick="() => NavigateToPage(CurrentPage - 1)"
+                            aria-label="Go to previous page">
+                        ‹
+                    </button>
+                </li>
+            }
+
+            @foreach (var pageItem in PageItems)
+            {
+                if (pageItem.Type == PageItemType.Page)
+                {
+                    <li class="bcl-pagination__item">
+                        <button type="button"
+                                class="bcl-pagination__button @(pageItem.Number == CurrentPage ? "bcl-pagination__button--active" : "")"
+                                disabled="@(pageItem.Number == CurrentPage)"
+                                @onclick="() => NavigateToPage(pageItem.Number)"
+                                aria-label="Go to page @pageItem.Number"
+                                aria-current="@(pageItem.Number == CurrentPage ? "page" : null)">
+                            @pageItem.Number
+                        </button>
+                    </li>
+                }
+                else if (pageItem.Type == PageItemType.Ellipsis)
+                {
+                    <li class="bcl-pagination__item bcl-pagination__item--ellipsis" aria-hidden="true">
+                        <span class="bcl-pagination__ellipsis">…</span>
+                    </li>
+                }
+            }
+
+            @if (ShowNextPage)
+            {
+                <li class="bcl-pagination__item">
+                    <button type="button"
+                            class="bcl-pagination__button"
+                            disabled="@(CurrentPage >= TotalPages)"
+                            @onclick="() => NavigateToPage(CurrentPage + 1)"
+                            aria-label="Go to next page">
+                        ›
+                    </button>
+                </li>
+            }
+
+            @if (ShowLastPage)
+            {
+                <li class="bcl-pagination__item">
+                    <button type="button"
+                            class="bcl-pagination__button"
+                            disabled="@(CurrentPage >= TotalPages)"
+                            @onclick="() => NavigateToPage(TotalPages)"
+                            aria-label="Go to last page">
+                        »
+                    </button>
+                </li>
+            }
+        </ul>
+    </nav>
+}
