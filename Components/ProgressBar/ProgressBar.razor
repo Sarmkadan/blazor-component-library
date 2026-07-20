@@ -1,0 +1,54 @@
+@if (Indeterminate)
+{
+    <div class="@GetCssClasses()" role="progressbar" aria-busy="true" aria-valuemin="0" aria-valuemax="100" aria-valuetext="Indeterminate progress">
+        <div class="bcl-progress-bar__track">
+            <div class="bcl-progress-bar__indeterminate"></div>
+        </div>
+        @if (ShowLabel)
+        {
+            <div class="bcl-progress-bar__label">Loading...</div>
+        }
+    </div>
+}
+else
+{
+    <div class="@GetCssClasses()" role="progressbar"
+         aria-valuemin="0"
+         aria-valuemax="@GetAriaValueMax()"
+         aria-valuenow="@GetAriaValueNow()"
+         aria-valuetext="@GetAriaValueText()">
+        <div class="bcl-progress-bar__track">
+            <div class="bcl-progress-bar__fill" style="width: @GetProgressValue();"></div>
+        </div>
+        @if (ShowLabel)
+        {
+            <div class="bcl-progress-bar__label">@GetPercentageLabel()</div>
+        }
+    </div>
+}
+
+@code {
+    private string GetAriaValueText()
+    {
+        if (Max <= 0)
+        {
+            return "0%";
+        }
+
+        var clampedValue = Value < 0 ? 0 : Value;
+        var percentage = Math.Min((clampedValue / Max) * 100, 100);
+        return $"{percentage:0}%";
+    }
+
+    private string GetPercentageLabel()
+    {
+        if (Max <= 0)
+        {
+            return "0%";
+        }
+
+        var clampedValue = Value < 0 ? 0 : Value;
+        var percentage = Math.Min((clampedValue / Max) * 100, 100);
+        return $"{percentage:0}%";
+    }
+}

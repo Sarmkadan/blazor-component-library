@@ -1,0 +1,75 @@
+.bcl-progress-bar {
+    --bcl-progress-bar-height: 0.5rem;
+    --bcl-progress-bar-radius: 0.25rem;
+    --bcl-progress-bar-bg: #e2e8f0;
+    --bcl-progress-bar-fill-bg: #3b82f6;
+    --bcl-progress-bar-track-bg: #e5e7eb;
+    --bcl-progress-bar-label-color: #4b5563;
+
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    width: 100%;
+}
+
+.bcl-progress-bar__track {
+    background-color: var(--bcl-progress-bar-track-bg);
+    border-radius: var(--bcl-progress-bar-radius);
+    height: var(--bcl-progress-bar-height);
+    overflow: hidden;
+    position: relative;
+    width: 100%;
+}
+
+.bcl-progress-bar__fill {
+    background-color: var(--bcl-progress-bar-fill-bg);
+    border-radius: var(--bcl-progress-bar-radius);
+    height: 100%;
+    transition: width 0.3s ease;
+    width: 0%;
+}
+
+.bcl-progress-bar__indeterminate {
+    background: linear-gradient(90deg, transparent, var(--bcl-progress-bar-fill-bg), transparent);
+    background-size: 200% 100%;
+    animation: bcl-progress-bar-indeterminate 1.5s ease-in-out infinite;
+    border-radius: var(--bcl-progress-bar-radius);
+    height: 100%;
+    position: absolute;
+    width: 50%;
+}
+
+.bcl-progress-bar__label {
+    color: var(--bcl-progress-bar-label-color);
+    font-size: 0.75rem;
+    text-align: right;
+    width: 100%;
+}
+
+@keyframes bcl-progress-bar-indeterminate {
+    0% {
+        left: -100%;
+        right: 100%;
+    }
+
+    100% {
+        left: 100%;
+        right: -100%;
+    }
+}
+
+/* Theme-aware colors */
+@media (prefers-color-scheme: dark) {
+    .bcl-progress-bar {
+        --bcl-progress-bar-bg: #1f2937;
+        --bcl-progress-bar-track-bg: #374151;
+        --bcl-progress-bar-label-color: #d1d5db;
+    }
+}
+
+/* High contrast mode */
+@media (prefers-contrast: more) {
+    .bcl-progress-bar__fill {
+        border: 2px solid;
+    }
+}
