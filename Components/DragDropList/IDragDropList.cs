@@ -27,4 +27,10 @@ public interface IDragDropList<TItem>
     /// has no effect, giving a disabled-but-visible appearance.
     /// </summary>
     bool Enabled { get; set; }
+
+    /// <summary>
+    /// Gets or sets the group name that this list belongs to.
+    /// Items can only be dropped into lists sharing the same Group name.
+    /// </summary>
+    string? Group { get; set; }
 }

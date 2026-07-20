@@ -15,6 +15,14 @@ public sealed partial class DragDropList<TItem> : ComponentBase, IDragDropList<T
 {
     internal int _draggingIndex = -1;
     internal int _dragOverIndex = -1;
+    internal string? _dragOverListGroup;
+
+    /// <summary>
+    /// Gets or sets the group name that this list belongs to.
+    /// Items can only be dropped into lists sharing the same Group name.
+    /// </summary>
+    [Parameter]
+    public string? Group { get; set; }
 
     /// <inheritdoc/>
     [Parameter]
@@ -48,16 +56,24 @@ public sealed partial class DragDropList<TItem> : ComponentBase, IDragDropList<T
         _draggingIndex = index;
     }
 
-    internal void HandleDragOver(int index)
+    internal void HandleDragOver(int index, string? dragOverListGroup)
     {
         if (!Enabled || _draggingIndex < 0) return;
         _dragOverIndex = index;
+        _dragOverListGroup = dragOverListGroup;
     }
 
     internal async Task HandleDrop()
     {
         if (!Enabled || _draggingIndex < 0 || _dragOverIndex < 0 ||
             _draggingIndex == _dragOverIndex)
+        {
+            ResetDragState();
+            return;
+        }
+
+        // Check if the drop is allowed (same group or no group specified)
+        if (Group != null && _dragOverListGroup != null && !string.Equals(Group, _dragOverListGroup, StringComparison.Ordinal))
         {
             ResetDragState();
             return;
@@ -79,6 +95,7 @@ public sealed partial class DragDropList<TItem> : ComponentBase, IDragDropList<T
     {
         _draggingIndex = -1;
         _dragOverIndex = -1;
+        _dragOverListGroup = null;
     }
 
     /// <summary>

@@ -4,11 +4,11 @@
     @foreach (var (item, index) in IndexedItems)
     {
         var capturedIndex = index;
-        <li class="bcl-dnd-item @(capturedIndex == _dragOverIndex ? "bcl-dnd-item--drag-over" : "") @(capturedIndex == _draggingIndex ? "bcl-dnd-item--dragging" : "")"
+        <li class="bcl-dnd-item @(capturedIndex == _dragOverIndex ? "bcl-dnd-item--drag-over" : "") @(capturedIndex == _draggingIndex ? "bcl-dnd-item--dragging" : "") @(_dragOverIndex >= 0 && _dragOverListGroup != null && Group != null && !string.Equals(Group, _dragOverListGroup, StringComparison.Ordinal) ? "bcl-dnd-item--invalid-drop" : "")"
             draggable="@(Enabled ? "true" : "false")"
             @ondragstart="() => HandleDragStart(capturedIndex)"
             @ondragover:preventDefault="true"
-            @ondragover="() => HandleDragOver(capturedIndex)"
+            @ondragover="() => HandleDragOver(capturedIndex, Group)"
             @ondrop="HandleDrop"
             @ondragend="HandleDragEnd">
             <span class="bcl-dnd-handle" aria-hidden="true" title="Drag to reorder">⠿</span>
