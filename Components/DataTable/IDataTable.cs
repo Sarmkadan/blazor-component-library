@@ -65,4 +65,9 @@ public interface IDataTable<TItem>
     /// Event callback for when a row in the data table is clicked.
     /// </summary>
     EventCallback<TItem> OnRowClick { get; set; }
+
+        /// <summary>
+        /// Content to render when the data table has no items to display.
+        /// </summary>
+        RenderFragment? EmptyTemplate { get; set; }
 }
