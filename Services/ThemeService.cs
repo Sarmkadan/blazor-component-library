@@ -54,10 +54,12 @@ public sealed class ThemeService : IThemeService
         // Enum.IsDefined guards against stray numeric strings (e.g. "42") which
         // Enum.TryParse would otherwise happily convert to an undefined enum value.
         if (Enum.TryParse<ThemeMode>(stored, ignoreCase: true, out var persisted) &&
-            Enum.IsDefined(persisted))
+            Enum.IsDefined(typeof(ThemeMode), persisted))
         {
             ApplyTheme(persisted, persist: false);
         }
+        // If the stored value is null, empty, or not a defined ThemeMode,
+        // we simply keep the default (ThemeMode.System) without throwing.
     }
 
     /// <inheritdoc/>
