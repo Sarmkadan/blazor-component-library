@@ -1,0 +1,96 @@
+@using Microsoft.AspNetCore.Components
+@using System.Collections.Generic
+@using System.Linq
+
+<CascadingValue Value="this">
+    <div class="accordion">
+        @ChildContent
+    </div>
+</CascadingValue>
+
+@code {
+    /// <summary>
+    /// Allows more than one accordion item to be expanded at the same time.
+    /// </summary>
+    [Parameter]
+    public bool AllowMultiple { get; set; }
+
+    /// <summary>
+    /// Content that contains one or more <see cref="AccordionItem"/> components.
+    /// </summary>
+    [Parameter]
+    public RenderFragment? ChildContent { get; set; }
+
+    /// <summary>
+    /// Fires when an item is toggled (expanded or collapsed).
+    /// </summary>
+    [Parameter]
+    public EventCallback<AccordionItem> ItemToggled { get; set; }
+
+    // Holds references to all registered items.
+    private readonly List<AccordionItem> _items = new();
+
+    /// <summary>
+    /// Called by child <see cref="AccordionItem"/> components to register themselves.
+    /// </summary>
+    internal void RegisterItem(AccordionItem item)
+    {
+        if (!_items.Contains(item))
+        {
+            _items.Add(item);
+            if (item.IsInitiallyExpanded)
+            {
+                // Expand the item without raising the ItemToggled event (initial state).
+                ExpandItem(item, raiseEvent: false);
+            }
+        }
+    }
+
+    /// <summary>
+    /// Called by child items when they are disposed.
+    /// </summary>
+    internal void UnregisterItem(AccordionItem item) => _items.Remove(item);
+
+    /// <summary>
+    /// Called by an <see cref="AccordionItem"/> when its header is clicked.
+    /// </summary>
+    internal void ToggleItem(AccordionItem item)
+    {
+        var newState = !item.IsExpanded;
+        if (newState)
+        {
+            ExpandItem(item, raiseEvent: true);
+        }
+        else
+        {
+            CollapseItem(item, raiseEvent: true);
+        }
+    }
+
+    private void ExpandItem(AccordionItem item, bool raiseEvent)
+    {
+        if (!AllowMultiple)
+        {
+            // Collapse any other expanded items when only a single item may be open.
+            foreach (var other in _items.Where(i => i != item && i.IsExpanded).ToList())
+            {
+                CollapseItem(other, raiseEvent: true);
+            }
+        }
+
+        item.SetExpanded(true);
+        if (raiseEvent)
+        {
+            ItemToggled.InvokeAsync(item);
+        }
+    }
+
+    private void CollapseItem(AccordionItem item, bool raiseEvent)
+    {
+        item.SetExpanded(false);
+        if (raiseEvent)
+        {
+            ItemToggled.InvokeAsync(item);
+        }
+    }
+}
