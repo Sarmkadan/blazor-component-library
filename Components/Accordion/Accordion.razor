@@ -15,6 +15,12 @@
     [Parameter]
     public bool AllowMultiple { get; set; }
 
+/// <summary>
+/// When true, only one accordion item can be expanded at a time (others are automatically closed).
+/// </summary>
+[Parameter]
+public bool SingleOpen { get; set; }
+
     /// <summary>
     /// Content that contains one or more <see cref="AccordionItem"/> components.
     /// </summary>
@@ -69,7 +75,7 @@
 
     private void ExpandItem(AccordionItem item, bool raiseEvent)
     {
-        if (!AllowMultiple)
+        if (!AllowMultiple || SingleOpen)
         {
             // Collapse any other expanded items when only a single item may be open.
             foreach (var other in _items.Where(i => i != item && i.IsExpanded).ToList())
