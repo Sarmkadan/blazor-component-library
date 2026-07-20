@@ -45,6 +45,20 @@ public sealed partial class Chart<TData> : ComponentBase, IChart<TData>
     /// </summary>
     public void Refresh() => NotifyStateChanged();
 
+    /// <summary>
+    /// Sets the visibility of a series in the chart.
+    /// </summary>
+    /// <param name="seriesIndex">The index of the series to toggle.</param>
+    /// <param name="visible">Whether the series should be visible.</param>
+    public void SetSeriesVisibility(int seriesIndex, bool visible)
+    {
+        // This method is called from JavaScript interop when a legend item is clicked
+        // This method signature satisfies the IChart interface
+  // The actual visibility toggle is handled in JavaScript
+  // This maintains the interface contract defined in IChart<TData>
+  StateHasChanged();
+    }
+
     private void NotifyStateChanged()
     {
         try

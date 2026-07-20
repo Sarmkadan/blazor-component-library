@@ -71,6 +71,13 @@ public interface IChart<TData>
     void Refresh();
 
     /// <summary>
+    /// Sets the visibility of a series in the chart.
+    /// </summary>
+    /// <param name="seriesIndex">The index of the series to toggle.</param>
+    /// <param name="visible">Whether the series should be visible.</param>
+    void SetSeriesVisibility(int seriesIndex, bool visible);
+
+    /// <summary>
     /// Gets or sets the type of chart to display.
     /// </summary>
     ChartType ChartType { get; set; }
