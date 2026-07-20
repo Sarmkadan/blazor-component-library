@@ -26,6 +26,12 @@ public interface IThemeService
     event Action<ThemeMode>? ThemeChanged;
 
     /// <summary>
+    /// Raised when the theme changes, providing the string representation
+    /// that is written to the <c>data-bcl-theme</c> attribute (e.g., "light", "dark", "auto").
+    /// </summary>
+    event Action<string>? OnThemeChanged;
+
+    /// <summary>
     /// Changes the active theme and persists the selection to local storage.
     /// Sets a <c>data-bcl-theme</c> attribute on <c>document.documentElement</c>
     /// so CSS custom properties can respond to the change without a page reload.

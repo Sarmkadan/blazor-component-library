@@ -21,6 +21,12 @@ public sealed class ThemeService : IThemeService
     /// <inheritdoc/>
     public event Action<ThemeMode>? ThemeChanged;
 
+    /// <summary>
+    /// Raised when the theme changes, providing the string representation
+    /// that is written to the <c>data-bcl-theme</c> attribute (e.g., "light", "dark", "auto").
+    /// </summary>
+    public event Action<string>? OnThemeChanged;
+
     /// <summary>Initialises a new instance of <see cref="ThemeService"/>.</summary>
     /// <param name="jsRuntime">The JS interop runtime injected by the DI container.</param>
     /// <exception cref="ArgumentNullException">Thrown when <paramref name="jsRuntime"/> is null.</exception>
@@ -59,6 +65,12 @@ public sealed class ThemeService : IThemeService
 
     private void ApplyTheme(ThemeMode theme, bool persist)
     {
+        // Do not raise events or perform any work if the theme is unchanged.
+        if (theme == _currentTheme)
+        {
+            return;
+        }
+
         _currentTheme = theme;
 
         var attributeValue = theme switch
@@ -75,6 +87,7 @@ public sealed class ThemeService : IThemeService
         _ = PushToBrowserAsync(attributeValue, persist ? theme : null);
 
         ThemeChanged?.Invoke(theme);
+        OnThemeChanged?.Invoke(attributeValue);
     }
 
     private async Task PushToBrowserAsync(string attributeValue, ThemeMode? persistAs)
