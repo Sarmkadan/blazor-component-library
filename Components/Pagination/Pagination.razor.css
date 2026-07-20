@@ -1,0 +1,83 @@
+/* Pagination component styles */
+
+.bcl-pagination {
+    display: inline-block;
+    font-family: var(--bcl-font-family, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif);
+    font-size: var(--bcl-font-size, 1rem);
+}
+
+.bcl-pagination__list {
+    display: flex;
+    gap: 0.25rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.bcl-pagination__item {
+    margin: 0;
+    padding: 0;
+}
+
+.bcl-pagination__button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 2.5rem;
+    height: 2.5rem;
+    padding: 0 0.5rem;
+    border: 1px solid transparent;
+    border-radius: 0.25rem;
+    background-color: var(--bcl-pagination-bg, transparent);
+    color: var(--bcl-pagination-color, currentColor);
+    cursor: pointer;
+    font-size: inherit;
+    font-weight: 500;
+    line-height: 1.25;
+    text-decoration: none;
+    transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.bcl-pagination__button:hover:not(:disabled) {
+    background-color: var(--bcl-pagination-hover-bg, rgba(0, 0, 0, 0.05));
+    color: var(--bcl-pagination-hover-color, currentColor);
+}
+
+.bcl-pagination__button:focus {
+    outline: 2px solid var(--bcl-pagination-focus-outline, currentColor);
+    outline-offset: 2px;
+}
+
+.bcl-pagination__button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.bcl-pagination__button--active {
+    background-color: var(--bcl-pagination-active-bg, currentColor);
+    color: var(--bcl-pagination-active-color, #fff);
+    border-color: var(--bcl-pagination-active-border, currentColor);
+}
+
+.bcl-pagination__button--active:hover {
+    background-color: var(--bcl-pagination-active-hover-bg, currentColor);
+    color: var(--bcl-pagination-active-color, #fff);
+}
+
+.bcl-pagination__item--ellipsis .bcl-pagination__ellipsis {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 2.5rem;
+    height: 2.5rem;
+    color: var(--bcl-pagination-ellipsis-color, currentColor);
+    font-size: 1.25rem;
+    font-weight: 500;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .bcl-pagination__button,
+    .bcl-pagination__button--active {
+        transition: none;
+    }
+}
