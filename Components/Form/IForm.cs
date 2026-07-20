@@ -41,4 +41,9 @@ public interface IForm<TModel>
     /// </summary>
     /// <returns>True if the form is valid, false otherwise.</returns>
     Task<bool> Validate();
+
+    /// <summary>
+    /// Resets the form to its initial state, clearing any modifications and validation state.
+    /// </summary>
+    void Reset();
 }

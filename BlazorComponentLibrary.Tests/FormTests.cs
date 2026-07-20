@@ -139,4 +139,60 @@ public class FormTests
         form.IsValid.Should().BeTrue();
         form.ValidationErrors.Should().BeEmpty();
     }
+
+    /// <summary>
+    /// Tests that Reset() clears the IsDirty flag.
+    /// </summary>
+    [Fact]
+    public void Reset_ClearsIsDirtyFlag()
+    {
+        // Arrange
+        var form = new Form<TestModel>();
+
+        // Simulate dirty state by directly setting the field
+        // (In real usage, this would be set by HandleFieldChanged)
+        var field = form.GetType().GetField("_isDirty", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+        field?.SetValue(form, true);
+
+        // Act
+        form.Reset();
+
+        // Assert
+        form.IsDirty.Should().BeFalse();
+    }
+
+    /// <summary>
+    /// Tests that Reset() can be called multiple times without errors.
+    /// </summary>
+    [Fact]
+    public void Reset_MultipleTimes_DoesNotThrow()
+    {
+        // Arrange
+        var form = new Form<TestModel>();
+
+        // Act & Assert
+        form.Reset();
+        form.Reset();
+        form.Reset();
+
+        // Should not throw
+        form.Should().NotBeNull();
+    }
+
+    /// <summary>
+    /// Tests that Reset() maintains the model instance.
+    /// </summary>
+    [Fact]
+    public void Reset_PreservesModelInstance()
+    {
+        // Arrange
+        var form = new Form<TestModel>();
+        var originalModel = form.Model;
+
+        // Act
+        form.Reset();
+
+        // Assert
+        form.Model.Should().BeSameAs(originalModel);
+    }
 }
