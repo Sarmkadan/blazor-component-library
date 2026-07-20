@@ -52,4 +52,17 @@ public interface IToastService
 
     /// <summary>Removes all active toasts immediately.</summary>
     void DismissAll();
+
+    /// <summary>
+    /// Pauses the auto-dismiss timer for a specific toast.
+    /// </summary>
+    /// <param name="id">The ID of the toast to pause.</param>
+    void PauseTimer(Guid id);
+
+    /// <summary>
+    /// Resumes the auto-dismiss timer for a specific toast.
+    /// </summary>
+    /// <param name="id">The ID of the toast to resume.</param>
+    /// <param name="remainingMs">The remaining time in milliseconds.</param>
+    void ResumeTimer(Guid id, double remainingMs);
 }

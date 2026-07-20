@@ -129,6 +129,40 @@ public sealed class ToastService : IToastService, IDisposable
         timer.Start();
     }
 
+    /// <summary>
+    /// Pauses the auto-dismiss timer for a specific toast.
+    /// </summary>
+    /// <param name="id">The ID of the toast to pause.</param>
+    public void PauseTimer(Guid id)
+    {
+        lock (_lock)
+        {
+            if (_timers.TryGetValue(id, out var timer))
+            {
+                timer.Stop();
+                _logger.LogDebug("Paused toast timer for ID: {ToastId}", id);
+            }
+        }
+    }
+
+    /// <summary>
+    /// Resumes the auto-dismiss timer for a specific toast.
+    /// </summary>
+    /// <param name="id">The ID of the toast to resume.</param>
+    /// <param name="remainingMs">The remaining time in milliseconds.</param>
+    public void ResumeTimer(Guid id, double remainingMs)
+    {
+        lock (_lock)
+        {
+            if (_timers.TryGetValue(id, out var timer))
+            {
+                timer.Interval = remainingMs;
+                timer.Start();
+                _logger.LogDebug("Resumed toast timer for ID: {ToastId} with {RemainingMs}ms remaining", id, remainingMs);
+            }
+        }
+    }
+
     /// <inheritdoc/>
     public void Dispose()
     {
