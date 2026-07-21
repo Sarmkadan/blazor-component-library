@@ -4,10 +4,15 @@ using Microsoft.AspNetCore.Components;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography;
+using System.Text;
+using System.Text.Json;
 
 public sealed partial class Chart<TData> : ComponentBase, IChart<TData>
 {
     private IEnumerable<TData> _data = Enumerable.Empty<TData>();
+    private string? _dataHash;
+    private Dictionary<string, object>? _geometryCache;
 
     [Parameter]
     public ChartType ChartType { get; set; }
@@ -32,12 +37,34 @@ public sealed partial class Chart<TData> : ComponentBase, IChart<TData>
     public IEnumerable<ChartAnnotation> Annotations { get; set; } = Enumerable.Empty<ChartAnnotation>();
 
     /// <summary>
+    /// Gets the cached geometry/path data for the current data set.
+    /// </summary>
+    protected Dictionary<string, object> GeometryCache
+    {
+        get
+        {
+            if (_geometryCache == null)
+            {
+                _geometryCache = new Dictionary<string, object>();
+            }
+            return _geometryCache;
+        }
+    }
+
+    /// <summary>
+    /// Gets the hash of the current data set.
+    /// </summary>
+    protected string? DataHash => _dataHash;
+
+    /// <summary>
     /// Sets the data source for the chart.
     /// </summary>
     /// <param name="data">The enumerable collection of data items.</param>
     public void SetData(IEnumerable<TData> data)
     {
         _data = data ?? Enumerable.Empty<TData>();
+        _dataHash = ComputeDataHash(_data);
+        InvalidateCache();
         NotifyStateChanged();
     }
 
@@ -70,6 +97,90 @@ public sealed partial class Chart<TData> : ComponentBase, IChart<TData>
         {
             // Ignore if the component is not attached to a renderer (e.g. unit tests).
         }
+    }
+
+    /// <summary>
+    /// Invalidates the geometry cache, forcing recomputation on next access.
+    /// This should be called whenever any parameter that affects rendering changes.
+    /// </summary>
+    private void InvalidateCache()
+    {
+        _geometryCache = null;
+    }
+
+    /// <summary>
+    /// Called when parameters are set, including during initial render.
+    /// Invalidates cache when any rendering-affecting parameter changes.
+    /// </summary>
+    protected override void OnParametersSet()
+    {
+        base.OnParametersSet();
+
+        // Invalidate cache if any parameter that affects rendering has changed
+        // This ensures geometry is recomputed when chart configuration changes
+        InvalidateCache();
+    }
+
+    /// <summary>
+    /// Computes a hash of the data set for use as a cache key.
+    /// This ensures that geometry/path data is only recomputed when the data changes.
+    /// </summary>
+    /// <param name="data">The data collection to hash.</param>
+    /// <returns>A hash string representing the data, or null if data is empty.</returns>
+    private string? ComputeDataHash(IEnumerable<TData> data)
+    {
+        if (!data.Any())
+        {
+            return null;
+        }
+
+        try
+        {
+            // Create a stable hash by serializing the data to JSON
+            // This provides a consistent representation of the data for comparison
+            var json = JsonSerializer.Serialize(data, new JsonSerializerOptions
+            {
+                PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+                WriteIndented = false,
+                DefaultIgnoreCondition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull
+            });
+
+            using var sha256 = SHA256.Create();
+            var bytes = Encoding.UTF8.GetBytes(json);
+            var hashBytes = sha256.ComputeHash(bytes);
+            return Convert.ToBase64String(hashBytes);
+        }
+        catch
+        {
+            // If serialization fails, return null to disable caching for this data set
+            return null;
+        }
+    }
+
+    /// <summary>
+    /// Gets or creates cached geometry data for a specific series.
+    /// </summary>
+    /// <param name="seriesKey">The key identifying the series.</param>
+    /// <param name="createFunc">A function that computes the geometry if not cached.</param>
+    /// <returns>The cached or newly computed geometry data.</returns>
+    protected object GetOrCreateGeometry(string seriesKey, Func<object> createFunc)
+    {
+        // If data hash is null (empty data) or cache is null, compute fresh
+        if (_dataHash == null || _geometryCache == null)
+        {
+            return createFunc();
+        }
+
+        // Try to get cached value
+        if (_geometryCache.TryGetValue(seriesKey, out var cachedValue))
+        {
+            return cachedValue;
+        }
+
+        // Compute and cache the geometry
+        var geometry = createFunc();
+        _geometryCache[seriesKey] = geometry;
+        return geometry;
     }
 
     /// <summary>
