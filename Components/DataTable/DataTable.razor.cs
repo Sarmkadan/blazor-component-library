@@ -36,6 +36,9 @@ public sealed partial class DataTable<TItem> : ComponentBase, IDataTable<TItem>
     private readonly SortState<TItem> _sortState = new();
     private bool _isShiftKeyPressed = false;
     private ISet<string> _hiddenColumns = new HashSet<string>();
+    private int _dataVersion = 0;
+    private int _sortVersion = 0;
+    private int _pageVersion = 0;
 
     [Parameter]
     public RenderFragment TableHeader { get; set; }
@@ -85,6 +88,7 @@ public sealed partial class DataTable<TItem> : ComponentBase, IDataTable<TItem>
     {
         ArgumentNullException.ThrowIfNull(data);
         _data = data;
+        _dataVersion++;
         _sortState.SetData(data);
         ApplyView();
         NotifyStateChanged();
@@ -108,6 +112,7 @@ public sealed partial class DataTable<TItem> : ComponentBase, IDataTable<TItem>
     public void SortBy(Func<TItem, object?> keySelector, SortDirection direction = SortDirection.Ascending)
     {
         _sortState.SortBy(keySelector, direction);
+        _sortVersion++;
         ApplyView();
         NotifyStateChanged();
     }
@@ -120,6 +125,7 @@ public sealed partial class DataTable<TItem> : ComponentBase, IDataTable<TItem>
     public void AddSortKey(Func<TItem, object?> keySelector, SortDirection direction = SortDirection.Ascending)
     {
         _sortState.AddSortKey(keySelector, direction);
+        _sortVersion++;
         ApplyView();
         NotifyStateChanged();
     }
@@ -130,6 +136,7 @@ public sealed partial class DataTable<TItem> : ComponentBase, IDataTable<TItem>
     public void ClearSort()
     {
         _sortState.ClearSort();
+        _sortVersion++;
         ApplyView();
         NotifyStateChanged();
     }
@@ -152,6 +159,7 @@ public sealed partial class DataTable<TItem> : ComponentBase, IDataTable<TItem>
             _hiddenColumns.Add(columnName);
         }
 
+        _pageVersion++;
         ApplyView();
         NotifyStateChanged();
     }
@@ -174,8 +182,31 @@ public sealed partial class DataTable<TItem> : ComponentBase, IDataTable<TItem>
     protected override void OnParametersSet()
     {
         base.OnParametersSet();
+        _pageVersion++;
         ApplyView();
     }
+
+    protected override bool ShouldRender()
+    {
+        // Track the version stamps at the time of last successful render
+        if (_lastRenderDataVersion == _dataVersion &&
+            _lastRenderSortVersion == _sortVersion &&
+            _lastRenderPageVersion == _pageVersion)
+        {
+            return false;
+        }
+
+        // Update the last rendered version stamps
+        _lastRenderDataVersion = _dataVersion;
+        _lastRenderSortVersion = _sortVersion;
+        _lastRenderPageVersion = _pageVersion;
+
+        return true;
+    }
+
+    private int _lastRenderDataVersion = -1;
+    private int _lastRenderSortVersion = -1;
+    private int _lastRenderPageVersion = -1;
 
     private void ApplyView()
     {
