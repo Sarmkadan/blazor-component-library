@@ -33,7 +33,7 @@ public sealed partial class DataTable<TItem> : ComponentBase, IDataTable<TItem>
 {
     private IEnumerable<TItem> _data = Enumerable.Empty<TItem>();
     private IEnumerable<TItem> _currentViewData = Enumerable.Empty<TItem>();
-    private List<(Func<TItem, object?> KeySelector, SortDirection Direction)> _sortKeys = new();
+    private readonly SortState<TItem> _sortState = new();
     private bool _isShiftKeyPressed = false;
     private ISet<string> _hiddenColumns = new HashSet<string>();
 
@@ -85,6 +85,7 @@ public sealed partial class DataTable<TItem> : ComponentBase, IDataTable<TItem>
     {
         ArgumentNullException.ThrowIfNull(data);
         _data = data;
+        _sortState.SetData(data);
         ApplyView();
         NotifyStateChanged();
     }
@@ -106,8 +107,7 @@ public sealed partial class DataTable<TItem> : ComponentBase, IDataTable<TItem>
     /// <param name="direction">The sort direction.</param>
     public void SortBy(Func<TItem, object?> keySelector, SortDirection direction = SortDirection.Ascending)
     {
-        _sortKeys.Clear();
-        _sortKeys.Add((keySelector, direction));
+        _sortState.SortBy(keySelector, direction);
         ApplyView();
         NotifyStateChanged();
     }
@@ -119,7 +119,7 @@ public sealed partial class DataTable<TItem> : ComponentBase, IDataTable<TItem>
     /// <param name="direction">The sort direction.</param>
     public void AddSortKey(Func<TItem, object?> keySelector, SortDirection direction = SortDirection.Ascending)
     {
-        _sortKeys.Add((keySelector, direction));
+        _sortState.AddSortKey(keySelector, direction);
         ApplyView();
         NotifyStateChanged();
     }
@@ -129,7 +129,7 @@ public sealed partial class DataTable<TItem> : ComponentBase, IDataTable<TItem>
     /// </summary>
     public void ClearSort()
     {
-        _sortKeys.Clear();
+        _sortState.ClearSort();
         ApplyView();
         NotifyStateChanged();
     }
@@ -179,34 +179,12 @@ public sealed partial class DataTable<TItem> : ComponentBase, IDataTable<TItem>
 
     private void ApplyView()
     {
-        IEnumerable<TItem> result = _data;
-
-        if (_sortKeys.Count > 0)
-        {
-            IOrderedEnumerable<TItem>? ordered = null;
-
-            foreach (var (keySelector, direction) in _sortKeys)
-            {
-                if (ordered == null)
-                {
-                    ordered = direction == SortDirection.Ascending
-                        ? result.OrderBy(keySelector, NullSafeComparer.Instance)
-                        : result.OrderByDescending(keySelector, NullSafeComparer.Instance);
-                }
-                else
-                {
-                    ordered = direction == SortDirection.Ascending
-                        ? ordered.ThenBy(keySelector, NullSafeComparer.Instance)
-                        : ordered.ThenByDescending(keySelector, NullSafeComparer.Instance);
-                }
-            }
-
-            result = ordered ?? result;
-        }
+        // Apply sorting if any sort keys are set
+        IEnumerable<TItem> sortedData = _sortState.ApplySort();
 
         // When virtualization is enabled, expose all rows — the Virtualize component
         // handles windowing. Pagination only applies in non-virtualized mode.
-        _currentViewData = EnableVirtualization ? result : result.Take(PageSize);
+        _currentViewData = EnableVirtualization ? sortedData : sortedData.Take(PageSize);
     }
 
     protected async Task OnRowClickHandler(TItem item)
