@@ -1,6 +1,7 @@
 namespace BlazorComponentLibrary.Components.Chart;
 
 using Microsoft.AspNetCore.Components;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -77,4 +78,11 @@ public sealed partial class Chart<TData> : ComponentBase, IChart<TData>
     /// </summary>
     [Parameter]
     public RenderFragment? ChildContent { get; set; }
+
+/// <summary>
+/// Gets or sets a function to format numeric values for axis labels and tooltips.
+/// Defaults to invariant culture formatting with "0.##" pattern.
+/// </summary>
+[Parameter]
+public Func<double, string> ValueFormatter { get; set; } = value => value.ToString("0.##", System.Globalization.CultureInfo.InvariantCulture);
 }
