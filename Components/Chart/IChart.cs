@@ -1,6 +1,7 @@
 namespace BlazorComponentLibrary.Components.Chart;
 
 using Microsoft.AspNetCore.Components;
+using System;
 using System.Collections.Generic;
 
 public enum ChartType
@@ -106,5 +107,11 @@ public interface IChart<TData>
     /// Gets or sets the annotations overlaid on the chart, such as threshold lines,
     /// event markers, and reference bands.
     /// </summary>
-    IEnumerable<ChartAnnotation> Annotations { get; set; }
+    /// <summary>
+/// Gets or sets a function to format numeric values for axis labels and tooltips.
+/// Defaults to invariant culture formatting with "0.##" pattern.
+/// </summary>
+Func<double, string> ValueFormatter { get; set; }
+
+		IEnumerable<ChartAnnotation> Annotations { get; set; }
 }
