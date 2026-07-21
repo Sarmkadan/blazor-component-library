@@ -204,4 +204,35 @@ public static class ChartExtensions
         chart.SetSeriesVisibility(seriesIndex, visible);
         chart.Refresh();
     }
+
+    /// <summary>
+    /// Gets or creates cached geometry data for a specific series.
+    /// This method allows components to cache expensive geometry/path computations
+    /// and reuse them when the data hasn't changed.
+    /// </summary>
+    /// <typeparam name="TData">The type of data in the chart.</typeparam>
+    /// <param name="chart">The chart instance.</param>
+    /// <param name="seriesKey">The key identifying the series.</param>
+    /// <param name="createFunc">A function that computes the geometry if not cached.</param>
+    /// <returns>The cached or newly computed geometry data.</returns>
+    /// <exception cref="ArgumentNullException"><paramref name="chart"/> is <see langword="null"/>.</exception>
+    /// <exception cref="ArgumentNullException"><paramref name="seriesKey"/> is <see langword="null"/>.</exception>
+    /// <exception cref="ArgumentNullException"><paramref name="createFunc"/> is <see langword="null"/>.</exception>
+    public static object GetOrCreateGeometry<TData>(
+        this IChart<TData> chart,
+        string seriesKey,
+        Func<object> createFunc)
+    {
+        ArgumentNullException.ThrowIfNull(chart);
+        ArgumentNullException.ThrowIfNull(seriesKey);
+        ArgumentNullException.ThrowIfNull(createFunc);
+
+        if (chart is Chart<TData> typedChart)
+        {
+            return typedChart.GetOrCreateGeometry(seriesKey, createFunc);
+        }
+
+        // Fallback for interface usage
+        return createFunc();
+    }
 }
