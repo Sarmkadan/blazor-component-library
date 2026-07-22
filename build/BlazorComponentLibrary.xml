@@ -1,0 +1,2591 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>BlazorComponentLibrary</name>
+    </assembly>
+    <members>
+        <member name="T:BlazorComponentLibrary.Components.Breadcrumbs.BreadcrumbItem">
+            <summary>
+            Represents a single item in a breadcrumb trail.
+            </summary>
+            <param name="Text">The display text for the breadcrumb item.</param>
+            <param name="Href">The URL to navigate to when the breadcrumb item is clicked. If null, the item is rendered as plain text.</param>
+        </member>
+        <member name="M:BlazorComponentLibrary.Components.Breadcrumbs.BreadcrumbItem.#ctor(System.String,System.String)">
+            <summary>
+            Represents a single item in a breadcrumb trail.
+            </summary>
+            <param name="Text">The display text for the breadcrumb item.</param>
+            <param name="Href">The URL to navigate to when the breadcrumb item is clicked. If null, the item is rendered as plain text.</param>
+        </member>
+        <member name="P:BlazorComponentLibrary.Components.Breadcrumbs.BreadcrumbItem.Text">
+            <summary>The display text for the breadcrumb item.</summary>
+        </member>
+        <member name="P:BlazorComponentLibrary.Components.Breadcrumbs.BreadcrumbItem.Href">
+            <summary>The URL to navigate to when the breadcrumb item is clicked. If null, the item is rendered as plain text.</summary>
+        </member>
+        <member name="T:BlazorComponentLibrary.Components.Breadcrumbs.Breadcrumbs">
+            <summary>
+            A breadcrumb navigation component that displays a hierarchy of links.
+            </summary>
+        </member>
+        <member name="P:BlazorComponentLibrary.Components.Breadcrumbs.Breadcrumbs.Items">
+            <summary>
+            Gets or sets the collection of breadcrumb items to display.
+            </summary>
+        </member>
+        <member name="P:BlazorComponentLibrary.Components.Breadcrumbs.Breadcrumbs.SeparatorTemplate">
+            <summary>
+            Gets or sets the template for the separator between breadcrumb items.
+            Defaults to "/".
+            </summary>
+        </member>
+        <member name="P:BlazorComponentLibrary.Components.Breadcrumbs.Breadcrumbs.Class">
+            <summary>
+            Gets or sets the CSS class for the breadcrumbs container.
+            </summary>
+        </member>
+        <member name="P:BlazorComponentLibrary.Components.Breadcrumbs.Breadcrumbs.Style">
+            <summary>
+            Gets or sets the CSS style for the breadcrumbs container.
+            </summary>
+        </member>
+        <member name="T:BlazorComponentLibrary.Components.Breadcrumbs.IBreadcrumbs">
+            <summary>
+            Represents a breadcrumb navigation component that displays a hierarchy of links.
+            </summary>
+        </member>
+        <member name="P:BlazorComponentLibrary.Components.Breadcrumbs.IBreadcrumbs.Items">
+            <summary>Gets or sets the collection of breadcrumb items to display.</summary>
+        </member>
+        <member name="P:BlazorComponentLibrary.Components.Breadcrumbs.IBreadcrumbs.SeparatorTemplate">
+            <summary>
+            Gets or sets the template for the separator between breadcrumb items.
+            Defaults to "/".
+            </summary>
+        </member>
+        <member name="P:BlazorComponentLibrary.Components.Breadcrumbs.IBreadcrumbs.Class">
+            <summary>
+            Gets or sets the CSS class for the breadcrumbs container.
+            </summary>
+        </member>
+        <member name="P:BlazorComponentLibrary.Components.Breadcrumbs.IBreadcrumbs.Style">
+            <summary>
+            Gets or sets the CSS style for the breadcrumbs container.
+            </summary>
+        </member>
+        <member name="P:BlazorComponentLibrary.Components.Chart.Chart`1.Annotations">
+            <summary>
+            Gets or sets annotations overlaid on the chart, such as threshold lines,
+            event markers, and reference bands.
+            </summary>
+        </member>
+        <member name="P:BlazorComponentLibrary.Components.Chart.Chart`1.GeometryCache">
+            <summary>
+            Gets the cached geometry/path data for the current data set.
+            </summary>
+        </member>
+        <member name="P:BlazorComponentLibrary.Components.Chart.Chart`1.DataHash">
+            <summary>
+            Gets the hash of the current data set.
+            </summary>
+        </member>
+        <member name="M:BlazorComponentLibrary.Components.Chart.Chart`1.SetData(System.Collections.Generic.IEnumerable{`0})">
+            <summary>
+            Sets the data source for the chart.
+            </summary>
+            <param name="data">The enumerable collection of data items.</param>
+        </member>
+        <member name="M:BlazorComponentLibrary.Components.Chart.Chart`1.Refresh">
+            <summary>
+            Refreshes the chart, re-rendering its content.
+            </summary>
+        </member>
+        <member name="M:BlazorComponentLibrary.Components.Chart.Chart`1.SetSeriesVisibility(System.Int32,System.Boolean)">
+            <summary>
+            Sets the visibility of a series in the chart.
+            </summary>
+            <param name="seriesIndex">The index of the series to toggle.</param>
+            <param name="visible">Whether the series should be visible.</param>
+        </member>
+        <member name="M:BlazorComponentLibrary.Components.Chart.Chart`1.InvalidateCache">
+            <summary>
+            Invalidates the geometry cache, forcing recomputation on next access.
+            This should be called whenever any parameter that affects rendering changes.
+            </summary>
+        </member>
+        <member name="M:BlazorComponentLibrary.Components.Chart.Chart`1.OnParametersSet">
+            <summary>
+            Called when parameters are set, including during initial render.
+            Invalidates cache when any rendering-affecting parameter changes.
+            </summary>
+        </member>
+        <member name="M:BlazorComponentLibrary.Components.Chart.Chart`1.ComputeDataHash(System.Collections.Generic.IEnumerable{`0})">
+            <summary>
+            Computes a hash of the data set for use as a cache key.
+            This ensures that geometry/path data is only recomputed when the data changes.
+            </summary>
+            <param name="data">The data collection to hash.</param>
+            <returns>A hash string representing the data, or null if data is empty.</returns>
+        </member>
+        <member name="M:BlazorComponentLibrary.Components.Chart.Chart`1.GetOrCreateGeometry(System.String,System.Func{System.Object})">
+            <summary>
+            Gets or creates cached geometry data for a specific series.
+            </summary>
+            <param name="seriesKey">The key identifying the series.</param>
+            <param name="createFunc">A function that computes the geometry if not cached.</param>
+            <returns>The cached or newly computed geometry data.</returns>
+        </member>
+        <member name="P:BlazorComponentLibrary.Components.Chart.Chart`1.ChildContent">
+            <summary>
+            Gets or sets custom content rendered inside the chart body, after the
+            built-in summary and before any annotations.
+            </summary>
+        </member>
+        <member name="P:BlazorComponentLibrary.Components.Chart.Chart`1.ValueFormatter">
+            <summary>
+            Gets or sets a function to format numeric values for axis labels and tooltips.
+            Defaults to invariant culture formatting with "0.##" pattern.
+            </summary>
+        </member>
+        <member name="T:BlazorComponentLibrary.Components.Chart.ChartAnnotationExtensions">
+            <summary>
+            Provides extension methods for working with <see cref="T:BlazorComponentLibrary.Components.Chart.ChartAnnotation"/> instances.
+            </summary>
+        </member>
+        <member name="M:BlazorComponentLibrary.Components.Chart.ChartAnnotationExtensions.GetDisplayText(BlazorComponentLibrary.Components.Chart.ChartAnnotation)">
+            <summary>
+            Gets the display text for the annotation based on its type and configuration.
+            </summary>
+            <param name="annotation">The annotation instance.</param>
+            <returns>A formatted string representing the annotation.</returns>
+            <exception cref="T:System.ArgumentNullException"><paramref name="annotation"/> is <see langword="null"/>.</exception>
+        </member>
+        <member name="M:BlazorComponentLibrary.Components.Chart.ChartAnnotationExtensions.IsValid(BlazorComponentLibrary.Components.Chart.ChartAnnotation)">
+            <summary>
+            Determines whether the annotation has a valid configuration for rendering.
+            </summary>
+            <param name="annotation">The annotation instance.</param>
+            <returns><see langword="true"/> if the annotation is valid; otherwise, <see langword="false"/>.</returns>
+            <exception cref="T:System.ArgumentNullException"><paramref name="annotation"/> is <see langword="null"/>.</exception>
+        </member>
+        <member name="M:BlazorComponentLibrary.Components.Chart.ChartAnnotationExtensions.Clone(BlazorComponentLibrary.Components.Chart.ChartAnnotation)">
+            <summary>
+            Creates a deep copy of the annotation to allow modifications without affecting the original.
+            </summary>
+            <param name="annotation">The annotation instance.</param>
+            <returns>A new <see cref="T:BlazorComponentLibrary.Components.Chart.ChartAnnotation"/> instance with the same values.</returns>
+            <exception cref="T:System.ArgumentNullException"><paramref name="annotation"/> is <see langword="null"/>.</exception>
+        </member>
+        <member name="M:BlazorComponentLibrary.Components.Chart.ChartAnnotationExtensions.SetColor(BlazorComponentLibrary.Components.Chart.ChartAnnotation,System.String)">
+            <summary>
+            Updates the annotation's color while preserving its other properties.
+            </summary>
+            <param name="annotation">The annotation instance.</param>
+            <param name="color">The new color value in CSS format (e.g., "#ff0000", "red", "rgba(255,0,0,0.5)").</param>
+            <exception cref="T:System.ArgumentNullException"><paramref name="annotation"/> is <see langword="null"/>.</exception>
+            <exception cref="T:System.ArgumentException"><paramref name="color"/> is <see langword="null"/> or empty.</exception>
+        </member>
+        <member name="M:BlazorComponentLibrary.Components.Chart.ChartAnnotationExtensions.SetTooltip(BlazorComponentLibrary.Components.Chart.ChartAnnotation,System.String)">
+            <summary>
+            Updates the annotation's tooltip text while preserving its other properties.
+            </summary>
+            <param name="annotation">The annotation instance.</param>
+            <param name="tooltip">The new tooltip text.</param>
+            <exception cref="T:System.ArgumentNullException"><paramref name="annotation"/> is <see langword="null"/>.</exception>
+        </member>
+        <member name="M:BlazorComponentLibrary.Components.Chart.ChartAnnotationExtensions.GetValueText(BlazorComponentLibrary.Components.Chart.ChartAnnotation)">
+            <summary>
+            Gets the annotation's value as a formatted string using invariant culture.
+            </summary>
+            <param name="annotation">The annotation instance.</param>
+            <returns>A formatted string representation of the value.</returns>
+            <exception cref="T:System.ArgumentNullException"><paramref name="annotation"/> is <see langword="null"/>.</exception>
+        </member>
+        <member name="M:BlazorComponentLibrary.Components.Chart.ChartAnnotationExtensions.HasLabel(BlazorComponentLibrary.Components.Chart.ChartAnnotation)">
+            <summary>
+            Determines whether the annotation has a label set.
+            </summary>
+            <param name="annotation">The annotation instance.</param>
+            <returns><see langword="true"/> if the annotation has a non-empty label; otherwise, <see langword="false"/>.</returns>
+            <exception cref="T:System.ArgumentNullException"><paramref name="annotation"/> is <see langword="null"/>.</exception>
+        </member>
+        <member name="T:BlazorComponentLibrary.Components.Chart.ChartAnnotationJsonExtensions">
+            <summary>
+            Provides System.Text.Json serialization and deserialization extensions for <see cref="T:BlazorComponentLibrary.Components.Chart.ChartAnnotation"/> instances.
+            </summary>
+        </member>
+        <member name="M:BlazorComponentLibrary.Components.Chart.ChartAnnotationJsonExtensions.ToJson(BlazorComponentLibrary.Components.Chart.ChartAnnotation,System.Boolean)">
+            <summary>
+            Serializes a chart annotation to a JSON string.
+            </summary>
+            <param name="value">The chart annotation to serialize.</param>
+            <param name="indented">Whether to format the JSON with indentation for readability.</param>
+            <returns>A JSON string representation of the chart annotation.</returns>
+            <exception cref="T:System.ArgumentNullException">Thrown when <paramref name="value"/> is <see langword="null"/>.</exception>
+        </member>
+        <member name="M:BlazorComponentLibrary.Components.Chart.ChartAnnotationJsonExtensions.FromJson(System.String)">
+            <summary>
+            Deserializes a chart annotation from a JSON string.
+            </summary>
+            <param name="json">The JSON string to deserialize.</param>
+            <returns>The deserialized chart annotation if successful; otherwise, <see langword="null"/>.</returns>
+            <exception cref="T:System.ArgumentException">Thrown when <paramref name="json"/> is <see langword="null"/> or empty.</exception>
+            <remarks>
+            This method returns <see langword="null"/> on deserialization failure rather than throwing, making it suitable for
+            scenarios where invalid JSON should be handled gracefully without exceptions.
+            </remarks>
+        </member>
+        <member name="M:BlazorComponentLibrary.Components.Chart.ChartAnnotationJsonExtensions.TryFromJson(System.String,BlazorComponentLibrary.Components.Chart.ChartAnnotation@)">
+            <summary>
+            Attempts to deserialize a chart annotation from a JSON string.
+            </summary>
+            <param name="json">The JSON string to deserialize.</param>
+            <param name="value">Receives the deserialized chart annotation if successful.</param>
+            <returns><see langword="true"/> if deserialization succeeded; otherwise, <see langword="false"/>.</returns>
+            <exception cref="T:System.ArgumentException">Thrown when <paramref name="json"/> is <see langword="null"/> or empty.</exception>
+        </member>
+        <member name="T:BlazorComponentLibrary.Components.Chart.ChartAnnotationValidation">
+            <summary>
+            Provides validation helpers for <see cref="T:BlazorComponentLibrary.Components.Chart.ChartAnnotation"/> instances.
+            </summary>
+        </member>
+        <member name="M:BlazorComponentLibrary.Components.Chart.ChartAnnotationValidation.Validate(BlazorComponentLibrary.Components.Chart.ChartAnnotation)">
+            <summary>
+            Validates a <see cref="T:BlazorComponentLibrary.Components.Chart.ChartAnnotation"/> instance and returns a list of human-readable problems.
+            </summary>
+            <param name="value">The annotation instance to validate.</param>
+            <returns>An enumerable of validation problems; empty if the annotation is valid.</returns>
+            <exception cref="T:System.ArgumentNullException"><paramref name="value"/> is <see langword="null"/>.</exception>
+        </member>
+        <member name="M:BlazorComponentLibrary.Components.Chart.ChartAnnotationValidation.IsValid(BlazorComponentLibrary.Components.Chart.ChartAnnotation)">
+            <summary>
+            Determines whether a <see cref="T:BlazorComponentLibrary.Components.Chart.ChartAnnotation"/> instance is valid.
+            </summary>
+            <param name="value">The annotation instance to check.</param>
+            <returns><see langword="true"/> if the annotation is valid; otherwise, <see langword="false"/>.</returns>
+            <exception cref="T:System.ArgumentNullException"><paramref name="value"/> is <see langword="null"/>.</exception>
+        </member>
+        <member name="M:BlazorComponentLibrary.Components.Chart.ChartAnnotationValidation.EnsureValid(BlazorComponentLibrary.Components.Chart.ChartAnnotation)">
+            <summary>
+            Ensures that a <see cref="T:BlazorComponentLibrary.Components.Chart.ChartAnnotation"/> instance is valid, throwing an exception if it is not.
+            </summary>
+            <param name="value">The annotation instance to validate.</param>
+            <exception cref="T:System.ArgumentNullException"><paramref name="value"/> is <see langword="null"/>.</exception>
+            <exception cref="T:System.ArgumentException"><paramref name="value"/> has validation problems.</exception>
+        </member>
+        <member name="T:BlazorComponentLibrary.Components.Chart.ChartExtensions">
+            <summary>
+            Provides extension methods for working with chart components.
+            </summary>
+            <remarks>
+            This static class contains fluent extension methods for <see cref="T:BlazorComponentLibrary.Components.Chart.IChart`1"/>
+            that simplify common chart operations like adding annotations, setting data, and configuring chart properties.
+            </remarks>
+        </member>
+        <member name="M:BlazorComponentLibrary.Components.Chart.ChartExtensions.SetDataAndRefresh``1(BlazorComponentLibrary.Components.Chart.IChart{``0},System.Collections.Generic.IEnumerable{``0})">
+            <summary>
+            Sets the chart data and refreshes the chart in a single operation.
+            </summary>
+            <typeparam name="TData">The type of data in the chart.</typeparam>
+            <param name="chart">The chart instance.</param>
+            <param name="data">The data to set.</param>
+            <exception cref="T:System.ArgumentNullException"><paramref name="chart"/> is <see langword="null"/>.</exception>
+        </member>
+        <member name="M:BlazorComponentLibrary.Components.Chart.ChartExtensions.AddThresholdLine``1(BlazorComponentLibrary.Components.Chart.IChart{``0},System.Double,System.String,System.String,System.String)">
+            <summary>
+            Adds a threshold line annotation to the chart at the specified value.
+            </summary>
+            <typeparam name="TData">The type of data in the chart.</typeparam>
+            <param name="chart">The chart instance.</param>
+            <param name="value">The threshold value where the line should be drawn.</param>
+            <param name="label">Optional label for the threshold line.</param>
+            <param name="color">Optional color for the threshold line. Defaults to "#ff6384".</param>
+            <param name="tooltip">Optional tooltip text shown on hover.</param>
+            <returns>The annotation that was added, allowing for method chaining.</returns>
+            <exception cref="T:System.ArgumentNullException"><paramref name="chart"/> is <see langword="null"/>.</exception>
+        </member>
+        <member name="M:BlazorComponentLibrary.Components.Chart.ChartExtensions.AddEventMarker``1(BlazorComponentLibrary.Components.Chart.IChart{``0},System.Double,System.String,System.String,System.String)">
+            <summary>
+            Adds an event marker annotation to the chart at the specified position.
+            </summary>
+            <typeparam name="TData">The type of data in the chart.</typeparam>
+            <param name="chart">The chart instance.</param>
+            <param name="position">The position on the x-axis where the marker should be drawn.</param>
+            <param name="label">Optional label for the event marker.</param>
+            <param name="color">Optional color for the event marker. Defaults to "#36a2eb".</param>
+            <param name="tooltip">Optional tooltip text shown on hover.</param>
+            <returns>The annotation that was added, allowing for method chaining.</returns>
+            <exception cref="T:System.ArgumentNullException"><paramref name="chart"/> is <see langword="null"/>.</exception>
+        </member>
+        <member name="M:BlazorComponentLibrary.Components.Chart.ChartExtensions.AddReferenceBand``1(BlazorComponentLibrary.Components.Chart.IChart{``0},System.Double,System.Double,System.String,System.String,System.String)">
+            <summary>
+            Adds a reference band annotation to the chart between two values.
+            </summary>
+            <typeparam name="TData">The type of data in the chart.</typeparam>
+            <param name="chart">The chart instance.</param>
+            <param name="startValue">The start value of the reference band.</param>
+            <param name="endValue">The end value of the reference band.</param>
+            <param name="label">Optional label for the reference band.</param>
+            <param name="color">Optional color for the reference band. Defaults to "#4bc0c080" (30% opacity).</param>
+            <param name="tooltip">Optional tooltip text shown on hover.</param>
+            <returns>The annotation that was added, allowing for method chaining.</returns>
+            <exception cref="T:System.ArgumentNullException"><paramref name="chart"/> is <see langword="null"/>.</exception>
+            <exception cref="T:System.ArgumentOutOfRangeException"><paramref name="startValue"/> is greater than <paramref name="endValue"/>.</exception>
+        </member>
+        <member name="M:BlazorComponentLibrary.Components.Chart.ChartExtensions.ClearAnnotations``1(BlazorComponentLibrary.Components.Chart.IChart{``0})">
+            <summary>
+            Clears all annotations from the chart.
+            </summary>
+            <typeparam name="TData">The type of data in the chart.</typeparam>
+            <param name="chart">The chart instance.</param>
+            <exception cref="T:System.ArgumentNullException"><paramref name="chart"/> is <see langword="null"/>.</exception>
+        </member>
+        <member name="M:BlazorComponentLibrary.Components.Chart.ChartExtensions.SetTitle``1(BlazorComponentLibrary.Components.Chart.IChart{``0},System.String)">
+            <summary>
+            Sets the chart title and refreshes the chart.
+            </summary>
+            <typeparam name="TData">The type of data in the chart.</typeparam>
+            <param name="chart">The chart instance.</param>
+            <param name="title">The title to set.</param>
+            <exception cref="T:System.ArgumentNullException"><paramref name="chart"/> is <see langword="null"/>.</exception>
+            <exception cref="T:System.ArgumentException"><paramref name="title"/> is <see langword="null"/> or empty.</exception>
+        </member>
+        <member name="M:BlazorComponentLibrary.Components.Chart.ChartExtensions.SetChartType``1(BlazorComponentLibrary.Components.Chart.IChart{``0},BlazorComponentLibrary.Components.Chart.ChartType)">
+            <summary>
+            Sets the chart type and refreshes the chart.
+            </summary>
+            <typeparam name="TData">The type of data in the chart.</typeparam>
+            <param name="chart">The chart instance.</param>
+            <param name="chartType">The chart type to set.</param>
+            <exception cref="T:System.ArgumentNullException"><paramref name="chart"/> is <see langword="null"/>.</exception>
+        </member>
+        <member name="M:BlazorComponentLibrary.Components.Chart.ChartExtensions.SetSeriesVisibility``1(BlazorComponentLibrary.Components.Chart.IChart{``0},System.Int32,System.Boolean)">
+            <summary>
+            Sets the visibility of a series in the chart.
+            </summary>
+            <typeparam name="TData">The type of data in the chart.</typeparam>
+            <param name="chart">The chart instance.</param>
+            <param name="seriesIndex">The index of the series to toggle.</param>
+            <param name="visible">Whether the series should be visible.</param>
+            <exception cref="T:System.ArgumentNullException"><paramref name="chart"/> is <see langword="null"/>.</exception>
+        </member>
+        <member name="M:BlazorComponentLibrary.Components.Chart.ChartExtensions.GetOrCreateGeometry``1(BlazorComponentLibrary.Components.Chart.IChart{``0},System.String,System.Func{System.Object})">
+            <summary>
+            Gets or creates cached geometry data for a specific series.
+            This method allows components to cache expensive geometry/path computations
+            and reuse them when the data hasn't changed.
+            </summary>
+            <typeparam name="TData">The type of data in the chart.</typeparam>
+            <param name="chart">The chart instance.</param>
+            <param name="seriesKey">The key identifying the series.</param>
+            <param name="createFunc">A function that computes the geometry if not cached.</param>
+            <returns>The cached or newly computed geometry data.</returns>
+            <exception cref="T:System.ArgumentNullException"><paramref name="chart"/> is <see langword="null"/>.</exception>
+            <exception cref="T:System.ArgumentNullException"><paramref name="seriesKey"/> is <see langword="null"/>.</exception>
+            <exception cref="T:System.ArgumentNullException"><paramref name="createFunc"/> is <see langword="null"/>.</exception>
+        </member>
+        <member name="T:BlazorComponentLibrary.Components.Chart.ChartJsonExtensions">
+            <summary>
+            Provides JSON serialization and deserialization extensions for <see cref="T:BlazorComponentLibrary.Components.Chart.Chart`1"/> components.
+            </summary>
+        </member>
+        <member name="M:BlazorComponentLibrary.Components.Chart.ChartJsonExtensions.ToJson``1(BlazorComponentLibrary.Components.Chart.Chart{``0},System.Boolean)">
+            <summary>
+            Serializes a chart to a JSON string.
+            </summary>
+            <typeparam name="TData">The type of data in the chart.</typeparam>
+            <param name="value">The chart to serialize.</param>
+            <param name="indented">Whether to format the JSON with indentation for readability.</param>
+            <returns>A JSON string representation of the chart.</returns>
+            <exception cref="T:System.ArgumentNullException">Thrown when <paramref name="value"/> is <see langword="null"/>.</exception>
+        </member>
+        <member name="M:BlazorComponentLibrary.Components.Chart.ChartJsonExtensions.FromJson``1(System.String)">
+            <summary>
+            Deserializes a chart from a JSON string.
+            </summary>
+            <typeparam name="TData">The type of data in the chart.</typeparam>
+            <param name="json">The JSON string to deserialize.</param>
+            <returns>The deserialized chart, or <see langword="null"/> if the JSON is invalid.</returns>
+            <exception cref="T:System.ArgumentNullException">Thrown when <paramref name="json"/> is <see langword="null"/>.</exception>
+            <exception cref="T:System.ArgumentException">Thrown when <paramref name="json"/> is empty.</exception>
+        </member>
+        <member name="M:BlazorComponentLibrary.Components.Chart.ChartJsonExtensions.TryFromJson``1(System.String,BlazorComponentLibrary.Components.Chart.Chart{``0}@)">
+            <summary>
+            Attempts to deserialize a chart from a JSON string.
+            </summary>
+            <typeparam name="TData">The type of data in the chart.</typeparam>
+            <param name="json">The JSON string to deserialize.</param>
+            <param name="value">Receives the deserialized chart if successful.</param>
+            <returns><see langword="true"/> if deserialization succeeded; otherwise, <see langword="false"/>.</returns>
+            <exception cref="T:System.ArgumentNullException">Thrown when <paramref name="json"/> is <see langword="null"/>.</exception>
+            <exception cref="T:System.ArgumentException">Thrown when <paramref name="json"/> is empty.</exception>
+        </member>
+        <member name="T:BlazorComponentLibrary.Components.Chart.ChartValidation">
+            <summary>
+            Provides validation helpers for chart components.
+            </summary>
+        </member>
+        <member name="M:BlazorComponentLibrary.Components.Chart.ChartValidation.Validate(BlazorComponentLibrary.Components.Chart.IChart{System.Object})">
+            <summary>
+            Validates a chart instance and returns a list of human-readable problems.
+            </summary>
+            <param name="value">The chart instance to validate.</param>
+            <returns>An enumerable of validation problems; empty if the chart is valid.</returns>
+            <exception cref="T:System.ArgumentNullException"><paramref name="value"/> is <see langword="null"/>.</exception>
+        </member>
+        <member name="M:BlazorComponentLibrary.Components.Chart.ChartValidation.IsValid(BlazorComponentLibrary.Components.Chart.IChart{System.Object})">
+            <summary>
+            Determines whether a chart instance is valid.
+            </summary>
+            <param name="value">The chart instance to check.</param>
+            <returns><see langword="true"/> if the chart is valid; otherwise, <see langword="false"/>.</returns>
+            <exception cref="T:System.ArgumentNullException"><paramref name="value"/> is <see langword="null"/>.</exception>
+        </member>
+        <member name="M:BlazorComponentLibrary.Components.Chart.ChartValidation.EnsureValid(BlazorComponentLibrary.Components.Chart.IChart{System.Object})">
+            <summary>
+            Ensures that a chart instance is valid, throwing an exception if it is not.
+            </summary>
+            <param name="value">The chart instance to validate.</param>
+            <exception cref="T:System.ArgumentNullException"><paramref name="value"/> is <see langword="null"/>.</exception>
+            <exception cref="T:System.ArgumentException"><paramref name="value"/> has validation problems.</exception>
+        </member>
+        <member name="M:BlazorComponentLibrary.Components.Chart.ChartValidation.ValidateStringCollection(System.Collections.Generic.IEnumerable{System.String},System.String)">
+            <summary>
+            Validates that a collection of strings contains no null or whitespace entries.
+            </summary>
+            <param name="collection">The collection to validate.</param>
+            <param name="itemTypeName">The type of items in the collection (used in error messages).</param>
+            <returns>An enumerable of validation problems; empty if the collection is valid.</returns>
+            <exception cref="T:System.ArgumentNullException"><paramref name="collection"/> is <see langword="null"/>.</exception>
+        </member>
+        <member name="M:BlazorComponentLibrary.Components.Chart.ChartValidation.ValidateAnnotations(System.Collections.Generic.IEnumerable{BlazorComponentLibrary.Components.Chart.ChartAnnotation})">
+            <summary>
+            Validates chart annotations for correctness.
+            </summary>
+            <param name="annotations">The annotations to validate.</param>
+            <returns>An enumerable of validation problems; empty if the annotations are valid.</returns>
+            <exception cref="T:System.ArgumentNullException"><paramref name="annotations"/> is <see langword="null"/>.</exception>
+        </member>
+        <member name="F:BlazorComponentLibrary.Components.Chart.ChartAnnotationType.ThresholdLine">
+            <summary>A horizontal line marking a threshold or target value.</summary>
+        </member>
+        <member name="F:BlazorComponentLibrary.Components.Chart.ChartAnnotationType.EventMarker">
+            <summary>A vertical line marking a significant event on the x-axis.</summary>
+        </member>
+        <member name="F:BlazorComponentLibrary.Components.Chart.ChartAnnotationType.ReferenceBand">
+            <summary>A shaded band between two values (e.g., an acceptable range).</summary>
+        </member>
+        <member name="T:BlazorComponentLibrary.Components.Chart.ChartAnnotation">
+            <summary>
+            Represents a contextual annotation overlaid on a chart, such as a threshold
+            line, event marker, or shaded reference band.
+            </summary>
+        </member>
+        <member name="P:BlazorComponentLibrary.Components.Chart.ChartAnnotation.Type">
+            <summary>Gets or sets the annotation type.</summary>
+        </member>
+        <member name="P:BlazorComponentLibrary.Components.Chart.ChartAnnotation.Value">
+            <summary>
+            Gets or sets the primary value for the annotation.
+            For ThresholdLine/EventMarker this is the line position.
+            For ReferenceBand this is the band's start value.
+            </summary>
+        </member>
+        <member name="P:BlazorComponentLibrary.Components.Chart.ChartAnnotation.EndValue">
+            <summary>
+            Gets or sets the end value for a ReferenceBand annotation.
+            Ignored for other annotation types.
+            </summary>
+        </member>
+        <member name="P:BlazorComponentLibrary.Components.Chart.ChartAnnotation.Label">
+            <summary>Gets or sets the display label for the annotation.</summary>
+        </member>
+        <member name="P:BlazorComponentLibrary.Components.Chart.ChartAnnotation.Color">
+            <summary>Gets or sets the CSS color for the annotation line or band.</summary>
+        </member>
+        <member name="P:BlazorComponentLibrary.Components.Chart.ChartAnnotation.Tooltip">
+            <summary>Gets or sets the tooltip text shown on hover.</summary>
+        </member>
+        <member name="M:BlazorComponentLibrary.Components.Chart.IChart`1.SetData(System.Collections.Generic.IEnumerable{`0})">
+            <summary>
+            Sets the data source for the chart.
+            </summary>
+            <param name="data">The enumerable collection of data items.</param>
+        </member>
+        <member name="M:BlazorComponentLibrary.Components.Chart.IChart`1.Refresh">
+            <summary>
+            Refreshes the chart, re-rendering its content.
+            </summary>
+        </member>
+        <member name="M:BlazorComponentLibrary.Components.Chart.IChart`1.SetSeriesVisibility(System.Int32,System.Boolean)">
+            <summary>
+            Sets the visibility of a series in the chart.
+            </summary>
+            <param name="seriesIndex">The index of the series to toggle.</param>
+            <param name="visible">Whether the series should be visible.</param>
+        </member>
+        <member name="P:BlazorComponentLibrary.Components.Chart.IChart`1.ChartType">
+            <summary>
+            Gets or sets the type of chart to display.
+            </summary>
+        </member>
+        <member name="P:BlazorComponentLibrary.Components.Chart.IChart`1.Title">
+            <summary>
+            Gets or sets the title of the chart.
+            </summary>
+        </member>
+        <member name="P:BlazorComponentLibrary.Components.Chart.IChart`1.Labels">
+            <summary>
+            Gets or sets the labels for the chart's data points or series.
+            </summary>
+        </member>
+        <member name="P:BlazorComponentLibrary.Components.Chart.IChart`1.Colors">
+            <summary>
+            Gets or sets the colors for the chart's data points or series.
+            </summary>
+        </member>
+        <member name="P:BlazorComponentLibrary.Components.Chart.IChart`1.Options">
+            <summary>
+            Gets or sets additional options for configuring the chart (e.g., library-specific settings).
+            </summary>
+        </member>
+        <member name="P:BlazorComponentLibrary.Components.Chart.IChart`1.ValueFormatter">
+            <summary>
+            Gets or sets the annotations overlaid on the chart, such as threshold lines,
+            event markers, and reference bands.
+            </summary>
+            <summary>
+            Gets or sets a function to format numeric values for axis labels and tooltips.
+            Defaults to invariant culture formatting with "0.##" pattern.
+            </summary>
+        </member>
+        <member name="T:BlazorComponentLibrary.Components.DataTable.NullSafeComparer">
+            <summary>
+            Compares two objects in a null-safe manner, placing nulls last.
+            </summary>
+        </member>
+        <member name="M:BlazorComponentLibrary.Components.DataTable.DataTable`1.GetPropertyValue(`0,System.String)">
+            <summary>
+            Gets the value of a property from an item using a cached compiled delegate.
+            </summary>
+            <param name="item">The item to get the property from.</param>
+            <param name="propertyName">The name of the property to access.</param>
+            <returns>The property value, or null if the property doesn't exist.</returns>
+        </member>
+        <member name="M:BlazorComponentLibrary.Components.DataTable.DataTable`1.CreatePropertyAccessor(System.Type,System.String)">
+            <summary>
+            Creates a compiled delegate to access a property value.
+            </summary>
+        </member>
+        <member name="M:BlazorComponentLibrary.Components.DataTable.DataTable`1.SetPropertyValue(`0,System.String,System.Object)">
+            <summary>
+            Sets the value of a property on an item using a cached compiled delegate.
+            </summary>
+            <param name="item">The item to set the property on.</param>
+            <param name="propertyName">The name of the property to set.</param>
+            <param name="value">The value to set.</param>
+        </member>
+        <member name="M:BlazorComponentLibrary.Components.DataTable.DataTable`1.CreatePropertySetter(System.Type,System.String)">
+            <summary>
+            Creates a compiled delegate to set a property value.
+            </summary>
+        </member>
+        <member name="P:BlazorComponentLibrary.Components.DataTable.DataTable`1.EnableVirtualization">
+            <summary>
+            When true, uses Blazor's Virtualize component to render only visible rows,
+            enabling efficient display of large datasets (thousands of rows) without
+            layout thrashing. Pagination is disabled when virtualization is active.
+            </summary>
+        </member>
+        <member name="P:BlazorComponentLibrary.Components.DataTable.DataTable`1.HiddenColumns">
+            <summary>
+            Gets or sets the names of columns that should be hidden.
+            </summary>
+        </member>
+        <member name="M:BlazorComponentLibrary.Components.DataTable.DataTable`1.SetData(System.Collections.Generic.IEnumerable{`0})">
+            <summary>
+            Sets the data source for the data table.
+            </summary>
+            <param name="data">The enumerable collection of data items.</param>
+            <exception cref="T:System.ArgumentNullException">Thrown when <paramref name="data"/> is null.</exception>
+        </member>
+        <member name="M:BlazorComponentLibrary.Components.DataTable.DataTable`1.Refresh">
+            <summary>
+            Refreshes the data table, re-rendering its content.
+            </summary>
+        </member>
+        <member name="M:BlazorComponentLibrary.Components.DataTable.DataTable`1.SortBy(System.Func{`0,System.Object},BlazorComponentLibrary.Components.DataTable.SortDirection)">
+            <summary>
+            Sorts the data table by the specified key selector. Null values are placed last,
+            preventing NullReferenceException when columns contain null entries.
+            </summary>
+            <param name="keySelector">A function that extracts the sort key from a row item.</param>
+            <param name="direction">The sort direction.</param>
+        </member>
+        <member name="M:BlazorComponentLibrary.Components.DataTable.DataTable`1.AddSortKey(System.Func{`0,System.Object},BlazorComponentLibrary.Components.DataTable.SortDirection)">
+            <summary>
+            Adds a secondary sort key to the existing sort keys.
+            </summary>
+            <param name="keySelector">A function that extracts the sort key from a row item.</param>
+            <param name="direction">The sort direction.</param>
+        </member>
+        <member name="M:BlazorComponentLibrary.Components.DataTable.DataTable`1.ClearSort">
+            <summary>
+            Clears all sort keys and returns to the original data order.
+            </summary>
+        </member>
+        <member name="M:BlazorComponentLibrary.Components.DataTable.DataTable`1.ToggleColumn(System.String)">
+            <summary>
+            Toggles the visibility of a column by name.
+            If the column is currently hidden, it will be shown. If it is currently shown, it will be hidden.
+            </summary>
+            <param name="columnName">The name of the column to toggle.</param>
+        </member>
+        <member name="M:BlazorComponentLibrary.Components.DataTable.DataTable`1.NotifyStateChanged">
+            <summary>
+            Notifies the component that its state has changed.
+            </summary>
+        </member>
+        <member name="P:BlazorComponentLibrary.Components.DataTable.DataTable`1.EmptyContent">
+            <summary>
+            Default content to render when the data table has no items to display.
+            Shows a "No data" message spanning all columns.
+            </summary>
+        </member>
+        <member name="M:BlazorComponentLibrary.Components.DataTable.IDataTable`1.SetData(System.Collections.Generic.IEnumerable{`0})">
+            <summary>
+            Sets the data source for the data table.
+            </summary>
+            <param name="data">The enumerable collection of data items to populate the table with.</param>
+        </member>
+        <member name="M:BlazorComponentLibrary.Components.DataTable.IDataTable`1.Refresh">
+            <summary>
+            Refreshes the data table, re-rendering its content.
+            </summary>
+        </member>
+        <member name="P:BlazorComponentLibrary.Components.DataTable.IDataTable`1.IsSortable">
+            <summary>
+            Gets or sets a value indicating whether the data table columns are sortable.
+            </summary>
+        </member>
+        <member name="P:BlazorComponentLibrary.Components.DataTable.IDataTable`1.IsFilterable">
+            <summary>
+            Gets or sets a value indicating whether the data table columns are filterable.
+            </summary>
+        </member>
+        <member name="P:BlazorComponentLibrary.Components.DataTable.IDataTable`1.PageSize">
+            <summary>
+            Gets or sets the number of items to display per page.
+            </summary>
+        </member>
+        <member name="P:BlazorComponentLibrary.Components.DataTable.IDataTable`1.EnableVirtualization">
+            <summary>
+            Gets or sets a value indicating whether row virtualization is enabled.
+            When true, only visible rows are rendered in the DOM, allowing efficient
+            display of large datasets.
+            </summary>
+        </member>
+        <member name="P:BlazorComponentLibrary.Components.DataTable.IDataTable`1.HiddenColumns">
+            <summary>
+            Gets or sets the names of columns that should be hidden.
+            </summary>
+        </member>
+        <member name="M:BlazorComponentLibrary.Components.DataTable.IDataTable`1.SortBy(System.Func{`0,System.Object},BlazorComponentLibrary.Components.DataTable.SortDirection)">
+            <summary>
+            Sorts the table by the specified key selector with null-safe comparison.
+            </summary>
+            <param name="keySelector">A function to extract the key to sort by from a data item.</param>
+            <param name="direction">The sort direction. Defaults to <see cref="F:BlazorComponentLibrary.Components.DataTable.SortDirection.Ascending"/>.</param>
+        </member>
+        <member name="M:BlazorComponentLibrary.Components.DataTable.IDataTable`1.ClearSort">
+            <summary>
+            Clears all sort keys and returns to the original data order.
+            </summary>
+        </member>
+        <member name="M:BlazorComponentLibrary.Components.DataTable.IDataTable`1.ToggleColumn(System.String)">
+            <summary>
+            Toggles the visibility of a column by name.
+            </summary>
+            <param name="columnName">The name of the column to toggle.</param>
+        </member>
+        <member name="P:BlazorComponentLibrary.Components.DataTable.IDataTable`1.OnRowClick">
+            <summary>
+            Event callback for when a row in the data table is clicked.
+            </summary>
+        </member>
+        <member name="P:BlazorComponentLibrary.Components.DataTable.IDataTable`1.EmptyTemplate">
+            <summary>
+            Content to render when the data table has no items to display.
+            </summary>
+        </member>
+        <member name="T:BlazorComponentLibrary.Components.DataTable.NullSafeComparer`1">
+            <summary>
+            A generic null-safe comparer that handles null values by treating them as less than any non-null value.
+            </summary>
+            <typeparam name="T">The type to compare.</typeparam>
+        </member>
+        <member name="T:BlazorComponentLibrary.Components.DataTable.NullSafeComparerExtensions">
+            <summary>
+            Provides extension methods for null-safe comparison that enable advanced sorting, filtering,
+            and collection operations with null-safe comparison semantics.
+            </summary>
+        </member>
+        <!-- Badly formed XML comment ignored for member "M:BlazorComponentLibrary.Components.DataTable.NullSafeComparerExtensions.OrderByNullSafe``2(System.Collections.Generic.IEnumerable{``0},System.Func{``0,``1})" -->
+        <!-- Badly formed XML comment ignored for member "M:BlazorComponentLibrary.Components.DataTable.NullSafeComparerExtensions.OrderByDescendingNullSafe``2(System.Collections.Generic.IEnumerable{``0},System.Func{``0,``1})" -->
+        <member name="M:BlazorComponentLibrary.Components.DataTable.NullSafeComparerExtensions.Min``1(System.Collections.Generic.IEnumerable{``0})">
+            <summary>
+            Returns the minimum value in a sequence using null-safe comparison.
+            </summary>
+            <typeparam name="TSource">The type of the elements of <paramref name="source"/>.</typeparam>
+            <param name="source">A sequence of values to determine the minimum of.</param>
+            <returns>The minimum value in the sequence, or default if the sequence is empty.</returns>
+            <exception cref="T:System.ArgumentNullException">Thrown when <paramref name="source"/> is null.</exception>
+            <exception cref="T:System.InvalidOperationException">Thrown when the sequence contains only null values and no default value exists.</exception>
+        </member>
+        <member name="M:BlazorComponentLibrary.Components.DataTable.NullSafeComparerExtensions.Max``1(System.Collections.Generic.IEnumerable{``0})">
+            <summary>
+            Returns the maximum value in a sequence using null-safe comparison.
+            </summary>
+            <typeparam name="TSource">The type of the elements of <paramref name="source"/>.</typeparam>
+            <param name="source">A sequence of values to determine the maximum of.</param>
+            <returns>The maximum value in the sequence, or default if the sequence is empty.</returns>
+            <exception cref="T:System.ArgumentNullException">Thrown when <paramref name="source"/> is null.</exception>
+            <exception cref="T:System.InvalidOperationException">Thrown when the sequence contains only null values and no default value exists.</exception>
+        </member>
+        <member name="M:BlazorComponentLibrary.Components.DataTable.NullSafeComparerExtensions.SortBy``2(System.Collections.Generic.IEnumerable{``0},System.Func{``0,``1},BlazorComponentLibrary.Components.DataTable.SortDirection)">
+            <summary>
+            Returns a new sequence sorted by the specified key selector in the specified direction.
+            This is a convenience method that wraps the LINQ OrderBy method with null-safe comparison.
+            </summary>
+            <typeparam name="TSource">The type of the elements of <paramref name="source"/>.</typeparam>
+            <typeparam name="TKey">The type of the key returned by <paramref name="keySelector"/>.</typeparam>
+            <param name="source">A sequence of values to order.</param>
+            <param name="keySelector">A function to extract a key from an element.</param>
+            <param name="direction">The sort direction (ascending or descending).</param>
+            <returns>A new sequence sorted according to the specified direction.</returns>
+            <exception cref="T:System.ArgumentNullException">Thrown when <paramref name="source"/> or <paramref name="keySelector"/> is null.</exception>
+        </member>
+        <member name="M:BlazorComponentLibrary.Components.DataTable.NullSafeComparerExtensions.WhereNotNull``1(System.Collections.Generic.IEnumerable{``0})">
+            <summary>
+            Returns a sequence with null values filtered out, using null-safe comparison semantics.
+            </summary>
+            <typeparam name="TSource">The type of the elements of <paramref name="source"/>.</typeparam>
+            <param name="source">A sequence of values to filter.</param>
+            <returns>A new sequence containing only non-null elements.</returns>
+            <exception cref="T:System.ArgumentNullException">Thrown when <paramref name="source"/> is null.</exception>
+        </member>
+        <member name="M:BlazorComponentLibrary.Components.DataTable.NullSafeComparerExtensions.WhereNotNull``1(System.Collections.Generic.IEnumerable{System.Nullable{``0}})">
+            <summary>
+            Returns a sequence with null values filtered out, using null-safe comparison semantics.
+            This overload works with nullable value types.
+            </summary>
+            <typeparam name="TSource">The type of the elements of <paramref name="source"/>.</typeparam>
+            <param name="source">A sequence of nullable values to filter.</param>
+            <returns>A new sequence containing only non-null values.</returns>
+            <exception cref="T:System.ArgumentNullException">Thrown when <paramref name="source"/> is null.</exception>
+        </member>
+        <member name="T:BlazorComponentLibrary.Components.DataTable.NullSafeComparerJsonExtensions">
+            <summary>
+            Provides System.Text.Json serialization extensions for <see cref="T:BlazorComponentLibrary.Components.DataTable.NullSafeComparer"/>.
+            </summary>
+        </member>
+        <member name="M:BlazorComponentLibrary.Components.DataTable.NullSafeComparerJsonExtensions.ToJson(BlazorComponentLibrary.Components.DataTable.NullSafeComparer,System.Boolean)">
+            <summary>
+            Serializes the <see cref="T:BlazorComponentLibrary.Components.DataTable.NullSafeComparer"/> type information to a JSON string.
+            Since <see cref="T:BlazorComponentLibrary.Components.DataTable.NullSafeComparer"/> is a stateless singleton, this method returns a JSON representation
+            containing the type information that can be used to recreate the comparer type.
+            </summary>
+            <param name="value">The NullSafeComparer instance to serialize. Must be <see cref="F:BlazorComponentLibrary.Components.DataTable.NullSafeComparer.Instance"/>.</param>
+            <param name="indented">Whether to format the JSON with indentation for readability.</param>
+            <returns>A JSON string representation containing the comparer type information.</returns>
+            <exception cref="T:System.ArgumentNullException">Thrown when <paramref name="value"/> is null.</exception>
+            <exception cref="T:System.ArgumentException">Thrown when <paramref name="value"/> is not <see cref="F:BlazorComponentLibrary.Components.DataTable.NullSafeComparer.Instance"/>.</exception>
+        </member>
+        <member name="M:BlazorComponentLibrary.Components.DataTable.NullSafeComparerJsonExtensions.FromJson(System.String)">
+            <summary>
+            Deserializes a JSON string to a <see cref="T:BlazorComponentLibrary.Components.DataTable.NullSafeComparer"/> instance.
+            Since <see cref="T:BlazorComponentLibrary.Components.DataTable.NullSafeComparer"/> is a stateless singleton, this method always returns <see cref="F:BlazorComponentLibrary.Components.DataTable.NullSafeComparer.Instance"/>.
+            </summary>
+            <param name="json">The JSON string to deserialize.</param>
+            <returns>The <see cref="F:BlazorComponentLibrary.Components.DataTable.NullSafeComparer.Instance"/> singleton, or null if the JSON is null, empty, or whitespace.</returns>
+            <exception cref="T:System.ArgumentNullException">Thrown when <paramref name="json"/> is null.</exception>
+        </member>
+        <member name="M:BlazorComponentLibrary.Components.DataTable.NullSafeComparerJsonExtensions.TryFromJson(System.String,BlazorComponentLibrary.Components.DataTable.NullSafeComparer@)">
+            <summary>
+            Attempts to deserialize a JSON string to a <see cref="T:BlazorComponentLibrary.Components.DataTable.NullSafeComparer"/> instance.
+            Since <see cref="T:BlazorComponentLibrary.Components.DataTable.NullSafeComparer"/> is a stateless singleton, this method always returns <see cref="F:BlazorComponentLibrary.Components.DataTable.NullSafeComparer.Instance"/> if deserialization succeeds.
+            </summary>
+            <param name="json">The JSON string to deserialize.</param>
+            <param name="value">Receives the <see cref="F:BlazorComponentLibrary.Components.DataTable.NullSafeComparer.Instance"/> singleton if deserialization succeeds.</param>
+            <returns><see langword="true"/> if the JSON is valid; otherwise, <see langword="false"/>.</returns>
+            <exception cref="T:System.ArgumentNullException">Thrown when <paramref name="json"/> is null.</exception>
+        </member>
+        <member name="T:BlazorComponentLibrary.Components.DataTable.NullSafeComparerValidation">
+            <summary>
+            Provides validation helpers for <see cref="T:BlazorComponentLibrary.Components.DataTable.NullSafeComparer`1"/> instances.
+            </summary>
+        </member>
+        <member name="M:BlazorComponentLibrary.Components.DataTable.NullSafeComparerValidation.Validate(BlazorComponentLibrary.Components.DataTable.NullSafeComparer)">
+            <summary>
+            Validates that the <see cref="T:BlazorComponentLibrary.Components.DataTable.NullSafeComparer`1"/> instance is properly configured.
+            </summary>
+            <param name="value">The comparer instance to validate.</param>
+            <returns>A list of validation problems; empty list if valid.</returns>
+            <exception cref="T:System.ArgumentNullException">Thrown when <paramref name="value"/> is null.</exception>
+        </member>
+        <member name="M:BlazorComponentLibrary.Components.DataTable.NullSafeComparerValidation.IsValid(BlazorComponentLibrary.Components.DataTable.NullSafeComparer)">
+            <summary>
+            Determines whether the specified <see cref="T:BlazorComponentLibrary.Components.DataTable.NullSafeComparer`1"/> instance is valid.
+            </summary>
+            <param name="value">The comparer instance to check.</param>
+            <returns>True if the instance is valid; otherwise, false.</returns>
+        </member>
+        <member name="M:BlazorComponentLibrary.Components.DataTable.NullSafeComparerValidation.EnsureValid(BlazorComponentLibrary.Components.DataTable.NullSafeComparer)">
+            <summary>
+            Ensures that the specified <see cref="T:BlazorComponentLibrary.Components.DataTable.NullSafeComparer`1"/> instance is valid.
+            </summary>
+            <param name="value">The comparer instance to validate.</param>
+            <exception cref="T:System.ArgumentNullException">Thrown when <paramref name="value"/> is null.</exception>
+            <exception cref="T:System.ArgumentException">Thrown when the comparer instance has validation problems.</exception>
+        </member>
+        <member name="T:BlazorComponentLibrary.Components.DataTable.SortState`1">
+            <summary>
+            Manages sorting state and logic for the DataTable component.
+            This internal class encapsulates all sorting-related functionality to enable better testability.
+            </summary>
+            <typeparam name="TItem">The type of items in the data table.</typeparam>
+        </member>
+        <member name="P:BlazorComponentLibrary.Components.DataTable.SortState`1.SortKeys">
+            <summary>
+            Gets the current sort keys.
+            </summary>
+        </member>
+        <member name="M:BlazorComponentLibrary.Components.DataTable.SortState`1.SetData(System.Collections.Generic.IEnumerable{`0})">
+            <summary>
+            Sets the data source for sorting.
+            </summary>
+            <param name="data">The data to sort.</param>
+        </member>
+        <member name="M:BlazorComponentLibrary.Components.DataTable.SortState`1.SortBy(System.Func{`0,System.Object},BlazorComponentLibrary.Components.DataTable.SortDirection)">
+            <summary>
+            Sorts the data by the specified key selector.
+            </summary>
+            <param name="keySelector">A function that extracts the sort key from a row item.</param>
+            <param name="direction">The sort direction.</param>
+        </member>
+        <member name="M:BlazorComponentLibrary.Components.DataTable.SortState`1.AddSortKey(System.Func{`0,System.Object},BlazorComponentLibrary.Components.DataTable.SortDirection)">
+            <summary>
+            Adds a secondary sort key to the existing sort keys.
+            </summary>
+            <param name="keySelector">A function that extracts the sort key from a row item.</param>
+            <param name="direction">The sort direction.</param>
+        </member>
+        <member name="M:BlazorComponentLibrary.Components.DataTable.SortState`1.ClearSort">
+            <summary>
+            Clears all sort keys and returns to the original data order.
+            </summary>
+        </member>
+        <member name="M:BlazorComponentLibrary.Components.DataTable.SortState`1.ApplySort">
+            <summary>
+            Applies the current sorting to the data and returns the sorted result.
+            </summary>
+            <returns>The sorted data.</returns>
+        </member>
+        <member name="T:BlazorComponentLibrary.Components.DragDropList.DragDropList`1">
+            <summary>
+            A reorderable list component that uses the HTML5 Drag and Drop API.
+            Users grab any row by its handle and drop it at the desired position.
+            The <see cref="P:BlazorComponentLibrary.Components.DragDropList.DragDropList`1.OnOrderChanged"/> callback fires with the fully reordered list so the
+            parent component can persist the new order without computing a diff.
+            </summary>
+            <typeparam name="TItem">The type of each list item.</typeparam>
+        </member>
+        <member name="P:BlazorComponentLibrary.Components.DragDropList.DragDropList`1.Group">
+            <summary>
+            Gets or sets the group name that this list belongs to.
+            Items can only be dropped into lists sharing the same Group name.
+            </summary>
+        </member>
+        <member name="P:BlazorComponentLibrary.Components.DragDropList.DragDropList`1.Items">
+            <inheritdoc/>
+        </member>
+        <member name="P:BlazorComponentLibrary.Components.DragDropList.DragDropList`1.ItemTemplate">
+            <inheritdoc/>
+        </member>
+        <member name="P:BlazorComponentLibrary.Components.DragDropList.DragDropList`1.OnOrderChanged">
+            <inheritdoc/>
+        </member>
+        <member name="P:BlazorComponentLibrary.Components.DragDropList.DragDropList`1.Enabled">
+            <inheritdoc/>
+        </member>
+        <member name="P:BlazorComponentLibrary.Components.DragDropList.DragDropList`1.CssClass">
+            <summary>Optional CSS class(es) appended to the root <c>&lt;ul&gt;</c> element.</summary>
+        </member>
+        <member name="M:BlazorComponentLibrary.Components.DragDropList.DragDropList`1.Reorder(System.Collections.Generic.IList{`0},System.Int32,System.Int32)">
+            <summary>
+            Returns a new list with the item originally at <paramref name="fromIndex"/>
+            moved to <paramref name="toIndex"/>. The source list is not mutated.
+            </summary>
+            <param name="source">The source list.</param>
+            <param name="fromIndex">Zero-based index of the item to move.</param>
+            <param name="toIndex">Zero-based target index after the move.</param>
+            <returns>A new <see cref="T:System.Collections.Generic.List`1"/> reflecting the reordered items.</returns>
+            <exception cref="T:System.ArgumentNullException">Thrown when <paramref name="source"/> is null.</exception>
+            <exception cref="T:System.ArgumentOutOfRangeException">
+            Thrown when <paramref name="fromIndex"/> or <paramref name="toIndex"/> is outside the bounds of <paramref name="source"/>.
+            </exception>
+        </member>
+        <member name="T:BlazorComponentLibrary.Components.DragDropList.DragDropListExtensions">
+            <summary>
+            Provides useful extension methods for <see cref="T:BlazorComponentLibrary.Components.DragDropList.DragDropList`1"/> components.
+            </summary>
+        </member>
+        <member name="M:BlazorComponentLibrary.Components.DragDropList.DragDropListExtensions.MoveItem``1(BlazorComponentLibrary.Components.DragDropList.DragDropList{``0},``0,System.Int32,System.Int32)">
+            <summary>
+            Moves an item from one index to another in the list, using the <see cref="M:BlazorComponentLibrary.Components.DragDropList.DragDropList`1.Reorder(System.Collections.Generic.IList{`0},System.Int32,System.Int32)"/> method.
+            </summary>
+            <typeparam name="TItem">The type of items in the list.</typeparam>
+            <param name="list">The <see cref="T:BlazorComponentLibrary.Components.DragDropList.DragDropList`1"/> instance.</param>
+            <param name="item">The item to move.</param>
+            <param name="fromIndex">The current zero-based index of the item.</param>
+            <param name="toIndex">The target zero-based index where the item should be moved.</param>
+            <exception cref="T:System.ArgumentNullException"><paramref name="list"/> is <see langword="null"/>.</exception>
+            <exception cref="T:System.ArgumentNullException"><paramref name="item"/> is <see langword="null"/>.</exception>
+            <exception cref="T:System.ArgumentOutOfRangeException">
+            <paramref name="fromIndex"/> or <paramref name="toIndex"/> is outside the bounds of the list.
+            </exception>
+        </member>
+        <member name="M:BlazorComponentLibrary.Components.DragDropList.DragDropListExtensions.MoveToBeginning``1(BlazorComponentLibrary.Components.DragDropList.DragDropList{``0},``0)">
+            <summary>
+            Moves an item to the beginning of the list.
+            </summary>
+            <typeparam name="TItem">The type of items in the list.</typeparam>
+            <param name="list">The <see cref="T:BlazorComponentLibrary.Components.DragDropList.DragDropList`1"/> instance.</param>
+            <param name="item">The item to move to the beginning.</param>
+            <exception cref="T:System.ArgumentNullException"><paramref name="list"/> is <see langword="null"/>.</exception>
+            <exception cref="T:System.ArgumentNullException"><paramref name="item"/> is <see langword="null"/>.</exception>
+        </member>
+        <member name="M:BlazorComponentLibrary.Components.DragDropList.DragDropListExtensions.MoveToEnd``1(BlazorComponentLibrary.Components.DragDropList.DragDropList{``0},``0)">
+            <summary>
+            Moves an item to the end of the list.
+            </summary>
+            <typeparam name="TItem">The type of items in the list.</typeparam>
+            <param name="list">The <see cref="T:BlazorComponentLibrary.Components.DragDropList.DragDropList`1"/> instance.</param>
+            <param name="item">The item to move to the end.</param>
+            <exception cref="T:System.ArgumentNullException"><paramref name="list"/> is <see langword="null"/>.</exception>
+            <exception cref="T:System.ArgumentNullException"><paramref name="item"/> is <see langword="null"/>.</exception>
+        </member>
+        <member name="M:BlazorComponentLibrary.Components.DragDropList.DragDropListExtensions.SwapItems``1(BlazorComponentLibrary.Components.DragDropList.DragDropList{``0},System.Int32,System.Int32)">
+            <summary>
+            Swaps two items in the list by their indices.
+            </summary>
+            <typeparam name="TItem">The type of items in the list.</typeparam>
+            <param name="list">The <see cref="T:BlazorComponentLibrary.Components.DragDropList.DragDropList`1"/> instance.</param>
+            <param name="index1">The first zero-based index.</param>
+            <param name="index2">The second zero-based index.</param>
+            <exception cref="T:System.ArgumentNullException"><paramref name="list"/> is <see langword="null"/>.</exception>
+            <exception cref="T:System.ArgumentOutOfRangeException">
+            <paramref name="index1"/> or <paramref name="index2"/> is outside the bounds of the list.
+            </exception>
+        </member>
+        <member name="M:BlazorComponentLibrary.Components.DragDropList.DragDropListExtensions.IndexOf``1(BlazorComponentLibrary.Components.DragDropList.DragDropList{``0},``0)">
+            <summary>
+            Gets the current index of a specific item in the list.
+            </summary>
+            <typeparam name="TItem">The type of items in the list.</typeparam>
+            <param name="list">The <see cref="T:BlazorComponentLibrary.Components.DragDropList.DragDropList`1"/> instance.</param>
+            <param name="item">The item to find.</param>
+            <returns>The zero-based index of the item, or -1 if not found.</returns>
+            <exception cref="T:System.ArgumentNullException"><paramref name="list"/> is <see langword="null"/>.</exception>
+            <exception cref="T:System.ArgumentNullException"><paramref name="item"/> is <see langword="null"/>.</exception>
+        </member>
+        <member name="M:BlazorComponentLibrary.Components.DragDropList.DragDropListExtensions.Contains``1(BlazorComponentLibrary.Components.DragDropList.DragDropList{``0},``0)">
+            <summary>
+            Determines whether the list contains a specific item.
+            </summary>
+            <typeparam name="TItem">The type of items in the list.</typeparam>
+            <param name="list">The <see cref="T:BlazorComponentLibrary.Components.DragDropList.DragDropList`1"/> instance.</param>
+            <param name="item">The item to check.</param>
+            <returns>True if the item is in the list; otherwise, false.</returns>
+            <exception cref="T:System.ArgumentNullException"><paramref name="list"/> is <see langword="null"/>.</exception>
+            <exception cref="T:System.ArgumentNullException"><paramref name="item"/> is <see langword="null"/>.</exception>
+        </member>
+        <member name="M:BlazorComponentLibrary.Components.DragDropList.DragDropListExtensions.Count``1(BlazorComponentLibrary.Components.DragDropList.DragDropList{``0})">
+            <summary>
+            Gets the number of items in the list.
+            </summary>
+            <typeparam name="TItem">The type of items in the list.</typeparam>
+            <param name="list">The <see cref="T:BlazorComponentLibrary.Components.DragDropList.DragDropList`1"/> instance.</param>
+            <returns>The number of items in the list.</returns>
+            <exception cref="T:System.ArgumentNullException"><paramref name="list"/> is <see langword="null"/>.</exception>
+        </member>
+        <member name="M:BlazorComponentLibrary.Components.DragDropList.DragDropListExtensions.AsReadOnly``1(BlazorComponentLibrary.Components.DragDropList.DragDropList{``0})">
+            <summary>
+            Gets a read-only view of the items in the list.
+            </summary>
+            <typeparam name="TItem">The type of items in the list.</typeparam>
+            <param name="list">The <see cref="T:BlazorComponentLibrary.Components.DragDropList.DragDropList`1"/> instance.</param>
+            <returns>An <see cref="T:System.Collections.Generic.IReadOnlyList`1"/> of items.</returns>
+            <exception cref="T:System.ArgumentNullException"><paramref name="list"/> is <see langword="null"/>.</exception>
+        </member>
+        <member name="T:BlazorComponentLibrary.Components.DragDropList.DragDropListJsonExtensions">
+            <summary>
+            Provides System.Text.Json serialization and deserialization helpers for <see cref="T:BlazorComponentLibrary.Components.DragDropList.DragDropList`1"/>.
+            </summary>
+        </member>
+        <member name="M:BlazorComponentLibrary.Components.DragDropList.DragDropListJsonExtensions.ToJson``1(BlazorComponentLibrary.Components.DragDropList.DragDropList{``0},System.Boolean)">
+            <summary>
+            Serializes a <see cref="T:BlazorComponentLibrary.Components.DragDropList.DragDropList`1"/> to a JSON string.
+            </summary>
+            <typeparam name="TItem">The type of items in the list.</typeparam>
+            <param name="value">The drag-and-drop list to serialize.</param>
+            <param name="indented">Whether to format the JSON with indentation for readability.</param>
+            <returns>A JSON string representation of the list.</returns>
+            <exception cref="T:System.ArgumentNullException">Thrown when <paramref name="value"/> is null.</exception>
+        </member>
+        <member name="M:BlazorComponentLibrary.Components.DragDropList.DragDropListJsonExtensions.FromJson``1(System.String)">
+            <summary>
+            Deserializes a JSON string into a <see cref="T:BlazorComponentLibrary.Components.DragDropList.DragDropList`1"/>.
+            </summary>
+            <typeparam name="TItem">The type of items in the list.</typeparam>
+            <param name="json">The JSON string to deserialize.</param>
+            <returns>A new <see cref="T:BlazorComponentLibrary.Components.DragDropList.DragDropList`1"/> instance with deserialized items, or null if the JSON is null or empty.</returns>
+            <exception cref="T:System.ArgumentNullException">Thrown when <paramref name="json"/> is null.</exception>
+            <exception cref="T:System.Text.Json.JsonException">Thrown when the JSON is malformed or cannot be deserialized.</exception>
+        </member>
+        <member name="M:BlazorComponentLibrary.Components.DragDropList.DragDropListJsonExtensions.TryFromJson``1(System.String,BlazorComponentLibrary.Components.DragDropList.DragDropList{``0}@)">
+            <summary>
+            Attempts to deserialize a JSON string into a <see cref="T:BlazorComponentLibrary.Components.DragDropList.DragDropList`1"/>.
+            </summary>
+            <typeparam name="TItem">The type of items in the list.</typeparam>
+            <param name="json">The JSON string to deserialize.</param>
+            <param name="value">Receives the deserialized list, or null if deserialization fails.</param>
+            <returns>True if deserialization succeeded; otherwise, false.</returns>
+            <exception cref="T:System.ArgumentNullException">Thrown when <paramref name="json"/> is null.</exception>
+        </member>
+        <member name="T:BlazorComponentLibrary.Components.DragDropList.DragDropListValidation">
+            <summary>
+            Provides validation helpers for <see cref="T:BlazorComponentLibrary.Components.DragDropList.DragDropList`1"/> components.
+            </summary>
+        </member>
+        <member name="M:BlazorComponentLibrary.Components.DragDropList.DragDropListValidation.Validate``1(BlazorComponentLibrary.Components.DragDropList.DragDropList{``0})">
+            <summary>
+            Validates a <see cref="T:BlazorComponentLibrary.Components.DragDropList.DragDropList`1"/> instance and returns any problems found.
+            </summary>
+            <typeparam name="TItem">The type of each list item.</typeparam>
+            <param name="value">The <see cref="T:BlazorComponentLibrary.Components.DragDropList.DragDropList`1"/> instance to validate.</param>
+            <returns>An <see cref="!:IReadOnlyList&lt;string&gt;"/> of human-readable problems; empty if valid.</returns>
+            <exception cref="T:System.ArgumentNullException">Thrown when <paramref name="value"/> is null.</exception>
+        </member>
+        <member name="M:BlazorComponentLibrary.Components.DragDropList.DragDropListValidation.IsValid``1(BlazorComponentLibrary.Components.DragDropList.DragDropList{``0})">
+            <summary>
+            Determines whether a <see cref="T:BlazorComponentLibrary.Components.DragDropList.DragDropList`1"/> instance is valid.
+            </summary>
+            <typeparam name="TItem">The type of each list item.</typeparam>
+            <param name="value">The <see cref="T:BlazorComponentLibrary.Components.DragDropList.DragDropList`1"/> instance to check.</param>
+            <returns><see langword="true"/> if valid; otherwise, <see langword="false"/>.</returns>
+            <exception cref="T:System.ArgumentNullException">Thrown when <paramref name="value"/> is null.</exception>
+        </member>
+        <member name="M:BlazorComponentLibrary.Components.DragDropList.DragDropListValidation.EnsureValid``1(BlazorComponentLibrary.Components.DragDropList.DragDropList{``0})">
+            <summary>
+            Ensures that a <see cref="T:BlazorComponentLibrary.Components.DragDropList.DragDropList`1"/> instance is valid, throwing an exception if not.
+            </summary>
+            <typeparam name="TItem">The type of each list item.</typeparam>
+            <param name="value">The <see cref="T:BlazorComponentLibrary.Components.DragDropList.DragDropList`1"/> instance to validate.</param>
+            <exception cref="T:System.ArgumentNullException">Thrown when <paramref name="value"/> is null.</exception>
+            <exception cref="T:System.ArgumentException">Thrown when <paramref name="value"/> is invalid, containing a list of problems.</exception>
+        </member>
+        <member name="T:BlazorComponentLibrary.Components.DragDropList.IDragDropList`1">
+            <summary>
+            Contract for the drag-and-drop reorderable list component.
+            </summary>
+            <typeparam name="TItem">The type of items in the list.</typeparam>
+        </member>
+        <member name="P:BlazorComponentLibrary.Components.DragDropList.IDragDropList`1.Items">
+            <summary>Gets or sets the ordered collection of items to display.</summary>
+        </member>
+        <member name="P:BlazorComponentLibrary.Components.DragDropList.IDragDropList`1.ItemTemplate">
+            <summary>Gets or sets the render template for a single list item.</summary>
+        </member>
+        <member name="P:BlazorComponentLibrary.Components.DragDropList.IDragDropList`1.OnOrderChanged">
+            <summary>
+            Event raised after the user drops an item at a new position.
+            The argument is the fully reordered list so the parent component can
+            persist the new order without computing a diff.
+            </summary>
+        </member>
+        <member name="P:BlazorComponentLibrary.Components.DragDropList.IDragDropList`1.Enabled">
+            <summary>
+            Gets or sets whether drag-and-drop reordering is currently enabled.
+            When set to <c>false</c> the drag handle is still rendered but dragging
+            has no effect, giving a disabled-but-visible appearance.
+            </summary>
+        </member>
+        <member name="P:BlazorComponentLibrary.Components.DragDropList.IDragDropList`1.Group">
+            <summary>
+            Gets or sets the group name that this list belongs to.
+            Items can only be dropped into lists sharing the same Group name.
+            </summary>
+        </member>
+        <member name="T:BlazorComponentLibrary.Components.Form.Form`1">
+            <summary>
+            A form component that binds a model instance and validates it with
+            <see cref="N:System.ComponentModel.DataAnnotations"/> attributes on submit.
+            </summary>
+            <typeparam name="TModel">The model type bound to the form.</typeparam>
+        </member>
+        <member name="P:BlazorComponentLibrary.Components.Form.Form`1.ChildContent">
+            <summary>Gets or sets the content rendered inside the form element.</summary>
+        </member>
+        <member name="P:BlazorComponentLibrary.Components.Form.Form`1.OnSubmit">
+            <summary>Event callback invoked with the model when the form is submitted and valid.</summary>
+        </member>
+        <member name="P:BlazorComponentLibrary.Components.Form.Form`1.Model">
+            <summary>
+            Gets the current data model bound to the form.
+            </summary>
+        </member>
+        <member name="P:BlazorComponentLibrary.Components.Form.Form`1.IsValid">
+            <summary>
+            Gets a value indicating whether the most recent call to <see cref="M:BlazorComponentLibrary.Components.Form.Form`1.Validate"/>
+            found no errors. Returns <c>true</c> if validation has not run yet.
+            </summary>
+        </member>
+        <member name="P:BlazorComponentLibrary.Components.Form.Form`1.ValidationErrors">
+            <summary>
+            Gets the validation errors produced by the most recent call to <see cref="M:BlazorComponentLibrary.Components.Form.Form`1.Validate"/>.
+            Empty if validation has not run yet or the model is valid.
+            </summary>
+        </member>
+        <member name="P:BlazorComponentLibrary.Components.Form.Form`1.IsDirty">
+            <summary>
+            Gets a value indicating whether any field in the form has been modified.
+            </summary>
+        </member>
+        <member name="P:BlazorComponentLibrary.Components.Form.Form`1.FieldsChanged">
+            <summary>
+            Event callback invoked when any field in the form is modified.
+            </summary>
+        </member>
+        <member name="M:BlazorComponentLibrary.Components.Form.Form`1.SetModel(`0)">
+            <summary>
+            Sets the data model for the form.
+            </summary>
+            <param name="model">The model instance to bind to the form.</param>
+        </member>
+        <member name="M:BlazorComponentLibrary.Components.Form.Form`1.NotifyStateChanged">
+            <summary>
+            Notifies the component that its state has changed.
+            </summary>
+        </member>
+        <member name="M:BlazorComponentLibrary.Components.Form.Form`1.HandleFieldChanged(System.Object,Microsoft.AspNetCore.Components.Forms.FieldChangedEventArgs)">
+            <summary>
+            Handles field changes and marks the form as dirty.
+            </summary>
+        </member>
+        <member name="M:BlazorComponentLibrary.Components.Form.Form`1.OnParametersSet">
+            <summary>
+            Overrides the base method to initialize the EditContext for field change tracking.
+            </summary>
+        </member>
+        <member name="M:BlazorComponentLibrary.Components.Form.Form`1.Validate">
+            <summary>
+            Validates the current model against its
+            <see cref="N:System.ComponentModel.DataAnnotations"/> attributes,
+            including <see cref="T:System.ComponentModel.DataAnnotations.IValidatableObject"/> implementations.
+            The results are exposed via <see cref="P:BlazorComponentLibrary.Components.Form.Form`1.ValidationErrors"/> and <see cref="P:BlazorComponentLibrary.Components.Form.Form`1.IsValid"/>.
+            </summary>
+            <returns>True if the model is valid, false otherwise.</returns>
+        </member>
+        <member name="M:BlazorComponentLibrary.Components.Form.Form`1.HandleSubmit">
+            <summary>
+            Handles form submission: validates the model and invokes
+            <see cref="P:BlazorComponentLibrary.Components.Form.Form`1.OnSubmit"/> only when validation succeeds.
+            </summary>
+        </member>
+        <member name="M:BlazorComponentLibrary.Components.Form.Form`1.Reset">
+            <summary>
+            Resets the form to its initial state, clearing any modifications.
+            </summary>
+        </member>
+        <member name="T:BlazorComponentLibrary.Components.Form.FormExtensions">
+            <summary>
+            Provides extension methods for working with <see cref="T:BlazorComponentLibrary.Components.Form.Form`1"/> components.
+            </summary>
+        </member>
+        <member name="M:BlazorComponentLibrary.Components.Form.FormExtensions.GetValidationError``1(BlazorComponentLibrary.Components.Form.Form{``0},System.String)">
+            <summary>
+            Gets the first validation error message for the specified property, or null if the property is valid.
+            </summary>
+            <typeparam name="TModel">The model type.</typeparam>
+            <param name="form">The form instance.</param>
+            <param name="propertyName">Name of the property to check.</param>
+            <returns>The first validation error message, or null if valid.</returns>
+            <exception cref="T:System.ArgumentNullException"><paramref name="form"/> is null.</exception>
+            <exception cref="T:System.ArgumentException"><paramref name="propertyName"/> is null or empty.</exception>
+        </member>
+        <member name="M:BlazorComponentLibrary.Components.Form.FormExtensions.GetValidationErrors``1(BlazorComponentLibrary.Components.Form.Form{``0},System.String)">
+            <summary>
+            Gets all validation error messages for the specified property.
+            </summary>
+            <typeparam name="TModel">The model type.</typeparam>
+            <param name="form">The form instance.</param>
+            <param name="propertyName">Name of the property to check.</param>
+            <returns>Read-only list of validation error messages.</returns>
+            <exception cref="T:System.ArgumentNullException"><paramref name="form"/> is null.</exception>
+            <exception cref="T:System.ArgumentException"><paramref name="propertyName"/> is null or empty.</exception>
+        </member>
+        <member name="M:BlazorComponentLibrary.Components.Form.FormExtensions.GetModelValueAsString``2(BlazorComponentLibrary.Components.Form.Form{``0},System.String)">
+            <summary>
+            Gets the value of a property from the form's model as a string representation.
+            </summary>
+            <typeparam name="TModel">The model type.</typeparam>
+            <typeparam name="TValue">The property type.</typeparam>
+            <param name="form">The form instance.</param>
+            <param name="propertyName">Name of the property to get.</param>
+            <returns>The string representation of the property value, or null if the property doesn't exist or is null.</returns>
+            <exception cref="T:System.ArgumentNullException"><paramref name="form"/> is null.</exception>
+            <exception cref="T:System.ArgumentException"><paramref name="propertyName"/> is null or empty.</exception>
+        </member>
+        <member name="M:BlazorComponentLibrary.Components.Form.FormExtensions.TrySetModelValueFromString``2(BlazorComponentLibrary.Components.Form.Form{``0},System.String,System.String)">
+            <summary>
+            Attempts to set a property value on the form's model from a string representation.
+            </summary>
+            <typeparam name="TModel">The model type.</typeparam>
+            <typeparam name="TValue">The property type.</typeparam>
+            <param name="form">The form instance.</param>
+            <param name="propertyName">Name of the property to set.</param>
+            <param name="value">The string value to parse.</param>
+            <returns>True if the value was successfully parsed and set; false otherwise.</returns>
+            <exception cref="T:System.ArgumentNullException"><paramref name="form"/> is null.</exception>
+            <exception cref="T:System.ArgumentException"><paramref name="propertyName"/> is null or empty.</exception>
+        </member>
+        <member name="T:BlazorComponentLibrary.Components.Form.FormJsonExtensions">
+            <summary>
+            Provides System.Text.Json serialization and deserialization extensions for <see cref="T:BlazorComponentLibrary.Components.Form.Form`1"/> components.
+            </summary>
+        </member>
+        <member name="M:BlazorComponentLibrary.Components.Form.FormJsonExtensions.ToJson``1(BlazorComponentLibrary.Components.Form.Form{``0},System.Boolean)">
+            <summary>
+            Serializes the form's model to a JSON string.
+            </summary>
+            <typeparam name="TModel">The model type bound to the form.</typeparam>
+            <param name="value">The form instance to serialize.</param>
+            <param name="indented">Whether to format the JSON with indentation for readability.</param>
+            <returns>A JSON string representation of the form's model.</returns>
+            <exception cref="T:System.ArgumentNullException"><paramref name="value"/> is null.</exception>
+        </member>
+        <member name="M:BlazorComponentLibrary.Components.Form.FormJsonExtensions.FromJson``1(System.String)">
+            <summary>
+            Deserializes a JSON string into a new <see cref="T:BlazorComponentLibrary.Components.Form.Form`1"/> model instance.
+            </summary>
+            <typeparam name="TModel">The model type to deserialize.</typeparam>
+            <param name="json">The JSON string to deserialize.</param>
+            <returns>A new model instance populated from the JSON, or null if deserialization fails.</returns>
+            <exception cref="T:System.ArgumentNullException"><paramref name="json"/> is null.</exception>
+        </member>
+        <member name="M:BlazorComponentLibrary.Components.Form.FormJsonExtensions.TryFromJson``1(System.String,BlazorComponentLibrary.Components.Form.Form{``0}@)">
+            <summary>
+            Attempts to deserialize a JSON string into a <see cref="T:BlazorComponentLibrary.Components.Form.Form`1"/> model instance.
+            </summary>
+            <typeparam name="TModel">The model type to deserialize.</typeparam>
+            <param name="json">The JSON string to deserialize.</param>
+            <param name="value">When this method returns, contains the deserialized form instance if deserialization succeeded; otherwise, null.</param>
+            <returns>True if deserialization succeeded; false if the JSON is invalid or deserialization failed.</returns>
+            <exception cref="T:System.ArgumentNullException"><paramref name="json"/> is null.</exception>
+        </member>
+        <member name="T:BlazorComponentLibrary.Components.Form.FormValidation">
+            <summary>
+            Provides validation helpers for <see cref="T:BlazorComponentLibrary.Components.Form.Form`1"/> components.
+            </summary>
+        </member>
+        <member name="M:BlazorComponentLibrary.Components.Form.FormValidation.Validate``1(BlazorComponentLibrary.Components.Form.Form{``0})">
+            <summary>
+            Validates the form and returns a list of human-readable validation problems.
+            </summary>
+            <typeparam name="TModel">The model type bound to the form.</typeparam>
+            <param name="form">The form to validate.</param>
+            <returns>An immutable list of validation error messages. Empty if the form is valid.</returns>
+            <exception cref="T:System.ArgumentNullException">Thrown when <paramref name="form"/> is null.</exception>
+        </member>
+        <member name="M:BlazorComponentLibrary.Components.Form.FormValidation.IsValid``1(BlazorComponentLibrary.Components.Form.Form{``0})">
+            <summary>
+            Determines whether the form is valid.
+            </summary>
+            <typeparam name="TModel">The model type bound to the form.</typeparam>
+            <param name="form">The form to validate.</param>
+            <returns>True if the form is valid; otherwise, false.</returns>
+            <exception cref="T:System.ArgumentNullException">Thrown when <paramref name="form"/> is null.</exception>
+        </member>
+        <member name="M:BlazorComponentLibrary.Components.Form.FormValidation.EnsureValid``1(BlazorComponentLibrary.Components.Form.Form{``0})">
+            <summary>
+            Validates the form and throws an exception if it is invalid.
+            </summary>
+            <typeparam name="TModel">The model type bound to the form.</typeparam>
+            <param name="form">The form to validate.</param>
+            <exception cref="T:System.ArgumentNullException">Thrown when <paramref name="form"/> is null.</exception>
+            <exception cref="T:System.ArgumentException">Thrown when the form is invalid, containing a list of validation problems.</exception>
+        </member>
+        <member name="M:BlazorComponentLibrary.Components.Form.IForm`1.SetModel(`0)">
+            <summary>
+            Sets the data model for the form.
+            </summary>
+            <param name="model">The model instance to bind to the form.</param>
+        </member>
+        <member name="P:BlazorComponentLibrary.Components.Form.IForm`1.Model">
+            <summary>
+            Gets the current data model bound to the form.
+            </summary>
+        </member>
+        <member name="P:BlazorComponentLibrary.Components.Form.IForm`1.OnSubmit">
+            <summary>
+            Event callback for when the form is submitted.
+            </summary>
+        </member>
+        <member name="P:BlazorComponentLibrary.Components.Form.IForm`1.IsValid">
+            <summary>
+            Gets a value indicating whether the form's current state is valid.
+            </summary>
+        </member>
+        <member name="P:BlazorComponentLibrary.Components.Form.IForm`1.IsDirty">
+            <summary>
+            Gets a value indicating whether any field in the form has been modified.
+            </summary>
+        </member>
+        <member name="P:BlazorComponentLibrary.Components.Form.IForm`1.FieldsChanged">
+            <summary>
+            Event callback invoked when any field in the form is modified.
+            </summary>
+        </member>
+        <member name="M:BlazorComponentLibrary.Components.Form.IForm`1.Validate">
+            <summary>
+            Triggers validation for all fields in the form.
+            </summary>
+            <returns>True if the form is valid, false otherwise.</returns>
+        </member>
+        <member name="M:BlazorComponentLibrary.Components.Form.IForm`1.Reset">
+            <summary>
+            Resets the form to its initial state, clearing any modifications and validation state.
+            </summary>
+        </member>
+        <member name="M:BlazorComponentLibrary.Components.Modal.IModal.Show">
+            <summary>
+            Shows the modal dialog.
+            </summary>
+            <returns>A task that represents the asynchronous show operation.</returns>
+        </member>
+        <member name="M:BlazorComponentLibrary.Components.Modal.IModal.Hide">
+            <summary>
+            Hides the modal dialog.
+            </summary>
+            <returns>A task that represents the asynchronous hide operation.</returns>
+        </member>
+        <member name="P:BlazorComponentLibrary.Components.Modal.IModal.IsVisible">
+            <summary>
+            Gets a value indicating whether the modal is currently visible.
+            </summary>
+        </member>
+        <member name="P:BlazorComponentLibrary.Components.Modal.IModal.Title">
+            <summary>
+            Gets or sets the title of the modal.
+            </summary>
+        </member>
+        <member name="P:BlazorComponentLibrary.Components.Modal.IModal.ChildContent">
+            <summary>
+            Gets or sets the content for the modal's body.
+            </summary>
+        </member>
+        <member name="P:BlazorComponentLibrary.Components.Modal.IModal.FooterContent">
+            <summary>
+            Gets or sets the content for the modal's footer.
+            </summary>
+        </member>
+        <member name="P:BlazorComponentLibrary.Components.Modal.IModal.OnClose">
+            <summary>
+            Event callback for when the modal is closed.
+            </summary>
+        </member>
+        <member name="P:BlazorComponentLibrary.Components.Modal.IModal.CloseOnOverlayClick">
+            <summary>
+            Gets or sets a value indicating whether clicking the overlay should close the modal.
+            </summary>
+        </member>
+        <member name="P:BlazorComponentLibrary.Components.Modal.Modal.IsVisible">
+            <summary>
+            Gets a value indicating whether the modal is currently visible.
+            </summary>
+        </member>
+        <member name="P:BlazorComponentLibrary.Components.Modal.Modal.SizeClass">
+            <summary>
+            Gets the CSS class string corresponding to the current <see cref="P:BlazorComponentLibrary.Components.Modal.Modal.Size"/>.
+            </summary>
+        </member>
+        <member name="M:BlazorComponentLibrary.Components.Modal.Modal.Show">
+            <summary>
+            Shows the modal dialog. Saves the currently focused element so it can be
+            restored when the modal closes (WCAG 2.1 SC 2.4.3).
+            </summary>
+            <exception cref="T:BlazorComponentLibrary.Exceptions.ModalException">Thrown when there is an error showing the modal.</exception>
+        </member>
+        <member name="M:BlazorComponentLibrary.Components.Modal.Modal.Hide">
+            <summary>
+            Hides the modal dialog and restores focus to the element that opened it.
+            </summary>
+            <exception cref="T:BlazorComponentLibrary.Exceptions.ModalException">Thrown when there is an error hiding the modal.</exception>
+        </member>
+        <member name="M:BlazorComponentLibrary.Components.Modal.Modal.GetActiveElementReference">
+            <summary>
+            Gets a reference to the currently focused element.
+            </summary>
+            <returns>ElementReference to the active element, or default if none.</returns>
+        </member>
+        <member name="T:BlazorComponentLibrary.Components.Modal.ModalExtensions">
+            <summary>
+            Provides extension methods for <see cref="T:BlazorComponentLibrary.Components.Modal.Modal"/> components to enhance their functionality
+            with common modal operations and convenience methods.
+            </summary>
+        </member>
+        <member name="M:BlazorComponentLibrary.Components.Modal.ModalExtensions.ShowAsync(BlazorComponentLibrary.Components.Modal.Modal)">
+            <summary>
+            Shows the modal and returns a <see cref="T:System.Threading.Tasks.Task"/> that can be awaited.
+            </summary>
+            <param name="modal">The modal instance to show.</param>
+            <returns>A <see cref="T:System.Threading.Tasks.Task"/> representing the asynchronous operation.</returns>
+            <exception cref="T:System.ArgumentNullException">Thrown when <paramref name="modal"/> is <see langword="null"/>.</exception>
+            <exception cref="!:ModalException">Thrown when there is an error showing the modal.</exception>
+        </member>
+        <member name="M:BlazorComponentLibrary.Components.Modal.ModalExtensions.HideAsync(BlazorComponentLibrary.Components.Modal.Modal)">
+            <summary>
+            Hides the modal and returns a <see cref="T:System.Threading.Tasks.Task"/> that can be awaited.
+            </summary>
+            <param name="modal">The modal instance to hide.</param>
+            <returns>A <see cref="T:System.Threading.Tasks.Task"/> representing the asynchronous operation.</returns>
+            <exception cref="T:System.ArgumentNullException">Thrown when <paramref name="modal"/> is <see langword="null"/>.</exception>
+            <exception cref="!:ModalException">Thrown when there is an error hiding the modal.</exception>
+        </member>
+        <member name="M:BlazorComponentLibrary.Components.Modal.ModalExtensions.ToggleAsync(BlazorComponentLibrary.Components.Modal.Modal)">
+            <summary>
+            Toggles the visibility of the modal. Shows the modal if it's currently hidden,
+            and hides it if it's currently visible.
+            </summary>
+            <param name="modal">The modal instance to toggle.</param>
+            <returns>A <see cref="T:System.Threading.Tasks.Task"/> representing the asynchronous operation.</returns>
+            <exception cref="T:System.ArgumentNullException">Thrown when <paramref name="modal"/> is <see langword="null"/>.</exception>
+            <exception cref="!:ModalException">Thrown when there is an error toggling the modal.</exception>
+        </member>
+        <member name="M:BlazorComponentLibrary.Components.Modal.ModalExtensions.ShowWithTemporaryTitleAsync(BlazorComponentLibrary.Components.Modal.Modal,System.String)">
+            <summary>
+            Shows the modal with a custom title, then restores the original title after hiding.
+            Useful for temporary title changes like success/error messages.
+            </summary>
+            <param name="modal">The modal instance.</param>
+            <param name="title">The temporary title to display.</param>
+            <returns>A <see cref="T:System.Threading.Tasks.Task"/> representing the asynchronous operation.</returns>
+            <exception cref="T:System.ArgumentNullException">Thrown when <paramref name="modal"/> or <paramref name="title"/> is <see langword="null"/>.</exception>
+            <exception cref="!:ModalException">Thrown when there is an error showing or hiding the modal.</exception>
+        </member>
+        <member name="M:BlazorComponentLibrary.Components.Modal.ModalExtensions.ShowWithAutoHideAsync(BlazorComponentLibrary.Components.Modal.Modal,System.Int32)">
+            <summary>
+            Shows the modal and automatically hides it after the specified delay.
+            Useful for auto-dismissing notifications or temporary dialogs.
+            </summary>
+            <param name="modal">The modal instance to show.</param>
+            <param name="delayMilliseconds">The delay in milliseconds before automatically hiding the modal.</param>
+            <returns>A <see cref="T:System.Threading.Tasks.Task"/> representing the asynchronous operation.</returns>
+            <exception cref="T:System.ArgumentNullException">Thrown when <paramref name="modal"/> is <see langword="null"/>.</exception>
+            <exception cref="T:System.ArgumentOutOfRangeException">Thrown when <paramref name="delayMilliseconds"/> is negative.</exception>
+            <exception cref="!:ModalException">Thrown when there is an error showing or hiding the modal.</exception>
+        </member>
+        <member name="M:BlazorComponentLibrary.Components.Modal.ModalExtensions.ShowWithAutoHideAndCallbackAsync(BlazorComponentLibrary.Components.Modal.Modal,System.Int32,System.Func{System.Threading.Tasks.Task})">
+            <summary>
+            Shows the modal and automatically hides it after the specified delay, then invokes the callback.
+            Useful for showing temporary dialogs with completion callbacks.
+            </summary>
+            <param name="modal">The modal instance to show.</param>
+            <param name="delayMilliseconds">The delay in milliseconds before automatically hiding the modal.</param>
+            <param name="callback">The callback to invoke after the modal is hidden.</param>
+            <returns>A <see cref="T:System.Threading.Tasks.Task"/> representing the asynchronous operation.</returns>
+            <exception cref="T:System.ArgumentNullException">Thrown when <paramref name="modal"/> or <paramref name="callback"/> is <see langword="null"/>.</exception>
+            <exception cref="T:System.ArgumentOutOfRangeException">Thrown when <paramref name="delayMilliseconds"/> is negative.</exception>
+            <exception cref="!:ModalException">Thrown when there is an error showing or hiding the modal.</exception>
+        </member>
+        <member name="M:BlazorComponentLibrary.Components.Modal.ModalExtensions.IsVisible(BlazorComponentLibrary.Components.Modal.Modal)">
+            <summary>
+            Determines whether the modal is currently visible.
+            </summary>
+            <param name="modal">The modal instance to check.</param>
+            <returns><see langword="true"/> if the modal is visible; otherwise, <see langword="false"/>.</returns>
+            <exception cref="T:System.ArgumentNullException">Thrown when <paramref name="modal"/> is <see langword="null"/>.</exception>
+        </member>
+        <member name="M:BlazorComponentLibrary.Components.Modal.ModalExtensions.SetFooterContent(BlazorComponentLibrary.Components.Modal.Modal,Microsoft.AspNetCore.Components.RenderFragment)">
+            <summary>
+            Sets the footer content of the modal.
+            </summary>
+            <param name="modal">The modal instance.</param>
+            <param name="footerContent">The footer content to set.</param>
+            <exception cref="T:System.ArgumentNullException">Thrown when <paramref name="modal"/> is <see langword="null"/>.</exception>
+        </member>
+        <member name="M:BlazorComponentLibrary.Components.Modal.ModalExtensions.SetChildContent(BlazorComponentLibrary.Components.Modal.Modal,Microsoft.AspNetCore.Components.RenderFragment)">
+            <summary>
+            Sets the child content of the modal.
+            </summary>
+            <param name="modal">The modal instance.</param>
+            <param name="childContent">The child content to set.</param>
+            <exception cref="T:System.ArgumentNullException">Thrown when <paramref name="modal"/> is <see langword="null"/>.</exception>
+        </member>
+        <member name="M:BlazorComponentLibrary.Components.Modal.ModalExtensions.SetCloseOnOverlayClick(BlazorComponentLibrary.Components.Modal.Modal,System.Boolean)">
+            <summary>
+            Sets whether clicking the overlay should close the modal.
+            </summary>
+            <param name="modal">The modal instance.</param>
+            <param name="closeOnOverlayClick">Whether to close on overlay click.</param>
+            <exception cref="T:System.ArgumentNullException">Thrown when <paramref name="modal"/> is <see langword="null"/>.</exception>
+        </member>
+        <member name="T:BlazorComponentLibrary.Components.Modal.ModalJsonExtensions">
+            <summary>
+            Provides System.Text.Json serialization and deserialization extensions for <see cref="T:BlazorComponentLibrary.Components.Modal.Modal"/> components.
+            </summary>
+        </member>
+        <member name="M:BlazorComponentLibrary.Components.Modal.ModalJsonExtensions.ToJson(BlazorComponentLibrary.Components.Modal.Modal,System.Boolean)">
+            <summary>
+            Serializes the modal to a JSON string.
+            </summary>
+            <param name="value">The modal instance to serialize.</param>
+            <param name="indented">Whether to format the JSON with indentation for readability.</param>
+            <returns>A JSON string representation of the modal.</returns>
+            <exception cref="T:System.ArgumentNullException"><paramref name="value"/> is null.</exception>
+        </member>
+        <member name="M:BlazorComponentLibrary.Components.Modal.ModalJsonExtensions.FromJson(System.String)">
+            <summary>
+            Deserializes a JSON string into a new <see cref="T:BlazorComponentLibrary.Components.Modal.Modal"/> instance.
+            </summary>
+            <param name="json">The JSON string to deserialize.</param>
+            <returns>A new modal instance populated from the JSON, or null if deserialization fails.</returns>
+            <exception cref="T:System.ArgumentNullException"><paramref name="json"/> is null.</exception>
+            <exception cref="T:System.Text.Json.JsonException">Thrown when the JSON is invalid or cannot be deserialized.</exception>
+        </member>
+        <member name="M:BlazorComponentLibrary.Components.Modal.ModalJsonExtensions.TryFromJson(System.String,BlazorComponentLibrary.Components.Modal.Modal@)">
+            <summary>
+            Attempts to deserialize a JSON string into a <see cref="T:BlazorComponentLibrary.Components.Modal.Modal"/> instance.
+            </summary>
+            <param name="json">The JSON string to deserialize.</param>
+            <param name="value">Receives the deserialized modal instance if successful; otherwise, null.</param>
+            <returns>True if deserialization succeeded; false if the JSON is invalid or deserialization failed.</returns>
+            <exception cref="T:System.ArgumentNullException"><paramref name="json"/> is null.</exception>
+            <exception cref="T:System.ArgumentNullException"><paramref name="value"/> is null.</exception>
+        </member>
+        <member name="M:BlazorComponentLibrary.Components.Modal.ModalValidation.Validate(BlazorComponentLibrary.Components.Modal.Modal)">
+            <summary>
+            Validates the given <paramref name="modal"/> and returns a list of human-readable problems.
+            </summary>
+            <param name="modal">The <see cref="T:BlazorComponentLibrary.Components.Modal.Modal"/> to validate.</param>
+            <returns>A list of human-readable problems.</returns>
+            <exception cref="T:System.ArgumentNullException">Thrown if <paramref name="modal"/> is <see langword="null"/>.</exception>
+        </member>
+        <member name="M:BlazorComponentLibrary.Components.Modal.ModalValidation.IsValid(BlazorComponentLibrary.Components.Modal.Modal)">
+            <summary>
+            Checks if the given <paramref name="modal"/> is valid.
+            </summary>
+            <param name="modal">The <see cref="T:BlazorComponentLibrary.Components.Modal.Modal"/> to check.</param>
+            <returns>True if the <paramref name="modal"/> is valid, false otherwise.</returns>
+            <exception cref="T:System.ArgumentNullException">Thrown if <paramref name="modal"/> is <see langword="null"/>.</exception>
+        </member>
+        <member name="M:BlazorComponentLibrary.Components.Modal.ModalValidation.EnsureValid(BlazorComponentLibrary.Components.Modal.Modal)">
+            <summary>
+            Ensures that the given <paramref name="modal"/> is valid.
+            </summary>
+            <param name="modal">The <see cref="T:BlazorComponentLibrary.Components.Modal.Modal"/> to ensure is valid.</param>
+            <exception cref="T:System.ArgumentNullException">Thrown if <paramref name="modal"/> is <see langword="null"/>.</exception>
+            <exception cref="T:System.ArgumentException">Thrown if the <paramref name="modal"/> is invalid.</exception>
+        </member>
+        <member name="T:BlazorComponentLibrary.Components.Pagination.Pagination">
+            <summary>
+            A pagination component that displays page numbers with ellipsis logic and supports keyboard navigation.
+            </summary>
+        </member>
+        <member name="P:BlazorComponentLibrary.Components.Pagination.Pagination.CurrentPage">
+            <summary>
+            Gets or sets the current page number (1-based).
+            </summary>
+        </member>
+        <member name="P:BlazorComponentLibrary.Components.Pagination.Pagination.TotalPages">
+            <summary>
+            Gets or sets the total number of pages.
+            </summary>
+        </member>
+        <member name="P:BlazorComponentLibrary.Components.Pagination.Pagination.SiblingCount">
+            <summary>
+            Gets or sets the number of sibling pages to show around the current page.
+            Defaults to 1 (shows 1 page on each side).
+            </summary>
+        </member>
+        <member name="P:BlazorComponentLibrary.Components.Pagination.Pagination.MaxVisiblePages">
+            <summary>
+            Gets or sets the maximum number of pages to display.
+            Defaults to 7 (shows first, last, and up to 5 middle pages).
+            </summary>
+        </member>
+        <member name="P:BlazorComponentLibrary.Components.Pagination.Pagination.Class">
+            <summary>
+            Gets or sets the CSS class for the pagination container.
+            </summary>
+        </member>
+        <member name="P:BlazorComponentLibrary.Components.Pagination.Pagination.Style">
+            <summary>
+            Gets or sets the inline style for the pagination container.
+            </summary>
+        </member>
+        <member name="P:BlazorComponentLibrary.Components.Pagination.Pagination.PageChanged">
+            <summary>
+            Event callback that fires when the page changes.
+            </summary>
+        </member>
+        <member name="T:BlazorComponentLibrary.Components.ProgressBar.IProgressBar">
+            <summary>
+            Represents a progress bar component with configurable value, maximum value, and display options.
+            </summary>
+        </member>
+        <member name="P:BlazorComponentLibrary.Components.ProgressBar.IProgressBar.Value">
+            <summary>Gets or sets the current value of the progress bar.</summary>
+        </member>
+        <member name="P:BlazorComponentLibrary.Components.ProgressBar.IProgressBar.Max">
+            <summary>Gets or sets the maximum value of the progress bar. Default is 100.</summary>
+        </member>
+        <member name="P:BlazorComponentLibrary.Components.ProgressBar.IProgressBar.ShowLabel">
+            <summary>Gets or sets whether to show the label with percentage. Default is true.</summary>
+        </member>
+        <member name="P:BlazorComponentLibrary.Components.ProgressBar.IProgressBar.Indeterminate">
+            <summary>Gets or sets whether the progress bar is in indeterminate mode.</summary>
+        </member>
+        <member name="P:BlazorComponentLibrary.Components.ProgressBar.IProgressBar.Class">
+            <summary>Gets or sets the CSS class for the progress bar.</summary>
+        </member>
+        <member name="P:BlazorComponentLibrary.Components.ProgressBar.IProgressBar.Style">
+            <summary>Gets or sets the CSS style for the progress bar.</summary>
+        </member>
+        <member name="T:BlazorComponentLibrary.Components.ProgressBar.ProgressBar">
+            <summary>
+            A progress bar component that displays progress with configurable value, max, and display options.
+            </summary>
+        </member>
+        <member name="P:BlazorComponentLibrary.Components.ProgressBar.ProgressBar.Value">
+            <summary>
+            Gets or sets the current value of the progress bar.
+            </summary>
+        </member>
+        <member name="P:BlazorComponentLibrary.Components.ProgressBar.ProgressBar.Max">
+            <summary>
+            Gets or sets the maximum value of the progress bar. Default is 100.
+            </summary>
+        </member>
+        <member name="P:BlazorComponentLibrary.Components.ProgressBar.ProgressBar.ShowLabel">
+            <summary>
+            Gets or sets whether to show the label with percentage. Default is true.
+            </summary>
+        </member>
+        <member name="P:BlazorComponentLibrary.Components.ProgressBar.ProgressBar.Indeterminate">
+            <summary>
+            Gets or sets whether the progress bar is in indeterminate mode.
+            When true, the progress bar shows an animated indeterminate state.
+            </summary>
+        </member>
+        <member name="P:BlazorComponentLibrary.Components.ProgressBar.ProgressBar.Class">
+            <summary>
+            Gets or sets the CSS class for the progress bar.
+            </summary>
+        </member>
+        <member name="P:BlazorComponentLibrary.Components.ProgressBar.ProgressBar.Style">
+            <summary>
+            Gets or sets the CSS style for the progress bar.
+            </summary>
+        </member>
+        <member name="P:BlazorComponentLibrary.Components.Skeleton.ISkeleton.Type">
+            <summary>Gets or sets the shape type of the skeleton placeholder.</summary>
+        </member>
+        <member name="P:BlazorComponentLibrary.Components.Skeleton.ISkeleton.Shape">
+            <summary>Gets or sets the shape of the skeleton.</summary>
+        </member>
+        <member name="P:BlazorComponentLibrary.Components.Skeleton.ISkeleton.Width">
+            <summary>Gets or sets the CSS width of the skeleton (e.g. "100%", "200px").</summary>
+        </member>
+        <member name="P:BlazorComponentLibrary.Components.Skeleton.ISkeleton.Height">
+            <summary>Gets or sets the CSS height of the skeleton (e.g. "auto", "80px").</summary>
+        </member>
+        <member name="P:BlazorComponentLibrary.Components.Skeleton.ISkeleton.Lines">
+            <summary>Gets or sets the number of text lines rendered when Type is Text.</summary>
+        </member>
+        <member name="P:BlazorComponentLibrary.Components.Skeleton.ISkeleton.Animated">
+            <summary>Gets or sets whether the pulse animation is enabled.</summary>
+        </member>
+        <member name="P:BlazorComponentLibrary.Components.Skeleton.Skeleton.Lines">
+            <summary>
+            Number of text lines rendered when <see cref="P:BlazorComponentLibrary.Components.Skeleton.Skeleton.Type"/> is <see cref="F:BlazorComponentLibrary.Components.Skeleton.SkeletonType.Text"/>.
+            Ignored for Circle and Rectangle types.
+            </summary>
+        </member>
+        <member name="P:BlazorComponentLibrary.Components.Skeleton.Skeleton.Animated">
+            <summary>
+            When true, a CSS pulse animation is applied to the placeholder to indicate
+            that content is loading.
+            </summary>
+        </member>
+        <member name="T:BlazorComponentLibrary.Components.Skeleton.SkeletonExtensions">
+            <summary>
+            Provides extension methods for <see cref="T:BlazorComponentLibrary.Components.Skeleton.Skeleton"/> components to enable fluent configuration.
+            </summary>
+        </member>
+        <member name="M:BlazorComponentLibrary.Components.Skeleton.SkeletonExtensions.AsText(BlazorComponentLibrary.Components.Skeleton.Skeleton,System.Int32)">
+            <summary>
+            Sets the skeleton type to Text with the specified number of lines.
+            </summary>
+            <param name="skeleton">The skeleton instance to configure.</param>
+            <param name="lines">Number of text lines to render. Must be greater than 0.</param>
+            <returns>The configured skeleton instance for method chaining.</returns>
+            <exception cref="T:System.ArgumentNullException"><paramref name="skeleton"/> is <see langword="null"/></exception>
+            <exception cref="T:System.ArgumentOutOfRangeException"><paramref name="lines"/> is less than 1.</exception>
+        </member>
+        <member name="M:BlazorComponentLibrary.Components.Skeleton.SkeletonExtensions.AsCircle(BlazorComponentLibrary.Components.Skeleton.Skeleton,System.String)">
+            <summary>
+            Sets the skeleton type to Circle with the specified size.
+            </summary>
+            <param name="skeleton">The skeleton instance to configure.</param>
+            <param name="size">The width and height of the circle (e.g. "40px", "2rem").</param>
+            <returns>The configured skeleton instance for method chaining.</returns>
+            <exception cref="T:System.ArgumentNullException"><paramref name="skeleton"/> is <see langword="null"/></exception>
+            <exception cref="T:System.ArgumentException"><paramref name="size"/> is <see langword="null"/> or whitespace.</exception>
+        </member>
+        <member name="M:BlazorComponentLibrary.Components.Skeleton.SkeletonExtensions.AsRectangle(BlazorComponentLibrary.Components.Skeleton.Skeleton,System.String,System.String)">
+            <summary>
+            Sets the skeleton type to Rectangle with the specified dimensions.
+            </summary>
+            <param name="skeleton">The skeleton instance to configure.</param>
+            <param name="width">The width of the rectangle (e.g. "100%", "200px").</param>
+            <param name="height">The height of the rectangle (e.g. "80px", "10rem").</param>
+            <returns>The configured skeleton instance for method chaining.</returns>
+            <exception cref="T:System.ArgumentNullException"><paramref name="skeleton"/> is <see langword="null"/></exception>
+            <exception cref="T:System.ArgumentException"><paramref name="width"/> is <see langword="null"/> or whitespace.</exception>
+        </member>
+        <member name="M:BlazorComponentLibrary.Components.Skeleton.SkeletonExtensions.WithWidth(BlazorComponentLibrary.Components.Skeleton.Skeleton,System.String)">
+            <summary>
+            Sets the width of the skeleton.
+            </summary>
+            <param name="skeleton">The skeleton instance to configure.</param>
+            <param name="width">The CSS width value (e.g. "100%", "200px", "5rem").</param>
+            <returns>The configured skeleton instance for method chaining.</returns>
+            <exception cref="T:System.ArgumentNullException"><paramref name="skeleton"/> is <see langword="null"/></exception>
+            <exception cref="T:System.ArgumentException"><paramref name="width"/> is <see langword="null"/> or whitespace.</exception>
+        </member>
+        <member name="M:BlazorComponentLibrary.Components.Skeleton.SkeletonExtensions.WithHeight(BlazorComponentLibrary.Components.Skeleton.Skeleton,System.String)">
+            <summary>
+            Sets the height of the skeleton.
+            </summary>
+            <param name="skeleton">The skeleton instance to configure.</param>
+            <param name="height">The CSS height value (e.g. "auto", "80px", "10rem").</param>
+            <returns>The configured skeleton instance for method chaining.</returns>
+            <exception cref="T:System.ArgumentNullException"><paramref name="skeleton"/> is <see langword="null"/></exception>
+            <exception cref="T:System.ArgumentException"><paramref name="height"/> is <see langword="null"/> or whitespace.</exception>
+        </member>
+        <member name="M:BlazorComponentLibrary.Components.Skeleton.SkeletonExtensions.WithLines(BlazorComponentLibrary.Components.Skeleton.Skeleton,System.Int32)">
+            <summary>
+            Sets the number of lines for text skeleton types.
+            </summary>
+            <param name="skeleton">The skeleton instance to configure.</param>
+            <param name="lines">Number of text lines to render. Must be greater than 0.</param>
+            <returns>The configured skeleton instance for method chaining.</returns>
+            <exception cref="T:System.ArgumentNullException"><paramref name="skeleton"/> is <see langword="null"/></exception>
+            <exception cref="T:System.ArgumentOutOfRangeException"><paramref name="lines"/> is less than 1.</exception>
+        </member>
+        <member name="M:BlazorComponentLibrary.Components.Skeleton.SkeletonExtensions.WithAnimation(BlazorComponentLibrary.Components.Skeleton.Skeleton,System.Boolean)">
+            <summary>
+            Enables or disables the animation effect on the skeleton.
+            </summary>
+            <param name="skeleton">The skeleton instance to configure.</param>
+            <param name="animated">Whether to enable the pulse animation.</param>
+            <returns>The configured skeleton instance for method chaining.</returns>
+            <exception cref="T:System.ArgumentNullException"><paramref name="skeleton"/> is <see langword="null"/></exception>
+        </member>
+        <member name="M:BlazorComponentLibrary.Components.Skeleton.SkeletonExtensions.Animated(BlazorComponentLibrary.Components.Skeleton.Skeleton)">
+            <summary>
+            Sets the skeleton to be animated.
+            </summary>
+            <param name="skeleton">The skeleton instance to configure.</param>
+            <returns>The configured skeleton instance for method chaining.</returns>
+            <exception cref="T:System.ArgumentNullException"><paramref name="skeleton"/> is <see langword="null"/></exception>
+        </member>
+        <member name="M:BlazorComponentLibrary.Components.Skeleton.SkeletonExtensions.Static(BlazorComponentLibrary.Components.Skeleton.Skeleton)">
+            <summary>
+            Sets the skeleton to be static (no animation).
+            </summary>
+            <param name="skeleton">The skeleton instance to configure.</param>
+            <returns>The configured skeleton instance for method chaining.</returns>
+            <exception cref="T:System.ArgumentNullException"><paramref name="skeleton"/> is <see langword="null"/></exception>
+        </member>
+        <member name="M:BlazorComponentLibrary.Components.Skeleton.SkeletonExtensions.AsAvatar(BlazorComponentLibrary.Components.Skeleton.Skeleton)">
+            <summary>
+            Configures the skeleton as a circular avatar with standard dimensions (40px × 40px).
+            </summary>
+            <param name="skeleton">The skeleton instance to configure.</param>
+            <returns>The configured skeleton instance for method chaining.</returns>
+            <exception cref="T:System.ArgumentNullException"><paramref name="skeleton"/> is <see langword="null"/></exception>
+        </member>
+        <member name="M:BlazorComponentLibrary.Components.Skeleton.SkeletonExtensions.AsButton(BlazorComponentLibrary.Components.Skeleton.Skeleton)">
+            <summary>
+            Configures the skeleton as a standard button placeholder (120px × 40px rectangle).
+            </summary>
+            <param name="skeleton">The skeleton instance to configure.</param>
+            <returns>The configured skeleton instance for method chaining.</returns>
+            <exception cref="T:System.ArgumentNullException"><paramref name="skeleton"/> is <see langword="null"/></exception>
+        </member>
+        <member name="M:BlazorComponentLibrary.Components.Skeleton.SkeletonExtensions.AsCard(BlazorComponentLibrary.Components.Skeleton.Skeleton)">
+            <summary>
+            Configures the skeleton as a standard card placeholder (100% width × 200px height).
+            </summary>
+            <param name="skeleton">The skeleton instance to configure.</param>
+            <returns>The configured skeleton instance for method chaining.</returns>
+            <exception cref="T:System.ArgumentNullException"><paramref name="skeleton"/> is <see langword="null"/></exception>
+        </member>
+        <member name="M:BlazorComponentLibrary.Components.Skeleton.SkeletonExtensions.WithShape(BlazorComponentLibrary.Components.Skeleton.Skeleton,BlazorComponentLibrary.Components.Skeleton.SkeletonShape)">
+            <summary>
+            Sets the shape of the skeleton.
+            </summary>
+            <param name="skeleton">The skeleton instance to configure.</param>
+            <param name="shape">The shape to use for the skeleton.</param>
+            <returns>The configured skeleton instance for method chaining.</returns>
+            <exception cref="T:System.ArgumentNullException"><paramref name="skeleton"/> is <see langword="null"/></exception>
+        </member>
+        <member name="T:BlazorComponentLibrary.Components.Skeleton.SkeletonJsonExtensions">
+            <summary>
+            Provides JSON serialization and deserialization extension methods for <see cref="T:BlazorComponentLibrary.Components.Skeleton.Skeleton"/> components.
+            </summary>
+        </member>
+        <member name="M:BlazorComponentLibrary.Components.Skeleton.SkeletonJsonExtensions.ToJson(BlazorComponentLibrary.Components.Skeleton.Skeleton,System.Boolean)">
+            <summary>
+            Serializes a <see cref="T:BlazorComponentLibrary.Components.Skeleton.Skeleton"/> instance to a JSON string.
+            </summary>
+            <param name="value">The skeleton instance to serialize. Cannot be <see langword="null"/>.</param>
+            <param name="indented">Whether to format the JSON with indentation for readability.</param>
+            <returns>A JSON string representation of the skeleton.</returns>
+            <exception cref="T:System.ArgumentNullException"><paramref name="value"/> is <see langword="null"/>.</exception>
+        </member>
+        <member name="M:BlazorComponentLibrary.Components.Skeleton.SkeletonJsonExtensions.FromJson(System.String)">
+            <summary>
+            Deserializes a JSON string to a <see cref="T:BlazorComponentLibrary.Components.Skeleton.Skeleton"/> instance.
+            </summary>
+            <param name="json">The JSON string to deserialize. Cannot be <see langword="null"/>.</param>
+            <returns>A <see cref="T:BlazorComponentLibrary.Components.Skeleton.Skeleton"/> instance if deserialization succeeds; otherwise, <see langword="null"/>.</returns>
+            <exception cref="T:System.ArgumentNullException"><paramref name="json"/> is <see langword="null"/>.</exception>
+        </member>
+        <member name="M:BlazorComponentLibrary.Components.Skeleton.SkeletonJsonExtensions.TryFromJson(System.String,BlazorComponentLibrary.Components.Skeleton.Skeleton@)">
+            <summary>
+            Attempts to deserialize a JSON string to a <see cref="T:BlazorComponentLibrary.Components.Skeleton.Skeleton"/> instance.
+            </summary>
+            <param name="json">The JSON string to deserialize. Cannot be <see langword="null"/>.</param>
+            <param name="value">Receives the deserialized skeleton if successful; otherwise, <see langword="null"/>.</param>
+            <returns><see langword="true"/> if deserialization succeeds; otherwise, <see langword="false"/>.</returns>
+            <exception cref="T:System.ArgumentNullException"><paramref name="json"/> is <see langword="null"/>.</exception>
+        </member>
+        <member name="T:BlazorComponentLibrary.Components.Skeleton.SkeletonValidation">
+            <summary>
+            Provides validation helpers for <see cref="T:BlazorComponentLibrary.Components.Skeleton.Skeleton"/> instances.
+            </summary>
+        </member>
+        <member name="M:BlazorComponentLibrary.Components.Skeleton.SkeletonValidation.Validate(BlazorComponentLibrary.Components.Skeleton.Skeleton)">
+            <summary>
+            Validates a <see cref="T:BlazorComponentLibrary.Components.Skeleton.Skeleton"/> instance and returns a list of human-readable problems.
+            </summary>
+            <param name="value">The skeleton instance to validate.</param>
+            <returns>An enumerable of validation messages. Empty if valid.</returns>
+            <exception cref="T:System.ArgumentNullException"><paramref name="value"/> is <see langword="null"/></exception>
+        </member>
+        <member name="M:BlazorComponentLibrary.Components.Skeleton.SkeletonValidation.IsValid(BlazorComponentLibrary.Components.Skeleton.Skeleton)">
+            <summary>
+            Determines whether a <see cref="T:BlazorComponentLibrary.Components.Skeleton.Skeleton"/> instance is valid.
+            </summary>
+            <param name="value">The skeleton instance to check.</param>
+            <returns><see langword="true"/> if valid; otherwise, <see langword="false"/>.</returns>
+            <exception cref="T:System.ArgumentNullException"><paramref name="value"/> is <see langword="null"/></exception>
+        </member>
+        <member name="M:BlazorComponentLibrary.Components.Skeleton.SkeletonValidation.EnsureValid(BlazorComponentLibrary.Components.Skeleton.Skeleton)">
+            <summary>
+            Ensures that a <see cref="T:BlazorComponentLibrary.Components.Skeleton.Skeleton"/> instance is valid, throwing an <see cref="T:System.ArgumentException"/> if not.
+            </summary>
+            <param name="value">The skeleton instance to validate.</param>
+            <exception cref="T:System.ArgumentNullException"><paramref name="value"/> is <see langword="null"/></exception>
+            <exception cref="T:System.ArgumentException"><paramref name="value"/> is invalid. The exception message contains the validation errors.</exception>
+        </member>
+        <member name="M:BlazorComponentLibrary.Components.Skeleton.SkeletonValidation.IsValidCssDimension(System.String)">
+            <summary>
+            Determines whether a CSS dimension string is valid.
+            Valid formats include: 'auto', '100%', '200px', '1.5em', '10rem', etc.
+            </summary>
+            <param name="cssValue">The CSS value to validate.</param>
+            <returns><see langword="true"/> if the CSS value is valid; otherwise, <see langword="false"/>.</returns>
+        </member>
+        <member name="T:BlazorComponentLibrary.Components.Tabs.TabPanel">
+            <summary>
+            A single tab panel that displays content when active.
+            </summary>
+        </member>
+        <member name="P:BlazorComponentLibrary.Components.Tabs.TabPanel.ChildContent">
+            <summary>
+            Content of the tab panel.
+            </summary>
+        </member>
+        <member name="P:BlazorComponentLibrary.Components.Tabs.TabPanel.Label">
+            <summary>
+            The label/title of the tab.
+            </summary>
+        </member>
+        <member name="P:BlazorComponentLibrary.Components.Tabs.TabPanel.Index">
+            <summary>
+            The index of this tab panel.
+            </summary>
+        </member>
+        <member name="T:BlazorComponentLibrary.Components.Tabs.Tabs">
+            <summary>
+            A tabbed interface component that allows switching between different panels.
+            </summary>
+        </member>
+        <member name="P:BlazorComponentLibrary.Components.Tabs.Tabs.ActiveIndex">
+            <summary>
+            The currently active tab index (two-way binding).
+            </summary>
+        </member>
+        <member name="P:BlazorComponentLibrary.Components.Tabs.Tabs.ActiveIndexChanged">
+            <summary>
+            Callback for when the active tab changes.
+            </summary>
+        </member>
+        <member name="P:BlazorComponentLibrary.Components.Tabs.Tabs.ChildContent">
+            <summary>
+            Content that contains one or more <see cref="T:BlazorComponentLibrary.Components.Tabs.TabPanel"/> components.
+            </summary>
+        </member>
+        <member name="P:BlazorComponentLibrary.Components.Tabs.Tabs.OnActiveIndexChanged">
+            <summary>
+            Fires when the active tab changes.
+            </summary>
+        </member>
+        <member name="T:BlazorComponentLibrary.Components.ThemeSwitcher.IThemeSwitcher">
+            <summary>Contract for the theme-switcher toggle component.</summary>
+        </member>
+        <member name="P:BlazorComponentLibrary.Components.ThemeSwitcher.IThemeSwitcher.ShowLabel">
+            <summary>
+            Gets or sets whether a text label is rendered beside each theme icon.
+            Defaults to <c>true</c>.
+            </summary>
+        </member>
+        <member name="P:BlazorComponentLibrary.Components.ThemeSwitcher.IThemeSwitcher.CssClass">
+            <summary>
+            Gets or sets optional CSS class(es) to append to the root element,
+            allowing consumers to customise layout without overriding library styles.
+            </summary>
+        </member>
+        <member name="T:BlazorComponentLibrary.Components.ThemeSwitcher.ThemeSwitcher">
+            <summary>
+            A three-way toggle that lets users switch between Light, Dark, and System themes.
+            The selected preference is persisted via <see cref="T:BlazorComponentLibrary.Services.IThemeService"/> so the choice
+            survives page reloads. Subscribe to <see cref="E:BlazorComponentLibrary.Services.IThemeService.ThemeChanged"/> to
+            react to theme changes elsewhere in the application.
+            </summary>
+        </member>
+        <member name="P:BlazorComponentLibrary.Components.ThemeSwitcher.ThemeSwitcher.ShowLabel">
+            <inheritdoc/>
+        </member>
+        <member name="P:BlazorComponentLibrary.Components.ThemeSwitcher.ThemeSwitcher.CssClass">
+            <inheritdoc/>
+        </member>
+        <member name="M:BlazorComponentLibrary.Components.ThemeSwitcher.ThemeSwitcher.Dispose">
+            <inheritdoc/>
+        </member>
+        <member name="T:BlazorComponentLibrary.Components.ThemeSwitcher.ThemeSwitcherJsonExtensions">
+            <summary>
+            Provides System.Text.Json serialization and deserialization extensions for <see cref="T:BlazorComponentLibrary.Components.ThemeSwitcher.ThemeSwitcher"/> components.
+            </summary>
+        </member>
+        <member name="M:BlazorComponentLibrary.Components.ThemeSwitcher.ThemeSwitcherJsonExtensions.ToJson(BlazorComponentLibrary.Components.ThemeSwitcher.ThemeSwitcher,System.Boolean)">
+            <summary>
+            Serializes the theme switcher to a JSON string.
+            </summary>
+            <param name="value">The theme switcher instance to serialize.</param>
+            <param name="indented">Whether to format the JSON with indentation for readability.</param>
+            <returns>A JSON string representation of the theme switcher.</returns>
+            <exception cref="T:System.ArgumentNullException"><paramref name="value"/> is null.</exception>
+        </member>
+        <member name="M:BlazorComponentLibrary.Components.ThemeSwitcher.ThemeSwitcherJsonExtensions.FromJson(System.String)">
+            <summary>
+            Deserializes a JSON string into a new <see cref="T:BlazorComponentLibrary.Components.ThemeSwitcher.ThemeSwitcher"/> instance.
+            </summary>
+            <param name="json">The JSON string to deserialize.</param>
+            <returns>A new theme switcher instance populated from the JSON, or null if deserialization fails.</returns>
+            <exception cref="T:System.ArgumentNullException"><paramref name="json"/> is null.</exception>
+            <exception cref="T:System.Text.Json.JsonException">Thrown when the JSON is invalid.</exception>
+        </member>
+        <member name="M:BlazorComponentLibrary.Components.ThemeSwitcher.ThemeSwitcherJsonExtensions.TryFromJson(System.String,BlazorComponentLibrary.Components.ThemeSwitcher.ThemeSwitcher@)">
+            <summary>
+            Attempts to deserialize a JSON string into a <see cref="T:BlazorComponentLibrary.Components.ThemeSwitcher.ThemeSwitcher"/> instance.
+            </summary>
+            <param name="json">The JSON string to deserialize.</param>
+            <param name="value">Receives the deserialized theme switcher instance if successful; otherwise, null.</param>
+            <returns>True if deserialization succeeded; false if the JSON is invalid or deserialization failed.</returns>
+            <exception cref="T:System.ArgumentNullException"><paramref name="json"/> is null.</exception>
+        </member>
+        <member name="T:BlazorComponentLibrary.Components.Toast.ToastPosition">
+            <summary>Defines the screen corner where the toast stack is anchored.</summary>
+        </member>
+        <member name="T:BlazorComponentLibrary.Components.Toast.IToastContainer">
+            <summary>Contract for the toast container component that renders active notifications.</summary>
+        </member>
+        <member name="P:BlazorComponentLibrary.Components.Toast.IToastContainer.Position">
+            <summary>
+            Gets or sets the screen position where toasts are stacked.
+            Defaults to <see cref="F:BlazorComponentLibrary.Components.Toast.ToastPosition.BottomRight"/>.
+            </summary>
+        </member>
+        <member name="P:BlazorComponentLibrary.Components.Toast.IToastContainer.MaxVisible">
+            <summary>
+            Gets or sets the maximum number of toasts visible simultaneously.
+            When the queue exceeds this limit the oldest toasts are hidden until
+            newer ones dismiss. Defaults to <c>5</c>.
+            </summary>
+        </member>
+        <member name="T:BlazorComponentLibrary.Components.Toast.ToastContainer">
+            <summary>
+            Renders the stack of active toast notifications produced by <see cref="T:BlazorComponentLibrary.Services.IToastService"/>.
+            Place a single <c>&lt;ToastContainer /&gt;</c> in your root layout component so it
+            is always present regardless of the current route.
+            </summary>
+        </member>
+        <member name="P:BlazorComponentLibrary.Components.Toast.ToastContainer.Position">
+            <inheritdoc/>
+        </member>
+        <member name="P:BlazorComponentLibrary.Components.Toast.ToastContainer.MaxVisible">
+            <inheritdoc/>
+        </member>
+        <member name="M:BlazorComponentLibrary.Components.Toast.ToastContainer.IconFor(BlazorComponentLibrary.Services.ToastType)">
+            <summary>Returns the icon character for the given toast type.</summary>
+        </member>
+        <member name="M:BlazorComponentLibrary.Components.Toast.ToastContainer.GetToastIcon(BlazorComponentLibrary.Services.ToastMessage)">
+            <summary>Gets the icon to display for the given toast message.</summary>
+            <param name="toast">The toast message.</param>
+            <returns>The icon to display, or null if no icon should be displayed.</returns>
+        </member>
+        <member name="M:BlazorComponentLibrary.Components.Toast.ToastContainer.Dispose">
+            <inheritdoc/>
+        </member>
+        <member name="T:BlazorComponentLibrary.Components.Toast.ToastContainerExtensions">
+            <summary>
+            Provides extension methods for <see cref="T:BlazorComponentLibrary.Components.Toast.ToastContainer"/> to simplify common toast operations.
+            </summary>
+        </member>
+        <member name="M:BlazorComponentLibrary.Components.Toast.ToastContainerExtensions.ShowSuccess(BlazorComponentLibrary.Components.Toast.ToastContainer,System.String,System.Int32)">
+            <summary>
+            Shows a success toast notification that automatically dismisses after the default duration.
+            </summary>
+            <param name="container">The toast container instance.</param>
+            <param name="message">The success message to display. Must not be empty.</param>
+            <param name="durationMs">
+            Auto-dismiss delay in milliseconds. Set to <c>0</c> to require manual dismissal.
+            Defaults to 4000 ms.
+            </param>
+            <exception cref="T:System.ArgumentNullException"><paramref name="container"/> is <see langword="null"/>.</exception>
+            <exception cref="T:System.ArgumentException"><paramref name="message"/> is <see langword="null"/> or empty.</exception>
+        </member>
+        <member name="M:BlazorComponentLibrary.Components.Toast.ToastContainerExtensions.ShowWarning(BlazorComponentLibrary.Components.Toast.ToastContainer,System.String,System.Int32)">
+            <summary>
+            Shows a warning toast notification that automatically dismisses after the default duration.
+            </summary>
+            <param name="container">The toast container instance.</param>
+            <param name="message">The warning message to display. Must not be empty.</param>
+            <param name="durationMs">
+            Auto-dismiss delay in milliseconds. Set to <c>0</c> to require manual dismissal.
+            Defaults to 4000 ms.
+            </param>
+            <exception cref="T:System.ArgumentNullException"><paramref name="container"/> is <see langword="null"/>.</exception>
+            <exception cref="T:System.ArgumentException"><paramref name="message"/> is <see langword="null"/> or empty.</exception>
+        </member>
+        <member name="M:BlazorComponentLibrary.Components.Toast.ToastContainerExtensions.ShowError(BlazorComponentLibrary.Components.Toast.ToastContainer,System.String,System.Int32)">
+            <summary>
+            Shows an error toast notification that automatically dismisses after the default duration.
+            </summary>
+            <param name="container">The toast container instance.</param>
+            <param name="message">The error message to display. Must not be empty.</param>
+            <param name="durationMs">
+            Auto-dismiss delay in milliseconds. Set to <c>0</c> to require manual dismissal.
+            Defaults to 4000 ms.
+            </param>
+            <exception cref="T:System.ArgumentNullException"><paramref name="container"/> is <see langword="null"/>.</exception>
+            <exception cref="T:System.ArgumentException"><paramref name="message"/> is <see langword="null"/> or empty.</exception>
+        </member>
+        <member name="M:BlazorComponentLibrary.Components.Toast.ToastContainerExtensions.ShowInfo(BlazorComponentLibrary.Components.Toast.ToastContainer,System.String)">
+            <summary>
+            Shows an informational toast notification that requires manual dismissal.
+            </summary>
+            <param name="container">The toast container instance.</param>
+            <param name="message">The informational message to display. Must not be empty.</param>
+            <exception cref="T:System.ArgumentNullException"><paramref name="container"/> is <see langword="null"/>.</exception>
+            <exception cref="T:System.ArgumentException"><paramref name="message"/> is <see langword="null"/> or empty.</exception>
+        </member>
+        <member name="M:BlazorComponentLibrary.Components.Toast.ToastContainerExtensions.DismissAll(BlazorComponentLibrary.Components.Toast.ToastContainer)">
+            <summary>
+            Dismisses all active toasts in the container.
+            </summary>
+            <param name="container">The toast container instance.</param>
+            <exception cref="T:System.ArgumentNullException"><paramref name="container"/> is <see langword="null"/>.</exception>
+        </member>
+        <member name="T:BlazorComponentLibrary.Components.Toast.ToastContainerJsonExtensions">
+            <summary>
+            Provides System.Text.Json serialization extensions for <see cref="T:BlazorComponentLibrary.Components.Toast.ToastContainer"/>.
+            </summary>
+        </member>
+        <member name="M:BlazorComponentLibrary.Components.Toast.ToastContainerJsonExtensions.ToJson(BlazorComponentLibrary.Components.Toast.ToastContainer,System.Boolean)">
+            <summary>
+            Serializes the <see cref="T:BlazorComponentLibrary.Components.Toast.ToastContainer"/> to a JSON string.
+            </summary>
+            <param name="value">The toast container to serialize.</param>
+            <param name="indented">Whether to format the JSON with indentation for readability.</param>
+            <returns>A JSON string representation of the toast container.</returns>
+            <exception cref="T:System.ArgumentNullException">Thrown when <paramref name="value"/> is <see langword="null"/>.</exception>
+        </member>
+        <member name="M:BlazorComponentLibrary.Components.Toast.ToastContainerJsonExtensions.FromJson(System.String)">
+            <summary>
+            Deserializes a <see cref="T:BlazorComponentLibrary.Components.Toast.ToastContainer"/> instance from a JSON string.
+            </summary>
+            <param name="json">The JSON string to deserialize.</param>
+            <returns>A deserialized <see cref="T:BlazorComponentLibrary.Components.Toast.ToastContainer"/> instance, or <see langword="null"/> if <paramref name="json"/> is <see langword="null"/>, empty, or whitespace.</returns>
+            <exception cref="T:System.ArgumentNullException">Thrown when <paramref name="json"/> is <see langword="null"/>.</exception>
+            <exception cref="T:System.Text.Json.JsonException">Thrown when the JSON is invalid or cannot be deserialized.</exception>
+        </member>
+        <member name="M:BlazorComponentLibrary.Components.Toast.ToastContainerJsonExtensions.TryFromJson(System.String,BlazorComponentLibrary.Components.Toast.ToastContainer@)">
+            <summary>
+            Attempts to deserialize a <see cref="T:BlazorComponentLibrary.Components.Toast.ToastContainer"/> instance from a JSON string.
+            </summary>
+            <param name="json">The JSON string to deserialize.</param>
+            <param name="value">Receives the deserialized <see cref="T:BlazorComponentLibrary.Components.Toast.ToastContainer"/> instance if successful.</param>
+            <returns><see langword="true"/> if deserialization succeeds; otherwise, <see langword="false"/>.</returns>
+            <exception cref="T:System.ArgumentNullException">Thrown when <paramref name="json"/> is <see langword="null"/>.</exception>
+        </member>
+        <member name="P:BlazorComponentLibrary.Components.Accordion.Accordion.AllowMultiple">
+            <summary>
+            Allows more than one accordion item to be expanded at the same time.
+            </summary>
+        </member>
+        <member name="P:BlazorComponentLibrary.Components.Accordion.Accordion.SingleOpen">
+            <summary>
+            When true, only one accordion item can be expanded at a time (others are automatically closed).
+            </summary>
+        </member>
+        <member name="P:BlazorComponentLibrary.Components.Accordion.Accordion.ChildContent">
+            <summary>
+            Content that contains one or more <see cref="T:BlazorComponentLibrary.Components.Accordion.AccordionItem"/> components.
+            </summary>
+        </member>
+        <member name="P:BlazorComponentLibrary.Components.Accordion.Accordion.ItemToggled">
+            <summary>
+            Fires when an item is toggled (expanded or collapsed).
+            </summary>
+        </member>
+        <member name="M:BlazorComponentLibrary.Components.Accordion.Accordion.RegisterItem(BlazorComponentLibrary.Components.Accordion.AccordionItem)">
+            <summary>
+            Called by child <see cref="T:BlazorComponentLibrary.Components.Accordion.AccordionItem"/> components to register themselves.
+            </summary>
+        </member>
+        <member name="M:BlazorComponentLibrary.Components.Accordion.Accordion.UnregisterItem(BlazorComponentLibrary.Components.Accordion.AccordionItem)">
+            <summary>
+            Called by child items when they are disposed.
+            </summary>
+        </member>
+        <member name="M:BlazorComponentLibrary.Components.Accordion.Accordion.ToggleItem(BlazorComponentLibrary.Components.Accordion.AccordionItem)">
+            <summary>
+            Called by an <see cref="T:BlazorComponentLibrary.Components.Accordion.AccordionItem"/> when its header is clicked.
+            </summary>
+        </member>
+        <member name="P:BlazorComponentLibrary.Components.Accordion.AccordionItem.Header">
+            <summary>
+            Header content of the accordion item.
+            </summary>
+        </member>
+        <member name="P:BlazorComponentLibrary.Components.Accordion.AccordionItem.ChildContent">
+            <summary>
+            Body content of the accordion item.
+            </summary>
+        </member>
+        <member name="P:BlazorComponentLibrary.Components.Accordion.AccordionItem.Expanded">
+            <summary>
+            Determines whether the item is initially expanded when the accordion is first rendered.
+            </summary>
+        </member>
+        <member name="M:BlazorComponentLibrary.Components.Accordion.AccordionItem.SetExpanded(System.Boolean)">
+            <summary>
+            Called by the parent accordion to change the expanded state.
+            </summary>
+        </member>
+        <member name="T:BlazorComponentLibrary.Components.Spinner.Spinner.SpinnerSize">
+            <summary>
+            The size of the spinner.
+            </summary>
+        </member>
+        <member name="P:BlazorComponentLibrary.Components.Spinner.Spinner.Size">
+            <summary>
+            Size of the spinner. Defaults to <see cref="F:BlazorComponentLibrary.Components.Spinner.Spinner.SpinnerSize.Medium"/>.
+            </summary>
+        </member>
+        <member name="P:BlazorComponentLibrary.Components.Spinner.Spinner.Color">
+            <summary>
+            CSS colour of the spinner. Accepts any valid CSS colour string.
+            Defaults to <c>currentColor</c>.
+            </summary>
+        </member>
+        <member name="P:BlazorComponentLibrary.Components.Spinner.Spinner.Label">
+            <summary>
+            Accessible label for the spinner. If not provided, the spinner will be
+            announced as a generic status element.
+            </summary>
+        </member>
+        <member name="T:BlazorComponentLibrary.Exceptions.BlazorComponentLibraryException">
+            <summary>
+            Base exception for all exceptions thrown by BlazorComponentLibrary.
+            </summary>
+        </member>
+        <member name="M:BlazorComponentLibrary.Exceptions.BlazorComponentLibraryException.#ctor">
+            <summary>Initializes a new instance of the <see cref="T:BlazorComponentLibrary.Exceptions.BlazorComponentLibraryException"/> class.</summary>
+        </member>
+        <member name="M:BlazorComponentLibrary.Exceptions.BlazorComponentLibraryException.#ctor(System.String)">
+            <summary>Initializes a new instance of the <see cref="T:BlazorComponentLibrary.Exceptions.BlazorComponentLibraryException"/> class with a specified error message.</summary>
+            <param name="message">The message that describes the error.</param>
+        </member>
+        <member name="M:BlazorComponentLibrary.Exceptions.BlazorComponentLibraryException.#ctor(System.String,System.Exception)">
+            <summary>Initializes a new instance of the <see cref="T:BlazorComponentLibrary.Exceptions.BlazorComponentLibraryException"/> class with a specified error message and a reference to the inner exception that is the cause of this exception.</summary>
+            <param name="message">The error message that explains the reason for the exception.</param>
+            <param name="innerException">The exception that is the cause of the current exception, or a null reference if no inner exception is specified.</param>
+        </member>
+        <member name="T:BlazorComponentLibrary.Exceptions.ConfigurationException">
+            <summary>
+            The exception that is thrown when there is a configuration error in the BlazorComponentLibrary.
+            This includes invalid configuration values, missing required settings, or invalid combinations of settings.
+            </summary>
+        </member>
+        <member name="M:BlazorComponentLibrary.Exceptions.ConfigurationException.#ctor">
+            <summary>Initializes a new instance of the <see cref="T:BlazorComponentLibrary.Exceptions.ConfigurationException"/> class.</summary>
+        </member>
+        <member name="M:BlazorComponentLibrary.Exceptions.ConfigurationException.#ctor(System.String)">
+            <summary>Initializes a new instance of the <see cref="T:BlazorComponentLibrary.Exceptions.ConfigurationException"/> class with a specified error message.</summary>
+            <param name="message">The message that describes the error.</param>
+        </member>
+        <member name="M:BlazorComponentLibrary.Exceptions.ConfigurationException.#ctor(System.String,System.Exception)">
+            <summary>Initializes a new instance of the <see cref="T:BlazorComponentLibrary.Exceptions.ConfigurationException"/> class with a specified error message and a reference to the inner exception that is the cause of this exception.</summary>
+            <param name="message">The error message that explains the reason for the exception.</param>
+            <param name="innerException">The exception that is the cause of the current exception, or a null reference if no inner exception is specified.</param>
+        </member>
+        <member name="T:BlazorComponentLibrary.Exceptions.ModalException">
+            <summary>
+            The exception that is thrown when an error occurs in the Modal component.
+            This includes JavaScript interop errors and modal lifecycle management issues.
+            </summary>
+        </member>
+        <member name="M:BlazorComponentLibrary.Exceptions.ModalException.#ctor">
+            <summary>Initializes a new instance of the <see cref="T:BlazorComponentLibrary.Exceptions.ModalException"/> class.</summary>
+        </member>
+        <member name="M:BlazorComponentLibrary.Exceptions.ModalException.#ctor(System.String)">
+            <summary>Initializes a new instance of the <see cref="T:BlazorComponentLibrary.Exceptions.ModalException"/> class with a specified error message.</summary>
+            <param name="message">The message that describes the error.</param>
+        </member>
+        <member name="M:BlazorComponentLibrary.Exceptions.ModalException.#ctor(System.String,System.Exception)">
+            <summary>Initializes a new instance of the <see cref="T:BlazorComponentLibrary.Exceptions.ModalException"/> class with a specified error message and a reference to the inner exception that is the cause of this exception.</summary>
+            <param name="message">The error message that explains the reason for the exception.</param>
+            <param name="innerException">The exception that is the cause of the current exception, or a null reference if no inner exception is specified.</param>
+        </member>
+        <member name="T:BlazorComponentLibrary.Exceptions.ThemeServiceException">
+            <summary>
+            The exception that is thrown when an error occurs in the ThemeService.
+            This includes JavaScript interop errors and local storage access issues.
+            </summary>
+        </member>
+        <member name="M:BlazorComponentLibrary.Exceptions.ThemeServiceException.#ctor">
+            <summary>Initializes a new instance of the <see cref="T:BlazorComponentLibrary.Exceptions.ThemeServiceException"/> class.</summary>
+        </member>
+        <member name="M:BlazorComponentLibrary.Exceptions.ThemeServiceException.#ctor(System.String)">
+            <summary>Initializes a new instance of the <see cref="T:BlazorComponentLibrary.Exceptions.ThemeServiceException"/> class with a specified error message.</summary>
+            <param name="message">The message that describes the error.</param>
+        </member>
+        <member name="M:BlazorComponentLibrary.Exceptions.ThemeServiceException.#ctor(System.String,System.Exception)">
+            <summary>Initializes a new instance of the <see cref="T:BlazorComponentLibrary.Exceptions.ThemeServiceException"/> class with a specified error message and a reference to the inner exception that is the cause of this exception.</summary>
+            <param name="message">The error message that explains the reason for the exception.</param>
+            <param name="innerException">The exception that is the cause of the current exception, or a null reference if no inner exception is specified.</param>
+        </member>
+        <member name="T:BlazorComponentLibrary.Exceptions.ToastServiceException">
+            <summary>
+            The exception that is thrown when an error occurs in the ToastService.
+            This includes issues with toast message validation and timer management.
+            </summary>
+        </member>
+        <member name="M:BlazorComponentLibrary.Exceptions.ToastServiceException.#ctor">
+            <summary>Initializes a new instance of the <see cref="T:BlazorComponentLibrary.Exceptions.ToastServiceException"/> class.</summary>
+        </member>
+        <member name="M:BlazorComponentLibrary.Exceptions.ToastServiceException.#ctor(System.String)">
+            <summary>Initializes a new instance of the <see cref="T:BlazorComponentLibrary.Exceptions.ToastServiceException"/> class with a specified error message.</summary>
+            <param name="message">The message that describes the error.</param>
+        </member>
+        <member name="M:BlazorComponentLibrary.Exceptions.ToastServiceException.#ctor(System.String,System.Exception)">
+            <summary>Initializes a new instance of the <see cref="T:BlazorComponentLibrary.Exceptions.ToastServiceException"/> class with a specified error message and a reference to the inner exception that is the cause of this exception.</summary>
+            <param name="message">The error message that explains the reason for the exception.</param>
+            <param name="innerException">The exception that is the cause of the current exception, or a null reference if no inner exception is specified.</param>
+        </member>
+        <member name="T:BlazorComponentLibrary.Exceptions.ValidationException">
+            <summary>
+            The exception that is thrown when validation of input data fails.
+            This includes invalid parameter values, failed validation rules, or invalid data formats.
+            </summary>
+        </member>
+        <member name="M:BlazorComponentLibrary.Exceptions.ValidationException.#ctor">
+            <summary>Initializes a new instance of the <see cref="T:BlazorComponentLibrary.Exceptions.ValidationException"/> class.</summary>
+        </member>
+        <member name="M:BlazorComponentLibrary.Exceptions.ValidationException.#ctor(System.String)">
+            <summary>Initializes a new instance of the <see cref="T:BlazorComponentLibrary.Exceptions.ValidationException"/> class with a specified error message.</summary>
+            <param name="message">The message that describes the error.</param>
+        </member>
+        <member name="M:BlazorComponentLibrary.Exceptions.ValidationException.#ctor(System.String,System.Exception)">
+            <summary>Initializes a new instance of the <see cref="T:BlazorComponentLibrary.Exceptions.ValidationException"/> class with a specified error message and a reference to the inner exception that is the cause of this exception.</summary>
+            <param name="message">The error message that explains the reason for the exception.</param>
+            <param name="innerException">The exception that is the cause of the current exception, or a null reference if no inner exception is specified.</param>
+        </member>
+        <member name="T:BlazorComponentLibrary.Extensions.ServiceCollectionExtensions">
+            <summary>Extension methods for registering library services with the DI container.</summary>
+        </member>
+        <member name="M:BlazorComponentLibrary.Extensions.ServiceCollectionExtensions.AddBlazorComponentLibrary(Microsoft.Extensions.DependencyInjection.IServiceCollection)">
+            <summary>
+            Registers all BlazorComponentLibrary services with the <see cref="T:Microsoft.Extensions.DependencyInjection.IServiceCollection"/>.
+            Call this once in <c>Program.cs</c>:
+            <code>builder.Services.AddBlazorComponentLibrary();</code>
+            </summary>
+            <param name="services">The service collection to configure.</param>
+            <returns>The same <paramref name="services"/> instance for chaining.</returns>
+            <exception cref="T:System.ArgumentNullException">Thrown when <paramref name="services"/> is null.</exception>
+        </member>
+        <member name="T:BlazorComponentLibrary.Services.ThemeMode">
+            <summary>Represents the available UI theme modes.</summary>
+        </member>
+        <member name="F:BlazorComponentLibrary.Services.ThemeMode.Light">
+            <summary>Light colour scheme.</summary>
+        </member>
+        <member name="F:BlazorComponentLibrary.Services.ThemeMode.Dark">
+            <summary>Dark colour scheme.</summary>
+        </member>
+        <member name="F:BlazorComponentLibrary.Services.ThemeMode.System">
+            <summary>Follow the OS / browser preference.</summary>
+        </member>
+        <member name="T:BlazorComponentLibrary.Services.IThemeService">
+            <summary>
+            Service that manages the active UI theme and persists the user's preference
+            across page reloads via the browser's local storage.
+            </summary>
+        </member>
+        <member name="P:BlazorComponentLibrary.Services.IThemeService.CurrentTheme">
+            <summary>Gets the currently active theme mode.</summary>
+        </member>
+        <member name="E:BlazorComponentLibrary.Services.IThemeService.ThemeChanged">
+            <summary>Raised whenever the active theme changes.</summary>
+        </member>
+        <member name="E:BlazorComponentLibrary.Services.IThemeService.OnThemeChanged">
+            <summary>
+            Raised when the theme changes, providing the string representation
+            that is written to the <c>data-bcl-theme</c> attribute (e.g., "light", "dark", "auto").
+            </summary>
+        </member>
+        <member name="M:BlazorComponentLibrary.Services.IThemeService.SetTheme(BlazorComponentLibrary.Services.ThemeMode)">
+            <summary>
+            Changes the active theme and persists the selection to local storage.
+            Sets a <c>data-bcl-theme</c> attribute on <c>document.documentElement</c>
+            so CSS custom properties can respond to the change without a page reload.
+            </summary>
+            <param name="theme">The new theme mode to apply.</param>
+        </member>
+        <member name="M:BlazorComponentLibrary.Services.IThemeService.InitializeAsync">
+            <summary>
+            Reads the persisted theme preference from local storage and applies it.
+            Call this once during application startup, e.g. inside
+            <c>OnAfterRenderAsync(firstRender: true)</c> of the root layout.
+            </summary>
+        </member>
+        <member name="T:BlazorComponentLibrary.Services.ToastType">
+            <summary>Classifies the visual style and semantic meaning of a toast notification.</summary>
+        </member>
+        <member name="F:BlazorComponentLibrary.Services.ToastType.Info">
+            <summary>Informational message with no urgency.</summary>
+        </member>
+        <member name="F:BlazorComponentLibrary.Services.ToastType.Success">
+            <summary>Operation completed successfully.</summary>
+        </member>
+        <member name="F:BlazorComponentLibrary.Services.ToastType.Warning">
+            <summary>Non-critical warning the user should be aware of.</summary>
+        </member>
+        <member name="F:BlazorComponentLibrary.Services.ToastType.Error">
+            <summary>An error has occurred and requires attention.</summary>
+        </member>
+        <member name="T:BlazorComponentLibrary.Services.ToastMessage">
+            <summary>Represents a single toast notification message.</summary>
+            <param name="Id">Unique identifier used to target the toast for dismissal.</param>
+            <param name="Message">The text content displayed in the toast.</param>
+            <param name="Type">The visual type that controls the toast's icon and accent colour.</param>
+            <param name="DurationMs">
+            Auto-dismiss delay in milliseconds. Set to <c>0</c> to require manual dismissal.
+            </param>
+            <param name="Icon">
+            The icon to display for this toast. If null, the default icon for the toast type will be used.
+            </param>
+        </member>
+        <member name="M:BlazorComponentLibrary.Services.ToastMessage.#ctor(System.Guid,System.String,BlazorComponentLibrary.Services.ToastType,System.Int32,System.String)">
+            <summary>Represents a single toast notification message.</summary>
+            <param name="Id">Unique identifier used to target the toast for dismissal.</param>
+            <param name="Message">The text content displayed in the toast.</param>
+            <param name="Type">The visual type that controls the toast's icon and accent colour.</param>
+            <param name="DurationMs">
+            Auto-dismiss delay in milliseconds. Set to <c>0</c> to require manual dismissal.
+            </param>
+            <param name="Icon">
+            The icon to display for this toast. If null, the default icon for the toast type will be used.
+            </param>
+        </member>
+        <member name="P:BlazorComponentLibrary.Services.ToastMessage.Id">
+            <summary>Unique identifier used to target the toast for dismissal.</summary>
+        </member>
+        <member name="P:BlazorComponentLibrary.Services.ToastMessage.Message">
+            <summary>The text content displayed in the toast.</summary>
+        </member>
+        <member name="P:BlazorComponentLibrary.Services.ToastMessage.Type">
+            <summary>The visual type that controls the toast's icon and accent colour.</summary>
+        </member>
+        <member name="P:BlazorComponentLibrary.Services.ToastMessage.DurationMs">
+            <summary>
+            Auto-dismiss delay in milliseconds. Set to <c>0</c> to require manual dismissal.
+            </summary>
+        </member>
+        <member name="P:BlazorComponentLibrary.Services.ToastMessage.Icon">
+            <summary>
+            The icon to display for this toast. If null, the default icon for the toast type will be used.
+            </summary>
+        </member>
+        <member name="T:BlazorComponentLibrary.Services.IToastService">
+            <summary>Service for queuing and managing toast notification messages.</summary>
+        </member>
+        <member name="P:BlazorComponentLibrary.Services.IToastService.ActiveToasts">
+            <summary>Gets the currently active toast messages in display order (oldest first).</summary>
+        </member>
+        <member name="E:BlazorComponentLibrary.Services.IToastService.ToastsChanged">
+            <summary>Raised whenever a toast is added or removed.</summary>
+        </member>
+        <member name="M:BlazorComponentLibrary.Services.IToastService.Show(System.String,BlazorComponentLibrary.Services.ToastType,System.Int32,System.String)">
+            <summary>
+            Adds a new toast notification. If <paramref name="durationMs"/> is greater than
+            zero the toast is automatically dismissed after the specified delay.
+            </summary>
+            <param name="message">The message text to display. Must not be empty.</param>
+            <param name="type">The toast type. Defaults to <see cref="F:BlazorComponentLibrary.Services.ToastType.Info"/>.</param>
+            <param name="durationMs">
+            Auto-dismiss delay in milliseconds. Defaults to 4 000 ms. Use <c>0</c> to
+            require the user to manually dismiss the notification.
+            </param>
+        </member>
+        <member name="M:BlazorComponentLibrary.Services.IToastService.Dismiss(System.Guid)">
+            <summary>Removes the toast with the specified identifier.</summary>
+            <param name="id">The unique identifier of the toast to dismiss.</param>
+        </member>
+        <member name="M:BlazorComponentLibrary.Services.IToastService.DismissAll">
+            <summary>Removes all active toasts immediately.</summary>
+        </member>
+        <member name="M:BlazorComponentLibrary.Services.IToastService.PauseTimer(System.Guid)">
+            <summary>
+            Pauses the auto-dismiss timer for a specific toast.
+            </summary>
+            <param name="id">The ID of the toast to pause.</param>
+        </member>
+        <member name="M:BlazorComponentLibrary.Services.IToastService.ResumeTimer(System.Guid,System.Double)">
+            <summary>
+            Resumes the auto-dismiss timer for a specific toast.
+            </summary>
+            <param name="id">The ID of the toast to resume.</param>
+            <param name="remainingMs">The remaining time in milliseconds.</param>
+        </member>
+        <member name="T:BlazorComponentLibrary.Services.ThemeService">
+            <summary>
+            Default implementation of <see cref="T:BlazorComponentLibrary.Services.IThemeService"/>.
+            Writes a <c>data-bcl-theme</c> attribute (<c>"light"</c>, <c>"dark"</c>, or <c>"auto"</c>)
+            to <c>document.documentElement</c> so CSS custom properties can vary by theme without
+            a full page reload. The selected preference is persisted in <c>localStorage</c> under
+            the key <c>bcl-theme</c>.
+            </summary>
+        </member>
+        <member name="P:BlazorComponentLibrary.Services.ThemeService.CurrentTheme">
+            <inheritdoc/>
+        </member>
+        <member name="E:BlazorComponentLibrary.Services.ThemeService.ThemeChanged">
+            <inheritdoc/>
+        </member>
+        <member name="E:BlazorComponentLibrary.Services.ThemeService.OnThemeChanged">
+            <summary>
+            Raised when the theme changes, providing the string representation
+            that is written to the <c>data-bcl-theme</c> attribute (e.g., "light", "dark", "auto").
+            </summary>
+        </member>
+        <member name="M:BlazorComponentLibrary.Services.ThemeService.#ctor(Microsoft.JSInterop.IJSRuntime)">
+            <summary>Initialises a new instance of <see cref="T:BlazorComponentLibrary.Services.ThemeService"/>.</summary>
+            <param name="jsRuntime">The JS interop runtime injected by the DI container.</param>
+            <exception cref="T:System.ArgumentNullException">Thrown when <paramref name="jsRuntime"/> is null.</exception>
+        </member>
+        <member name="M:BlazorComponentLibrary.Services.ThemeService.InitializeAsync">
+            <inheritdoc/>
+            <exception cref="T:BlazorComponentLibrary.Exceptions.ThemeServiceException">Thrown when there is an error accessing local storage or applying theme.</exception>
+        </member>
+        <member name="M:BlazorComponentLibrary.Services.ThemeService.SetTheme(BlazorComponentLibrary.Services.ThemeMode)">
+            <inheritdoc/>
+        </member>
+        <member name="T:BlazorComponentLibrary.Services.ToastService">
+            <summary>
+            Default implementation of <see cref="T:BlazorComponentLibrary.Services.IToastService"/>.
+            Each toast with a positive <c>DurationMs</c> value is automatically dismissed via a
+            <see cref="T:System.Timers.Timer"/> so the calling component does not need to manage
+            any async lifecycle state.
+            </summary>
+        </member>
+        <member name="M:BlazorComponentLibrary.Services.ToastService.#ctor(Microsoft.Extensions.Logging.ILogger{BlazorComponentLibrary.Services.ToastService})">
+            <summary>Initialises a new instance of <see cref="T:BlazorComponentLibrary.Services.ToastService"/>.</summary>
+            <param name="logger">
+            Optional logger. When omitted (e.g. in unit tests) a no-op logger is used.
+            </param>
+        </member>
+        <member name="P:BlazorComponentLibrary.Services.ToastService.ActiveToasts">
+            <inheritdoc/>
+        </member>
+        <member name="E:BlazorComponentLibrary.Services.ToastService.ToastsChanged">
+            <inheritdoc/>
+        </member>
+        <member name="M:BlazorComponentLibrary.Services.ToastService.Show(System.String,BlazorComponentLibrary.Services.ToastType,System.Int32,System.String)">
+            <inheritdoc/>
+            <exception cref="T:BlazorComponentLibrary.Exceptions.ToastServiceException">Thrown when the message is null or whitespace,
+            or when <paramref name="durationMs"/> is negative.</exception>
+        </member>
+        <member name="M:BlazorComponentLibrary.Services.ToastService.Dismiss(System.Guid)">
+            <inheritdoc/>
+        </member>
+        <member name="M:BlazorComponentLibrary.Services.ToastService.DismissAll">
+            <inheritdoc/>
+        </member>
+        <member name="M:BlazorComponentLibrary.Services.ToastService.PauseTimer(System.Guid)">
+            <summary>
+            Pauses the auto-dismiss timer for a specific toast.
+            </summary>
+            <param name="id">The ID of the toast to pause.</param>
+        </member>
+        <member name="M:BlazorComponentLibrary.Services.ToastService.ResumeTimer(System.Guid,System.Double)">
+            <summary>
+            Resumes the auto-dismiss timer for a specific toast.
+            </summary>
+            <param name="id">The ID of the toast to resume.</param>
+            <param name="remainingMs">The remaining time in milliseconds.</param>
+        </member>
+        <member name="M:BlazorComponentLibrary.Services.ToastService.Dispose">
+            <inheritdoc/>
+        </member>
+    </members>
+</doc>
