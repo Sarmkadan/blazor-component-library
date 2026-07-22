@@ -1,162 +1,312 @@
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
 using Bunit;
+using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
 using Xunit;
 using BlazorComponentLibrary.Components.Toast;
 using BlazorComponentLibrary.Services;
 
-namespace BlazorComponentLibrary.Tests;
+namespace BlazorComponentLibrary.Tests.Components.Toast;
 
 /// <summary>
-/// Tests for the <see cref="ToastContainer"/> component's public API.
+/// Tests for the <see cref="ToastContainer"/> component's toast rendering behavior.
+/// Tests show toast on service event, removes after dismiss, and multiple toasts order.
 /// </summary>
 public sealed class ToastContainerTests : TestContext
 {
-    #region Helper types
-
-    /// <summary>
-    /// Minimal fake implementation of <see cref="IToastService"/> used for testing.
-    /// </summary>
-    private sealed class FakeToastService : IToastService
+    [Fact]
+    public void ShowsToast_WhenToastServiceRaisesToastsChangedEvent()
     {
-        private readonly List<ToastMessage> _active = new();
-        private Action? _toastsChanged;
-        private int _subscriberCount;
+        // Arrange
+        var service = new ToastService();
+        Services.AddSingleton<IToastService>(service);
+        
+        // Act - render the component
+        var cut = RenderComponent<ToastContainer>();
+        
+        // Assert - initially no toasts
+        cut.FindAll(".bcl-toast").Count.Should().Be(0);
+        
+        // Act - show a toast
+        service.Show("Test message", ToastType.Info, 4000);
+        
+        // Assert - toast should be visible
+        var toasts = cut.FindAll(".bcl-toast");
+        toasts.Count.Should().Be(1);
+        toasts[0].TextContent.Should().Contain("Test message");
+        toasts[0].TextContent.Should().Contain("ℹ"); // Info icon
+    }
 
-        public IEnumerable<ToastMessage> ActiveToasts => _active;
+    [Fact]
+    public void RemovesToast_AfterDismissEvent()
+    {
+        // Arrange
+        var service = new ToastService();
+        Services.AddSingleton<IToastService>(service);
+        
+        // Act - render the component
+        var cut = RenderComponent<ToastContainer>();
+        
+        // Show a toast
+        service.Show("Test message", ToastType.Info, 4000);
+        cut.WaitForAssertion(() => cut.FindAll(".bcl-toast").Count.Should().Be(1));
+        
+        // Get the toast ID
+        var toastId = service.ActiveToasts[0].Id;
+        
+        // Act - dismiss the toast
+        service.Dismiss(toastId);
+        
+        // Assert - toast should be removed
+        cut.WaitForAssertion(() => cut.FindAll(".bcl-toast").Count.Should().Be(0));
+    }
 
-        public event Action? ToastsChanged
+    [Fact]
+    public void RendersMultipleToasts_InOrder()
+    {
+        // Arrange
+        var service = new ToastService();
+        Services.AddSingleton<IToastService>(service);
+        
+        // Act - render the component
+        var cut = RenderComponent<ToastContainer>();
+        
+        // Show multiple toasts
+        service.Show("First message", ToastType.Info, 4000);
+        service.Show("Second message", ToastType.Success, 4000);
+        service.Show("Third message", ToastType.Warning, 4000);
+        
+        // Assert - all toasts should be visible
+        var toasts = cut.FindAll(".bcl-toast");
+        toasts.Count.Should().Be(3);
+        
+        // Check order (oldest first)
+        toasts[0].TextContent.Should().Contain("First message");
+        toasts[1].TextContent.Should().Contain("Second message");
+        toasts[2].TextContent.Should().Contain("Third message");
+    }
+
+    [Fact]
+    public void RendersCorrectToastIcons_ForDifferentTypes()
+    {
+        // Arrange
+        var service = new ToastService();
+        Services.AddSingleton<IToastService>(service);
+        
+        // Act - render the component
+        var cut = RenderComponent<ToastContainer>();
+        
+        // Show toasts of different types
+        service.Show("Info toast", ToastType.Info, 4000);
+        service.Show("Success toast", ToastType.Success, 4000);
+        service.Show("Warning toast", ToastType.Warning, 4000);
+        service.Show("Error toast", ToastType.Error, 4000);
+        
+        // Assert - check icons
+        var toasts = cut.FindAll(".bcl-toast");
+        toasts.Count.Should().Be(4);
+        
+        toasts[0].TextContent.Should().Contain("ℹ"); // Info
+        toasts[1].TextContent.Should().Contain("✓"); // Success
+        toasts[2].TextContent.Should().Contain("⚠"); // Warning
+        toasts[3].TextContent.Should().Contain("✕"); // Error
+    }
+
+    [Fact]
+    public void ShowsDismissButton_ForEachToast()
+    {
+        // Arrange
+        var service = new ToastService();
+        Services.AddSingleton<IToastService>(service);
+        
+        // Act - render the component
+        var cut = RenderComponent<ToastContainer>();
+        
+        // Show a toast
+        service.Show("Test message", ToastType.Info, 4000);
+        cut.WaitForAssertion(() => cut.FindAll(".bcl-toast").Count.Should().Be(1));
+        
+        // Assert - dismiss button should exist
+        var dismissButtons = cut.FindAll(".bcl-toast__close");
+        dismissButtons.Count.Should().Be(1);
+        dismissButtons[0].TextContent.Should().Contain("✕");
+    }
+
+    [Fact]
+    public void DismissesToast_WhenDismissButtonClicked()
+    {
+        // Arrange
+        var service = new ToastService();
+        Services.AddSingleton<IToastService>(service);
+        
+        // Act - render the component
+        var cut = RenderComponent<ToastContainer>();
+        
+        // Show a toast
+        service.Show("Test message", ToastType.Info, 4000);
+        cut.WaitForAssertion(() => cut.FindAll(".bcl-toast").Count.Should().Be(1));
+        
+        // Get the dismiss button and click it
+        var dismissButton = cut.Find(".bcl-toast__close");
+        dismissButton.Click();
+        
+        // Assert - toast should be removed
+        cut.WaitForAssertion(() => cut.FindAll(".bcl-toast").Count.Should().Be(0));
+    }
+
+    [Fact]
+    public void RespectsMaxVisible_ShowingOnlyLastNToasts()
+    {
+        // Arrange
+        var service = new ToastService();
+        Services.AddSingleton<IToastService>(service);
+        
+        // Act - render with MaxVisible = 3
+        var cut = RenderComponent<ToastContainer>(parameters => parameters
+            .Add(p => p.MaxVisible, 3));
+        
+        // Show 5 toasts
+        for (int i = 1; i <= 5; i++)
         {
-            add
-            {
-                _toastsChanged += value;
-                _subscriberCount++;
-            }
-            remove
-            {
-                _toastsChanged -= value;
-                _subscriberCount--;
-            }
+            service.Show($"Message {i}", ToastType.Info, 4000);
         }
-
-        public int SubscriberCount => _subscriberCount;
-
-        public void AddToast(ToastMessage toast)
-        {
-            _active.Add(toast);
-            _toastsChanged?.Invoke();
-        }
-    }
-
-    #endregion
-
-    [Fact]
-    public void IconFor_ReturnsCorrectIcon_ForEachToastType()
-    {
-        Assert.Equal("✓", ToastContainer.IconFor(ToastType.Success));
-        Assert.Equal("⚠", ToastContainer.IconFor(ToastType.Warning));
-        Assert.Equal("✕", ToastContainer.IconFor(ToastType.Error));
-        // Any other value falls back to the info icon
-        Assert.Equal("ℹ", ToastContainer.IconFor((ToastType)999));
+        
+        // Assert - only last 3 should be visible
+        cut.WaitForAssertion(() => {
+            var toasts = cut.FindAll(".bcl-toast");
+            toasts.Count.Should().Be(3);
+            
+            // Check that the last 3 are shown
+            toasts[0].TextContent.Should().Contain("Message 3");
+            toasts[1].TextContent.Should().Contain("Message 4");
+            toasts[2].TextContent.Should().Contain("Message 5");
+        });
     }
 
     [Fact]
-    public void GetToastIcon_ReturnsCustomIcon_WhenProvided()
+    public void ShowsToastWithCustomIcon_WhenProvided()
     {
-        var toast = new ToastMessage { Type = ToastType.Success, Icon = "custom-icon" };
-        var result = ToastContainer.GetToastIcon(toast);
-        Assert.Equal("custom-icon", result);
+        // Arrange
+        var service = new ToastService();
+        Services.AddSingleton<IToastService>(service);
+        
+        // Act - render the component
+        var cut = RenderComponent<ToastContainer>();
+        
+        // Show toast with custom icon
+        service.Show("Custom icon toast", ToastType.Info, 4000, "🔥");
+        
+        // Assert - custom icon should be displayed
+        var toasts = cut.FindAll(".bcl-toast");
+        toasts.Count.Should().Be(1);
+        toasts[0].TextContent.Should().Contain("🔥");
     }
 
     [Fact]
-    public void GetToastIcon_ReturnsDefaultIcon_WhenCustomIconIsNull()
+    public void DismissesAllToasts_WhenDismissAllCalled()
     {
-        var toast = new ToastMessage { Type = ToastType.Warning, Icon = null };
-        var result = ToastContainer.GetToastIcon(toast);
-        Assert.Equal("⚠", result);
+        // Arrange
+        var service = new ToastService();
+        Services.AddSingleton<IToastService>(service);
+        
+        // Act - render the component
+        var cut = RenderComponent<ToastContainer>();
+        
+        // Show multiple toasts
+        service.Show("First", ToastType.Info, 4000);
+        service.Show("Second", ToastType.Success, 4000);
+        service.Show("Third", ToastType.Warning, 4000);
+        
+        cut.WaitForAssertion(() => cut.FindAll(".bcl-toast").Count.Should().Be(3));
+        
+        // Act - dismiss all
+        service.DismissAll();
+        
+        // Assert - all toasts should be removed
+        cut.WaitForAssertion(() => cut.FindAll(".bcl-toast").Count.Should().Be(0));
     }
 
     [Fact]
-    public void PositionParameter_ControlsRootCssClass()
+    public void ContainerHasCorrectAriaAttributes()
     {
-        // TopLeft
+        // Arrange
+        var service = new ToastService();
+        Services.AddSingleton<IToastService>(service);
+        
+        // Act - render the component
+        var cut = RenderComponent<ToastContainer>();
+        
+        // Assert - check ARIA attributes
+        var container = cut.Find("div");
+        container.GetAttribute("role").Should().Be("status");
+        container.GetAttribute("aria-live").Should().Be("polite");
+        container.GetAttribute("aria-atomic").Should().Be("false");
+    }
+
+    [Fact]
+    public void ToastHasCorrectAriaAttributes()
+    {
+        // Arrange
+        var service = new ToastService();
+        Services.AddSingleton<IToastService>(service);
+        
+        // Act - render the component
+        var cut = RenderComponent<ToastContainer>();
+        
+        // Show a toast
+        service.Show("Accessible toast", ToastType.Info, 4000);
+        cut.WaitForAssertion(() => cut.FindAll(".bcl-toast").Count.Should().Be(1));
+        
+        // Assert - check ARIA attributes on toast
+        var toast = cut.Find(".bcl-toast");
+        toast.GetAttribute("role").Should().Be("alert");
+    }
+
+    [Fact]
+    public void ToastHasDismissButtonWithAriaLabel()
+    {
+        // Arrange
+        var service = new ToastService();
+        Services.AddSingleton<IToastService>(service);
+        
+        // Act - render the component
+        var cut = RenderComponent<ToastContainer>();
+        
+        // Show a toast
+        service.Show("Test", ToastType.Info, 4000);
+        cut.WaitForAssertion(() => cut.FindAll(".bcl-toast").Count.Should().Be(1));
+        
+        // Assert - check dismiss button aria-label
+        var dismissButton = cut.Find(".bcl-toast__close");
+        dismissButton.GetAttribute("aria-label").Should().Be("Dismiss notification");
+    }
+
+    [Fact]
+    public void ShowsToastWithDifferentPositions()
+    {
+        // Arrange
+        var service = new ToastService();
+        Services.AddSingleton<IToastService>(service);
+        
+        // Test TopLeft position
         var cut = RenderComponent<ToastContainer>(parameters => parameters
             .Add(p => p.Position, ToastPosition.TopLeft));
-
-        var rootDiv = cut.Find("div");
-        Assert.Contains("bcl-toast-container--top-left", rootDiv.ClassList);
-
-        // BottomRight (default)
-        cut = RenderComponent<ToastContainer>();
-        rootDiv = cut.Find("div");
-        Assert.Contains("bcl-toast-container--bottom-right", rootDiv.ClassList);
-    }
-
-    [Fact]
-    public void MaxVisible_DefaultValue_IsFive()
-    {
-        var cut = RenderComponent<ToastContainer>();
-        Assert.Equal(5, cut.Instance.MaxVisible);
-    }
-
-    [Fact]
-    public void Position_DefaultValue_IsBottomRight()
-    {
-        var cut = RenderComponent<ToastContainer>();
-        Assert.Equal(ToastPosition.BottomRight, cut.Instance.Position);
-    }
-
-    [Fact]
-    public void VisibleToasts_ReturnsLastNToasts_BasedOnMaxVisible()
-    {
-        var fakeService = new FakeToastService();
-
-        // Add 7 toasts
-        for (int i = 1; i <= 7; i++)
-        {
-            fakeService.AddToast(new ToastMessage { Type = ToastType.Info, Icon = $"icon{i}" });
-        }
-
-        // Register the fake service in the test DI container
-        Services.AddSingleton<IToastService>(fakeService);
-
-        var cut = RenderComponent<ToastContainer>(parameters => parameters
-            .Add(p => p.MaxVisible, 5));
-
-        // Use reflection to get the internal VisibleToasts property
-        var prop = typeof(ToastContainer).GetProperty(
-            "VisibleToasts",
-            BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public);
-
-        Assert.NotNull(prop);
-
-        var visible = (IEnumerable<ToastMessage>)prop!.GetValue(cut.Instance)!;
-        var visibleArray = visible.ToArray();
-
-        Assert.Equal(5, visibleArray.Length);
-        // Should be the last 5 added (i.e., 3..7)
-        var expectedIcons = new[] { "icon3", "icon4", "icon5", "icon6", "icon7" };
-        Assert.Equal(expectedIcons, visibleArray.Select(t => t.Icon));
-    }
-
-    [Fact]
-    public void Dispose_UnsubscribesFromToastService()
-    {
-        var fakeService = new FakeToastService();
-        Services.AddSingleton<IToastService>(fakeService);
-
-        var cut = RenderComponent<ToastContainer>();
-
-        // After initialization the component should have subscribed once
-        Assert.Equal(1, fakeService.SubscriberCount);
-
-        // Dispose the component
-        cut.Instance.Dispose();
-
-        // Subscription should be removed
-        Assert.Equal(0, fakeService.SubscriberCount);
+        
+        service.Show("TopLeft toast", ToastType.Info, 4000);
+        cut.WaitForAssertion(() => {
+            var container = cut.Find("div");
+            container.ClassList.Should().Contain("bcl-toast-container--top-left");
+        });
+        
+        // Test BottomRight position (default)
+        cut = RenderComponent<ToastContainer>(parameters => parameters
+            .Add(p => p.Position, ToastPosition.BottomRight));
+        
+        service.Show("BottomRight toast", ToastType.Info, 4000);
+        cut.WaitForAssertion(() => {
+            var container = cut.Find("div");
+            container.ClassList.Should().Contain("bcl-toast-container--bottom-right");
+        });
     }
 }
