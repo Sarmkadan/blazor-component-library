@@ -3,8 +3,11 @@ namespace BlazorComponentLibrary.Components.DataTable;
 using BlazorComponentLibrary.Exceptions;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
+using System.Reflection;
 
 public enum SortDirection
 {
@@ -40,11 +43,102 @@ public sealed partial class DataTable<TItem> : ComponentBase, IDataTable<TItem>
     private int _sortVersion = 0;
     private int _pageVersion = 0;
 
-    [Parameter]
-    public RenderFragment TableHeader { get; set; }
+    // Cache for compiled property accessors to avoid reflection per cell render
+    private static readonly ConcurrentDictionary<(Type ItemType, string PropertyName), Func<object, object?>> _propertyAccessorCache = new();
+    private static readonly ConcurrentDictionary<(Type ItemType, string PropertyName), Action<object, object?>> _propertySetterCache = new();
+
+    /// <summary>
+    /// Gets the value of a property from an item using a cached compiled delegate.
+    /// </summary>
+    /// <param name="item">The item to get the property from.</param>
+    /// <param name="propertyName">The name of the property to access.</param>
+    /// <returns>The property value, or null if the property doesn't exist.</returns>
+    private static object? GetPropertyValue(TItem item, string propertyName)
+    {
+        if (item == null)
+        {
+            return null;
+        }
+
+        var cacheKey = (typeof(TItem), propertyName);
+        if (!_propertyAccessorCache.TryGetValue(cacheKey, out var accessor))
+        {
+            accessor = CreatePropertyAccessor(typeof(TItem), propertyName);
+            _propertyAccessorCache.TryAdd(cacheKey, accessor);
+        }
+
+        return accessor(item);
+    }
+
+    /// <summary>
+    /// Creates a compiled delegate to access a property value.
+    /// </summary>
+    private static Func<object, object?> CreatePropertyAccessor(Type itemType, string propertyName)
+    {
+        var propertyInfo = itemType.GetProperty(propertyName, BindingFlags.Instance | BindingFlags.Public | BindingFlags.IgnoreCase);
+        if (propertyInfo == null)
+        {
+            return _ => null;
+        }
+
+        var param = Expression.Parameter(typeof(object), "item");
+        var castParam = Expression.Convert(param, itemType);
+        var access = Expression.Property(castParam, propertyInfo);
+        var convert = Expression.Convert(access, typeof(object));
+        var lambda = Expression.Lambda<Func<object, object?>>(convert, param);
+
+        return lambda.Compile();
+    }
+
+    /// <summary>
+    /// Sets the value of a property on an item using a cached compiled delegate.
+    /// </summary>
+    /// <param name="item">The item to set the property on.</param>
+    /// <param name="propertyName">The name of the property to set.</param>
+    /// <param name="value">The value to set.</param>
+    private static void SetPropertyValue(TItem item, string propertyName, object? value)
+    {
+        if (item == null)
+        {
+            return;
+        }
+
+        var cacheKey = (typeof(TItem), propertyName);
+        if (!_propertySetterCache.TryGetValue(cacheKey, out var setter))
+        {
+            setter = CreatePropertySetter(typeof(TItem), propertyName);
+            _propertySetterCache.TryAdd(cacheKey, setter);
+        }
+
+        setter(item, value);
+    }
+
+    /// <summary>
+    /// Creates a compiled delegate to set a property value.
+    /// </summary>
+    private static Action<object, object?> CreatePropertySetter(Type itemType, string propertyName)
+    {
+        var propertyInfo = itemType.GetProperty(propertyName, BindingFlags.Instance | BindingFlags.Public | BindingFlags.IgnoreCase);
+        if (propertyInfo == null || !propertyInfo.CanWrite)
+        {
+            return (_, _) => { };
+        }
+
+        var paramItem = Expression.Parameter(typeof(object), "item");
+        var paramValue = Expression.Parameter(typeof(object), "value");
+        var castItem = Expression.Convert(paramItem, itemType);
+        var castValue = Expression.Convert(paramValue, propertyInfo.PropertyType);
+        var assign = Expression.Assign(Expression.Property(castItem, propertyInfo), castValue);
+        var lambda = Expression.Lambda<Action<object, object?>>(assign, paramItem, paramValue);
+
+        return lambda.Compile();
+    }
 
     [Parameter]
-    public RenderFragment<TItem> RowTemplate { get; set; }
+    public RenderFragment TableHeader { get; set; } = null!;
+
+    [Parameter]
+    public RenderFragment<TItem> RowTemplate { get; set; } = null!;
 
     [Parameter]
     public EventCallback<TItem> OnRowClick { get; set; }
