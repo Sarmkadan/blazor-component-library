@@ -1,6 +1,7 @@
 namespace BlazorComponentLibrary.Services;
 
 using BlazorComponentLibrary.Exceptions;
+using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using System.Timers;
@@ -17,6 +18,7 @@ public sealed class ToastService : IToastService, IDisposable
     private readonly List<ToastMessage> _toasts = new();
     private readonly Dictionary<Guid, Timer> _timers = new();
     private readonly object _lock = new();
+    private readonly object _eventLock = new();
 
     /// <summary>Initialises a new instance of <see cref="ToastService"/>.</summary>
     /// <param name="logger">
@@ -63,7 +65,7 @@ public sealed class ToastService : IToastService, IDisposable
         }
 
         _logger.LogInformation("Toast added successfully with ID: {ToastId}", toast.Id);
-        ToastsChanged?.Invoke();
+        InvokeToastsChanged();
 
         if (durationMs > 0)
             ScheduleDismiss(toast.Id, durationMs);
@@ -86,7 +88,7 @@ public sealed class ToastService : IToastService, IDisposable
             return;
 
         _logger.LogInformation("Toast dismissed successfully with ID: {ToastId}", id);
-        ToastsChanged?.Invoke();
+        InvokeToastsChanged();
     }
 
     /// <inheritdoc/>
@@ -101,7 +103,7 @@ public sealed class ToastService : IToastService, IDisposable
         }
 
         _logger.LogInformation("All toasts dismissed successfully");
-        ToastsChanged?.Invoke();
+        InvokeToastsChanged();
     }
 
     private void ScheduleDismiss(Guid id, int durationMs)
@@ -160,6 +162,14 @@ public sealed class ToastService : IToastService, IDisposable
                 timer.Start();
                 _logger.LogDebug("Resumed toast timer for ID: {ToastId} with {RemainingMs}ms remaining", id, remainingMs);
             }
+        }
+    }
+
+    private void InvokeToastsChanged()
+    {
+        lock (_eventLock)
+        {
+            ToastsChanged?.Invoke();
         }
     }
 

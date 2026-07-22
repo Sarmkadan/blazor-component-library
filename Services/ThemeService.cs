@@ -1,6 +1,7 @@
 namespace BlazorComponentLibrary.Services;
 
 using BlazorComponentLibrary.Exceptions;
+using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
 
 /// <summary>
@@ -14,6 +15,7 @@ public sealed class ThemeService : IThemeService
 {
     private readonly IJSRuntime _jsRuntime;
     private ThemeMode _currentTheme = ThemeMode.System;
+    private readonly object _eventLock = new();
 
     /// <inheritdoc/>
     public ThemeMode CurrentTheme => _currentTheme;
@@ -88,8 +90,8 @@ public sealed class ThemeService : IThemeService
         // surface as unobserved task exceptions.
         _ = PushToBrowserAsync(attributeValue, persist ? theme : null);
 
-        ThemeChanged?.Invoke(theme);
-        OnThemeChanged?.Invoke(attributeValue);
+        InvokeThemeChanged(theme);
+        InvokeOnThemeChanged(attributeValue);
     }
 
     private async Task PushToBrowserAsync(string attributeValue, ThemeMode? persistAs)
@@ -116,6 +118,22 @@ public sealed class ThemeService : IThemeService
         {
             // Browser-side failure (e.g. localStorage blocked). The in-memory theme
             // has already been updated and the ThemeChanged event has been raised.
+        }
+    }
+
+    private void InvokeThemeChanged(ThemeMode theme)
+    {
+        lock (_eventLock)
+        {
+            ThemeChanged?.Invoke(theme);
+        }
+    }
+
+    private void InvokeOnThemeChanged(string attributeValue)
+    {
+        lock (_eventLock)
+        {
+            OnThemeChanged?.Invoke(attributeValue);
         }
     }
 }
