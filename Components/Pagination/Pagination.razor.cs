@@ -51,7 +51,7 @@ public sealed partial class Pagination : ComponentBase
     [Parameter]
     public EventCallback<int> PageChanged { get; set; }
 
-    private IEnumerable<PageItem> PageItems
+    internal IEnumerable<PageItem> PageItems
     {
         get
         {
@@ -106,6 +106,6 @@ public sealed partial class Pagination : ComponentBase
         }
     }
 
-    private record PageItem(int Number, PageItemType Type);
-    private enum PageItemType { Page, Ellipsis }
+    internal record PageItem(int Number, PageItemType Type);
+    internal enum PageItemType { Page, Ellipsis }
 }
