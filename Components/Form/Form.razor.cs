@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 /// <see cref="System.ComponentModel.DataAnnotations"/> attributes on submit.
 /// </summary>
 /// <typeparam name="TModel">The model type bound to the form.</typeparam>
-public sealed partial class Form<TModel> : ComponentBase, IForm<TModel> where TModel : new()
+public sealed partial class Form<TModel> : ComponentBase, IForm<TModel>, IDisposable, IAsyncDisposable where TModel : new()
 {
     private TModel _model = new();
     private IReadOnlyList<ValidationResult> _validationErrors = Array.Empty<ValidationResult>();
@@ -64,6 +64,26 @@ public sealed partial class Form<TModel> : ComponentBase, IForm<TModel> where TM
         _isDirty = false;
         _editContext = null;
         NotifyStateChanged(); // Notify Blazor that the component state has changed
+    }
+
+    /// <summary>
+    /// Disposes the component and unsubscribes from events to prevent memory leaks.
+    /// </summary>
+    public void Dispose()
+    {
+        if (_editContext != null)
+        {
+            _editContext.OnFieldChanged -= HandleFieldChanged;
+        }
+    }
+
+    /// <summary>
+    /// Disposes the component asynchronously and unsubscribes from events.
+    /// </summary>
+    public ValueTask DisposeAsync()
+    {
+        Dispose();
+        return ValueTask.CompletedTask;
     }
 
     /// <summary>

@@ -13,11 +13,12 @@ public enum ModalSize
     FullScreen
 }
 
-public sealed partial class Modal : ComponentBase, IModal
+public sealed partial class Modal : ComponentBase, IModal, IDisposable, IAsyncDisposable
 {
     private bool _isVisible = false;
     private ElementReference _dialogElement;
     private ElementReference? _triggerElement;
+    private bool _disposed;
 
     [Inject]
     private IJSRuntime JSRuntime { get; set; } = default!;
@@ -135,5 +136,30 @@ public sealed partial class Modal : ComponentBase, IModal
         }
 
         return Task.CompletedTask;
+    }
+
+    /// <inheritdoc/>
+    public void Dispose()
+    {
+        if (_disposed)
+        {
+            return;
+        }
+
+        // Clean up any JavaScript interop resources
+        _disposed = true;
+    }
+
+    /// <inheritdoc/>
+    public async ValueTask DisposeAsync()
+    {
+        if (_disposed)
+        {
+            return;
+        }
+
+        // Clean up any JavaScript interop resources
+        _disposed = true;
+        await ValueTask.CompletedTask;
     }
 }

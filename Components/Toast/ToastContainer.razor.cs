@@ -2,13 +2,14 @@ namespace BlazorComponentLibrary.Components.Toast;
 
 using BlazorComponentLibrary.Services;
 using Microsoft.AspNetCore.Components;
+using System;
 
 /// <summary>
 /// Renders the stack of active toast notifications produced by <see cref="IToastService"/>.
 /// Place a single <c>&lt;ToastContainer /&gt;</c> in your root layout component so it
 /// is always present regardless of the current route.
 /// </summary>
-public sealed partial class ToastContainer : ComponentBase, IToastContainer, IDisposable
+public sealed partial class ToastContainer : ComponentBase, IToastContainer, IDisposable, IAsyncDisposable
 {
     [Inject]
     internal IToastService ToastService { get; set; } = default!;
@@ -39,8 +40,8 @@ public sealed partial class ToastContainer : ComponentBase, IToastContainer, IDi
     {
         ToastType.Success => "✓",
         ToastType.Warning => "⚠",
-        ToastType.Error   => "✕",
-        _                 => "ℹ",
+        ToastType.Error => "✕",
+        _ => "ℹ",
     };
 
     /// <summary>Gets the icon to display for the given toast message.</summary>
@@ -50,17 +51,24 @@ public sealed partial class ToastContainer : ComponentBase, IToastContainer, IDi
 
     private static string PositionCss(ToastPosition position) => position switch
     {
-        ToastPosition.TopLeft      => "top-left",
-        ToastPosition.TopCenter    => "top-center",
-        ToastPosition.TopRight     => "top-right",
-        ToastPosition.BottomLeft   => "bottom-left",
+        ToastPosition.TopLeft => "top-left",
+        ToastPosition.TopCenter => "top-center",
+        ToastPosition.TopRight => "top-right",
+        ToastPosition.BottomLeft => "bottom-left",
         ToastPosition.BottomCenter => "bottom-center",
-        _                          => "bottom-right",
+        _ => "bottom-right",
     };
 
     /// <inheritdoc/>
     public void Dispose()
     {
         ToastService.ToastsChanged -= OnToastsChanged;
+    }
+
+    /// <inheritdoc/>
+    public ValueTask DisposeAsync()
+    {
+        Dispose();
+        return ValueTask.CompletedTask;
     }
 }
