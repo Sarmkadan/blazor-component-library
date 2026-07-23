@@ -8,11 +8,12 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json;
 
-public sealed partial class Chart<TData> : ComponentBase, IChart<TData>
+public sealed partial class Chart<TData> : ComponentBase, IChart<TData>, IDisposable, IAsyncDisposable
 {
     private IEnumerable<TData> _data = Enumerable.Empty<TData>();
     private string? _dataHash;
     private Dictionary<string, object>? _geometryCache;
+    private bool _disposed;
 
     [Parameter]
     public ChartType ChartType { get; set; }
@@ -196,4 +197,31 @@ public sealed partial class Chart<TData> : ComponentBase, IChart<TData>
 /// </summary>
 [Parameter]
 public Func<double, string> ValueFormatter { get; set; } = value => value.ToString("0.##", System.Globalization.CultureInfo.InvariantCulture);
+
+    /// <inheritdoc/>
+    public void Dispose()
+    {
+        if (_disposed)
+        {
+            return;
+        }
+
+        // Clean up any JavaScript interop event subscriptions
+        // Note: Actual cleanup would be implemented in JavaScript interop layer
+        _disposed = true;
+    }
+
+    /// <inheritdoc/>
+    public async ValueTask DisposeAsync()
+    {
+        if (_disposed)
+        {
+            return;
+        }
+
+        // Clean up any JavaScript interop event subscriptions
+        // Note: Actual cleanup would be implemented in JavaScript interop layer
+        _disposed = true;
+        await ValueTask.CompletedTask;
+    }
 }

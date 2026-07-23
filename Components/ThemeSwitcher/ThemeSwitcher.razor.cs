@@ -2,6 +2,7 @@ namespace BlazorComponentLibrary.Components.ThemeSwitcher;
 
 using BlazorComponentLibrary.Services;
 using Microsoft.AspNetCore.Components;
+using System;
 
 /// <summary>
 /// A three-way toggle that lets users switch between Light, Dark, and System themes.
@@ -9,7 +10,7 @@ using Microsoft.AspNetCore.Components;
 /// survives page reloads. Subscribe to <see cref="IThemeService.ThemeChanged"/> to
 /// react to theme changes elsewhere in the application.
 /// </summary>
-public sealed partial class ThemeSwitcher : ComponentBase, IThemeSwitcher, IDisposable
+public sealed partial class ThemeSwitcher : ComponentBase, IThemeSwitcher, IDisposable, IAsyncDisposable
 {
     [Inject]
     private IThemeService ThemeService { get; set; } = default!;
@@ -42,5 +43,12 @@ public sealed partial class ThemeSwitcher : ComponentBase, IThemeSwitcher, IDisp
     public void Dispose()
     {
         ThemeService.ThemeChanged -= OnThemeChanged;
+    }
+
+    /// <inheritdoc/>
+    public ValueTask DisposeAsync()
+    {
+        Dispose();
+        return ValueTask.CompletedTask;
     }
 }

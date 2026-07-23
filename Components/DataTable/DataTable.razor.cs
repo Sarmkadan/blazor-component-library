@@ -32,7 +32,7 @@ public sealed class NullSafeComparer : IComparer<object?>
     }
 }
 
-public sealed partial class DataTable<TItem> : ComponentBase, IDataTable<TItem>
+public sealed partial class DataTable<TItem> : ComponentBase, IDataTable<TItem>, IDisposable, IAsyncDisposable
 {
     private IEnumerable<TItem> _data = Enumerable.Empty<TItem>();
     private IEnumerable<TItem> _currentViewData = Enumerable.Empty<TItem>();
@@ -42,6 +42,7 @@ public sealed partial class DataTable<TItem> : ComponentBase, IDataTable<TItem>
     private int _dataVersion = 0;
     private int _sortVersion = 0;
     private int _pageVersion = 0;
+    private bool _disposed;
 
     // Cache for compiled property accessors to avoid reflection per cell render
     private static readonly ConcurrentDictionary<(Type ItemType, string PropertyName), Func<object, object?>> _propertyAccessorCache = new();
@@ -301,6 +302,37 @@ public sealed partial class DataTable<TItem> : ComponentBase, IDataTable<TItem>
     private int _lastRenderDataVersion = -1;
     private int _lastRenderSortVersion = -1;
     private int _lastRenderPageVersion = -1;
+    private IDisposable? _virtualizeRegistration;
+
+    /// <inheritdoc/>
+    public void Dispose()
+    {
+        if (_disposed)
+        {
+            return;
+        }
+
+        _virtualizeRegistration?.Dispose();
+        _disposed = true;
+    }
+
+    /// <inheritdoc/>
+    public async ValueTask DisposeAsync()
+    {
+        if (_disposed)
+        {
+            return;
+        }
+
+        if (_virtualizeRegistration != null)
+        {
+            _virtualizeRegistration.Dispose();
+            _virtualizeRegistration = null;
+        }
+
+        _disposed = true;
+        await ValueTask.CompletedTask;
+    }
 
     private void ApplyView()
     {
