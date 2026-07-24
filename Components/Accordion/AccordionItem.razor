@@ -16,22 +16,32 @@
 </div>
 
 @code {
-    [CascadingParameter] private Accordion? Parent { get; set; }
+    [CascadingParameter]
+    private Accordion? Parent { get; set; }
 
     /// <summary>
     /// Header content of the accordion item.
     /// </summary>
-    [Parameter] public RenderFragment? Header { get; set; }
+    [Parameter]
+    public RenderFragment? Header { get; set; }
 
     /// <summary>
     /// Body content of the accordion item.
     /// </summary>
-    [Parameter] public RenderFragment? ChildContent { get; set; }
+    [Parameter]
+    public RenderFragment? ChildContent { get; set; }
 
     /// <summary>
     /// Determines whether the item is initially expanded when the accordion is first rendered.
     /// </summary>
-    [Parameter] public bool Expanded { get; set; }
+    [Parameter]
+    public bool Expanded { get; set; }
+
+    /// <summary>
+    /// Callback that is called when the expanded state changes.
+    /// </summary>
+    [Parameter]
+    public EventCallback<bool> ExpandedChanged { get; set; }
 
     // Internal state used by the parent accordion.
     internal bool IsExpanded => _expanded;
@@ -39,16 +49,20 @@
 
     private bool _expanded;
 
-    protected override void OnInitialized()
+    protected override async Task OnInitializedAsync()
     {
+        ArgumentNullException.ThrowIfNull(Parent, nameof(Parent));
+
         // Initialise internal state from the parameter.
         _expanded = Expanded;
-        Parent?.RegisterItem(this);
+        Parent.RegisterItem(this);
     }
 
     /// <summary>
     /// Called by the parent accordion to change the expanded state.
     /// </summary>
+    /// <param name="value">The new expanded state.</param>
+    /// <exception cref="InvalidOperationException">Thrown when the parent accordion is null.</exception>
     internal void SetExpanded(bool value)
     {
         if (_expanded != value)
@@ -58,9 +72,23 @@
         }
     }
 
-    private void Toggle()
+    private async Task Toggle()
     {
-        Parent?.ToggleItem(this);
+        if (Parent is null)
+        {
+            throw new InvalidOperationException(
+                "AccordionItem must be used within an Accordion component. " +
+                "Ensure the AccordionItem is a child of an Accordion component.");
+        }
+
+        Parent.ToggleItem(this);
+
+        // Update the Expanded parameter when toggled by user interaction
+        if (_expanded != Expanded)
+        {
+            Expanded = _expanded;
+            await ExpandedChanged.InvokeAsync(_expanded);
+        }
     }
 
     public void Dispose()
