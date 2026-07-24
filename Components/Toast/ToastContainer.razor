@@ -6,14 +6,25 @@
     var toastId = toast.Id;
     var toastDuration = toast.DurationMs;
     <div class="bcl-toast bcl-toast--@toast.Type.ToString().ToLower()" role="alert"
-         @onmouseover="() => ToastService.PauseTimer(toastId)"
-         @onmouseout="() => ToastService.ResumeTimer(toastId, toastDuration)">
+        @if (PauseOnHover)
+        {
+            @onmouseover="() => ToastService.PauseTimer(toastId)"
+            @onmouseout="() => ToastService.ResumeTimer(toastId, toastDuration)"
+        }
+        @onfocusin="() => ToastService.PauseTimer(toastId)"
+        @onfocusout="() => ToastService.ResumeTimer(toastId, toastDuration)">
         <span class="bcl-toast__icon" aria-hidden="true">@GetToastIcon(toast)</span>
-        <span class="bcl-toast__message">@toast.Message</span>
+        <span class="bcl-toast__message">
+            @toast.Message
+            @if (toast.Count > 1 && Dedup)
+            {
+                <span class="bcl-toast__count">×@toast.Count</span>
+            }
+        </span>
         <button type="button"
-                class="bcl-toast__close"
-                aria-label="Dismiss notification"
-                @onclick="() => ToastService.Dismiss(toastId)">✕</button>
+            class="bcl-toast__close"
+            aria-label="Dismiss notification"
+            @onclick="() => ToastService.Dismiss(toastId)">✕</button>
     </div>
 }
 </div>

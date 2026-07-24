@@ -4,6 +4,7 @@ using BlazorComponentLibrary.Exceptions;
 using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
+using System.Collections.Concurrent;
 using System.Timers;
 
 /// <summary>
@@ -17,6 +18,7 @@ public sealed class ToastService : IToastService, IDisposable
     private readonly ILogger<ToastService> _logger;
     private readonly List<ToastMessage> _toasts = new();
     private readonly Dictionary<Guid, Timer> _timers = new();
+    private readonly ConcurrentDictionary<string, Guid> _dedupCache = new();
     private readonly object _lock = new();
     private readonly object _eventLock = new();
 
@@ -38,6 +40,13 @@ public sealed class ToastService : IToastService, IDisposable
     /// <inheritdoc/>
     public event Action? ToastsChanged;
 
+    /// <summary>
+    /// Gets or sets whether to deduplicate toasts with the same message.
+    /// When enabled, consecutive identical messages are combined into a single toast
+    /// with a counter badge showing the count.
+    /// </summary>
+    public bool Dedup { get; set; } = false;
+
     /// <inheritdoc/>
     /// <exception cref="ToastServiceException">Thrown when the message is null or whitespace,
     /// or when <paramref name="durationMs"/> is negative.</exception>
@@ -57,18 +66,68 @@ public sealed class ToastService : IToastService, IDisposable
             throw new ToastServiceException("DurationMs cannot be negative.");
         }
 
-        var toast = new ToastMessage(Guid.NewGuid(), message, type, durationMs, icon);
+        Guid toastId;
+        ToastMessage? existingToast = null;
 
         lock (_lock)
         {
+            // Handle deduplication if enabled
+            if (Dedup)
+            {
+                var messageKey = message.Trim();
+                if (_dedupCache.TryGetValue(messageKey, out var cachedId))
+                {
+                    // Find the existing toast with this ID
+                    existingToast = _toasts.FirstOrDefault(t => t.Id == cachedId);
+                    if (existingToast != null)
+                    {
+                        // Update the existing toast's count and reset its timer
+                        var updatedToast = existingToast with { Count = existingToast.Count + 1 };
+                        _toasts.Remove(existingToast);
+                        _toasts.Add(updatedToast);
+                        toastId = updatedToast.Id;
+
+                        // Update the timer with the new duration
+                        if (durationMs > 0 && _timers.TryGetValue(toastId, out var existingTimer))
+                        {
+                            existingTimer.Stop();
+                            existingTimer.Interval = durationMs;
+                            existingTimer.Start();
+                        }
+                        else if (durationMs > 0)
+                        {
+                            ScheduleDismiss(toastId, durationMs);
+                        }
+
+                        _logger.LogInformation("Deduplicated toast updated with ID: {ToastId}, new count: {Count}", toastId, updatedToast.Count);
+                        InvokeToastsChanged();
+                        return;
+                    }
+                }
+                else
+                {
+                    // Add to cache for future deduplication
+                    _dedupCache[messageKey] = Guid.Empty; // Placeholder, will be updated below
+                }
+            }
+
+            // Create new toast
+            toastId = Guid.NewGuid();
+            var toast = new ToastMessage(toastId, message, type, durationMs, icon);
             _toasts.Add(toast);
+
+            // Update cache with actual ID
+            if (Dedup)
+            {
+                _dedupCache[message.Trim()] = toastId;
+            }
         }
 
-        _logger.LogInformation("Toast added successfully with ID: {ToastId}", toast.Id);
+        _logger.LogInformation("Toast added successfully with ID: {ToastId}", toastId);
         InvokeToastsChanged();
 
         if (durationMs > 0)
-            ScheduleDismiss(toast.Id, durationMs);
+            ScheduleDismiss(toastId, durationMs);
     }
 
     /// <inheritdoc/>
@@ -77,8 +136,14 @@ public sealed class ToastService : IToastService, IDisposable
         _logger.LogDebug("Dismissing toast with ID: {ToastId}", id);
 
         bool removed;
+        string? dismissedMessage = null;
         lock (_lock)
         {
+            var toastToRemove = _toasts.FirstOrDefault(t => t.Id == id);
+            if (toastToRemove != null)
+            {
+                dismissedMessage = toastToRemove.Message.Trim();
+            }
             removed = _toasts.RemoveAll(t => t.Id == id) > 0;
             if (_timers.Remove(id, out var timer))
                 timer.Dispose();
@@ -86,6 +151,19 @@ public sealed class ToastService : IToastService, IDisposable
 
         if (!removed)
             return;
+
+        // Clean up deduplication cache if this was the last instance of a message
+        if (Dedup && dismissedMessage != null)
+        {
+            // Only remove from cache if no other toasts with this message exist
+            lock (_lock)
+            {
+                if (!_toasts.Any(t => t.Message.Trim() == dismissedMessage))
+                {
+                    _dedupCache.TryRemove(dismissedMessage, out _);
+                }
+            }
+        }
 
         _logger.LogInformation("Toast dismissed successfully with ID: {ToastId}", id);
         InvokeToastsChanged();
@@ -100,6 +178,10 @@ public sealed class ToastService : IToastService, IDisposable
         {
             _toasts.Clear();
             DisposeTimers();
+            if (Dedup)
+            {
+                _dedupCache.Clear();
+            }
         }
 
         _logger.LogInformation("All toasts dismissed successfully");
