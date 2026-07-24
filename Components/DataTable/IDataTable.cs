@@ -44,6 +44,22 @@ public interface IDataTable<TItem>
     ISet<string> HiddenColumns { get; set; }
 
     /// <summary>
+    /// Gets or sets a value indicating whether row selection is enabled.
+    /// </summary>
+    bool EnableSelection { get; set; }
+
+    /// <summary>
+    /// Gets or sets the currently selected items.
+    /// </summary>
+    ISet<TItem> SelectedItems { get; set; }
+
+    /// <summary>
+    /// Gets or sets the callback invoked once per selection change with the resulting set of
+    /// selected items.
+    /// </summary>
+    EventCallback<ISet<TItem>> SelectedItemsChanged { get; set; }
+
+    /// <summary>
     /// Sorts the table by the specified key selector with null-safe comparison.
     /// </summary>
     /// <param name="keySelector">A function to extract the key to sort by from a data item.</param>

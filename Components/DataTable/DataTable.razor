@@ -14,9 +14,7 @@
 <tbody>
 @foreach (var item in _currentViewData)
 {
-<tr @onclick="() => OnRowClickHandler(item)">
-@RowTemplate(item)
-</tr>
+<DataTableRow TItem="TItem" @key="item" Item="item" IsSelected="IsItemSelected(item)" RowTemplate="RowTemplate" OnRowClick="OnRowClickHandler" />
 }
 </tbody>
 </table>

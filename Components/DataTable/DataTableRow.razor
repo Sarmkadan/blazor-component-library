@@ -1,0 +1,11 @@
+@using Microsoft.AspNetCore.Components
+@typeparam TItem
+
+<tr @onclick="HandleClickAsync" class="@(IsSelected ? "bcl-row-selected" : null)">
+@RowTemplate(Item)
+</tr>
+
+@code {
+    // This partial class is linked to DataTableRow.razor.cs
+    // The logic is in DataTableRow.razor.cs
+}

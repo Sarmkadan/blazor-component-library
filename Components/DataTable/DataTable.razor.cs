@@ -39,9 +39,12 @@ public sealed partial class DataTable<TItem> : ComponentBase, IDataTable<TItem>,
     private readonly SortState<TItem> _sortState = new();
     private bool _isShiftKeyPressed = false;
     private ISet<string> _hiddenColumns = new HashSet<string>();
+    private ISet<TItem> _selectedItems = new HashSet<TItem>();
+    private TItem? _lastSelectedItem;
     private int _dataVersion = 0;
     private int _sortVersion = 0;
     private int _pageVersion = 0;
+    private int _selectionVersion = 0;
     private bool _disposed;
 
     // Cache for compiled property accessors to avoid reflection per cell render
@@ -175,6 +178,32 @@ public sealed partial class DataTable<TItem> : ComponentBase, IDataTable<TItem>,
     }
 
     /// <summary>
+    /// Gets or sets a value indicating whether row selection is enabled. When enabled, clicking a
+    /// row toggles its selection (or, when the Shift key is held, selects the contiguous range
+    /// between the last clicked row and the current one) before <see cref="OnRowClick"/> is invoked.
+    /// </summary>
+    [Parameter]
+    public bool EnableSelection { get; set; } = false;
+
+    /// <summary>
+    /// Gets or sets the currently selected items. Assigning a new set replaces the current
+    /// selection outright.
+    /// </summary>
+    [Parameter]
+    public ISet<TItem> SelectedItems
+    {
+        get => _selectedItems;
+        set => _selectedItems = value ?? new HashSet<TItem>();
+    }
+
+    /// <summary>
+    /// Gets or sets the callback invoked once per selection change - including once for an
+    /// entire Shift-click range - with the resulting set of selected items.
+    /// </summary>
+    [Parameter]
+    public EventCallback<ISet<TItem>> SelectedItemsChanged { get; set; }
+
+    /// <summary>
     /// Sets the data source for the data table.
     /// </summary>
     /// <param name="data">The enumerable collection of data items.</param>
@@ -286,7 +315,8 @@ public sealed partial class DataTable<TItem> : ComponentBase, IDataTable<TItem>,
         // Track the version stamps at the time of last successful render
         if (_lastRenderDataVersion == _dataVersion &&
             _lastRenderSortVersion == _sortVersion &&
-            _lastRenderPageVersion == _pageVersion)
+            _lastRenderPageVersion == _pageVersion &&
+            _lastRenderSelectionVersion == _selectionVersion)
         {
             return false;
         }
@@ -295,6 +325,7 @@ public sealed partial class DataTable<TItem> : ComponentBase, IDataTable<TItem>,
         _lastRenderDataVersion = _dataVersion;
         _lastRenderSortVersion = _sortVersion;
         _lastRenderPageVersion = _pageVersion;
+        _lastRenderSelectionVersion = _selectionVersion;
 
         return true;
     }
@@ -302,6 +333,7 @@ public sealed partial class DataTable<TItem> : ComponentBase, IDataTable<TItem>,
     private int _lastRenderDataVersion = -1;
     private int _lastRenderSortVersion = -1;
     private int _lastRenderPageVersion = -1;
+    private int _lastRenderSelectionVersion = -1;
     private IDisposable? _virtualizeRegistration;
 
     /// <inheritdoc/>
@@ -346,9 +378,126 @@ public sealed partial class DataTable<TItem> : ComponentBase, IDataTable<TItem>,
 
     protected async Task OnRowClickHandler(TItem item)
     {
+        if (EnableSelection)
+        {
+            await ToggleSelectionAsync(item);
+        }
+
         if (OnRowClick.HasDelegate)
         {
             await OnRowClick.InvokeAsync(item);
+        }
+    }
+
+    /// <summary>
+    /// Determines whether the given item is currently selected.
+    /// </summary>
+    /// <param name="item">The item to check.</param>
+    /// <returns><see langword="true"/> if <paramref name="item"/> is in <see cref="SelectedItems"/>; otherwise <see langword="false"/>.</returns>
+    protected bool IsItemSelected(TItem item) => _selectedItems.Contains(item);
+
+    /// <summary>
+    /// Toggles the selection state of <paramref name="item"/>. If the Shift key is currently held
+    /// and a prior selection anchor exists, selects the contiguous range in the current view
+    /// between the anchor and <paramref name="item"/> instead, notifying
+    /// <see cref="SelectedItemsChanged"/> exactly once for the whole batch.
+    /// </summary>
+    /// <param name="item">The item that was clicked.</param>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="item"/> is null.</exception>
+    public async Task ToggleSelectionAsync(TItem item)
+    {
+        ArgumentNullException.ThrowIfNull(item);
+
+        if (_isShiftKeyPressed && _lastSelectedItem is not null)
+        {
+            SelectRange(_lastSelectedItem, item);
+        }
+        else if (!_selectedItems.Remove(item))
+        {
+            _selectedItems.Add(item);
+        }
+
+        _lastSelectedItem = item;
+        _selectionVersion++;
+
+        if (SelectedItemsChanged.HasDelegate)
+        {
+            await SelectedItemsChanged.InvokeAsync(_selectedItems);
+        }
+
+        NotifyStateChanged();
+    }
+
+    /// <summary>
+    /// Clears the current selection.
+    /// </summary>
+    public async Task ClearSelectionAsync()
+    {
+        if (_selectedItems.Count == 0)
+        {
+            return;
+        }
+
+        _selectedItems.Clear();
+        _lastSelectedItem = default;
+        _selectionVersion++;
+
+        if (SelectedItemsChanged.HasDelegate)
+        {
+            await SelectedItemsChanged.InvokeAsync(_selectedItems);
+        }
+
+        NotifyStateChanged();
+    }
+
+    /// <summary>
+    /// Selects every item currently in view (respecting the active page/sort/filter), notifying
+    /// <see cref="SelectedItemsChanged"/> once for the entire batch.
+    /// </summary>
+    public async Task SelectAllInViewAsync()
+    {
+        foreach (var item in _currentViewData)
+        {
+            _selectedItems.Add(item);
+        }
+
+        _selectionVersion++;
+
+        if (SelectedItemsChanged.HasDelegate)
+        {
+            await SelectedItemsChanged.InvokeAsync(_selectedItems);
+        }
+
+        NotifyStateChanged();
+    }
+
+    /// <summary>
+    /// Adds every item in the current view between <paramref name="from"/> and <paramref name="to"/>
+    /// (inclusive, in either direction) to the selection. Falls back to toggling just
+    /// <paramref name="to"/> when either endpoint is not present in the current view.
+    /// </summary>
+    /// <param name="from">The range's anchor item.</param>
+    /// <param name="to">The range's terminal item.</param>
+    private void SelectRange(TItem from, TItem to)
+    {
+        var view = _currentViewData.ToList();
+        var startIndex = view.IndexOf(from);
+        var endIndex = view.IndexOf(to);
+
+        if (startIndex < 0 || endIndex < 0)
+        {
+            if (!_selectedItems.Remove(to))
+            {
+                _selectedItems.Add(to);
+            }
+
+            return;
+        }
+
+        var (lower, upper) = startIndex <= endIndex ? (startIndex, endIndex) : (endIndex, startIndex);
+        for (var i = lower; i <= upper; i++)
+        {
+            _selectedItems.Add(view[i]);
         }
     }
 
