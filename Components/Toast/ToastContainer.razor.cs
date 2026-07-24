@@ -6,8 +6,8 @@ using System;
 
 /// <summary>
 /// Renders the stack of active toast notifications produced by <see cref="IToastService"/>.
-/// Place a single <c>&lt;ToastContainer /&gt;</c> in your root layout component so it
-/// is always present regardless of the current route.
+/// Place a single <c>&lt;ToastContainer /&gt;</c> in your root layout component so it is
+/// always present regardless of the current route.
 /// </summary>
 public sealed partial class ToastContainer : ComponentBase, IToastContainer, IDisposable, IAsyncDisposable
 {
@@ -21,6 +21,14 @@ public sealed partial class ToastContainer : ComponentBase, IToastContainer, IDi
     /// <inheritdoc/>
     [Parameter]
     public int MaxVisible { get; set; } = 5;
+
+    /// <inheritdoc/>
+    [Parameter]
+    public bool PauseOnHover { get; set; } = true;
+
+    /// <inheritdoc/>
+    [Parameter]
+    public bool Dedup { get; set; } = false;
 
     internal IEnumerable<ToastMessage> VisibleToasts =>
         ToastService.ActiveToasts.TakeLast(MaxVisible);

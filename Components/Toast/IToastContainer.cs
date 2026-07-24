@@ -26,4 +26,17 @@ public interface IToastContainer
     /// newer ones dismiss. Defaults to <c>5</c>.
     /// </summary>
     int MaxVisible { get; set; }
+
+    /// <summary>
+    /// Gets or sets whether hovering over a toast pauses its auto-dismiss timer.
+    /// Defaults to <c>true</c>.
+    /// </summary>
+    bool PauseOnHover { get; set; }
+
+    /// <summary>
+    /// Gets or sets whether to deduplicate toasts with the same message.
+    /// When enabled, consecutive identical messages are combined into a single toast
+    /// with a counter badge showing the count. Defaults to <c>false</c>.
+    /// </summary>
+    bool Dedup { get; set; }
 }

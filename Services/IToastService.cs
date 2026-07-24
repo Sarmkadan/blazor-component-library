@@ -26,7 +26,10 @@ public enum ToastType
 /// <param name="Icon">
 /// The icon to display for this toast. If null, the default icon for the toast type will be used.
 /// </param>
-public sealed record ToastMessage(Guid Id, string Message, ToastType Type, int DurationMs, string? Icon = null);
+/// <param name="Count">
+/// The number of times this toast message has been deduplicated. Defaults to 1.
+/// </param>
+public sealed record ToastMessage(Guid Id, string Message, ToastType Type, int DurationMs, string? Icon = null, int Count = 1);
 
 /// <summary>Service for queuing and managing toast notification messages.</summary>
 public interface IToastService
