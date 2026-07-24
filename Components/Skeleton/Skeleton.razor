@@ -1,30 +1,49 @@
 @if (Type == SkeletonType.Text)
 {
-<div class="@CssClass @ShapeClass" style="width: @Width;" role="status" aria-label="Loading…">
-@for (int i = 0; i < Lines; i++)
-{
-var lineIndex = i;
-<div class="bcl-skeleton__line @(lineIndex == Lines - 1 ? "bcl-skeleton__line--short" : "")"></div>
-}
+<div class="@CssClass @ShapeClass" style="width: @Width;" role="status" @((MarkupString)GetAriaBusyAttribute()) aria-label="@GetLoadingLabel()">
+	@if (ShowLoadingLabel)
+	{
+		<span class="bcl-visually-hidden">@GetLoadingLabel()</span>
+	}
+	@for (int i = 0; i < Lines; i++)
+	{
+		var lineIndex = i;
+		<div class="bcl-skeleton__line @(lineIndex == Lines - 1 ? "bcl-skeleton__line--short" : "")" aria-hidden="true"></div>
+	}
 </div>
 }
 else if (Type == SkeletonType.Circle)
 {
 <div class="@CssClass @ShapeClass"
-style="width: @Width; height: @(Height == "auto" ? Width : Height);"
-role="status" aria-label="Loading…"></div>
+	style="width: @Width; height: @(Height == "auto" ? Width : Height);"
+	role="status" @((MarkupString)GetAriaBusyAttribute()) aria-label="@GetLoadingLabel()">
+	@if (ShowLoadingLabel)
+	{
+		<span class="bcl-visually-hidden">@GetLoadingLabel()</span>
+	}
+</div>
 }
 else if (Type == SkeletonType.Rectangle)
 {
 <div class="@CssClass @ShapeClass"
-style="width: @Width; height: @(Height == "auto" ? "1.5rem" : Height);"
-role="status" aria-label="Loading…"></div>
+	style="width: @Width; height: @(Height == "auto" ? "1.5rem" : Height);"
+	role="status" @((MarkupString)GetAriaBusyAttribute()) aria-label="@GetLoadingLabel()">
+	@if (ShowLoadingLabel)
+	{
+		<span class="bcl-visually-hidden">@GetLoadingLabel()</span>
+	}
+</div>
 }
 else
 {
 <div class="@CssClass @ShapeClass"
-style="width: @Width; height: @(Height == "auto" ? "1.5rem" : Height);"
-role="status" aria-label="Loading…"></div>
+	style="width: @Width; height: @(Height == "auto" ? "1.5rem" : Height);"
+	role="status" @((MarkupString)GetAriaBusyAttribute()) aria-label="@GetLoadingLabel()">
+	@if (ShowLoadingLabel)
+	{
+		<span class="bcl-visually-hidden">@GetLoadingLabel()</span>
+	}
+</div>
 }
 
 @code {

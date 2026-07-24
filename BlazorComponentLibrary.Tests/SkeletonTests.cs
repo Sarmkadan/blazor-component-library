@@ -37,6 +37,7 @@ public sealed class SkeletonTests : TestContext
 
         // Attributes
         Assert.Equal("Loading…", div.GetAttribute("aria-label"));
+	Assert.Equal("true", div.GetAttribute("aria-busy"));
         Assert.Contains("width: 100%", div.GetAttribute("style"));
     }
 
@@ -314,6 +315,38 @@ public sealed class SkeletonTests : TestContext
         instance.Height.Should().Be("auto");
         instance.Lines.Should().Be(3);
         instance.Animated.Should().BeTrue();
+    }
+
+    /// <summary>
+    /// Verifies that decorative lines have aria-hidden="true".
+    /// </summary>
+    [Fact]
+    public void TextType_LinesHaveAriaHiddenTrue()
+    {
+        // Arrange & Act
+        var cut = RenderComponent<Skeleton>(parameters => parameters
+            .Add(p => p.Type, SkeletonType.Text)
+            .Add(p => p.Lines, 2));
+
+        // Assert
+        var lines = cut.FindAll("div.bcl-skeleton__line");
+        Assert.All(lines, line => Assert.Equal("true", line.GetAttribute("aria-hidden")));
+    }
+
+    /// <summary>
+    /// Verifies that visually-hidden label is rendered when ShowLoadingLabel is true.
+    /// </summary>
+    [Fact]
+    public void ShowLoadingLabel_True_RendersVisuallyHiddenLabel()
+    {
+        // Arrange & Act
+        var cut = RenderComponent<Skeleton>(parameters => parameters
+            .Add(p => p.ShowLoadingLabel, true)
+            .Add(p => p.LoadingLabel, "Custom Loading..."));
+
+        // Assert
+        var span = cut.Find("span.bcl-visually-hidden");
+        Assert.Equal("Custom Loading...", span.TextContent);
     }
 
     /// <summary>
