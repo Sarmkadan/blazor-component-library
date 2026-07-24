@@ -5,83 +5,56 @@
 <script src="_content/BlazorComponentLibrary/js/blazor-chart-interop.js"></script>
 
 <div class="bcl-chart" @ref="_chartElement">
-<h3 class="bcl-chart-title">@Title</h3>
-<div class="bcl-chart-body">
-<!-- Placeholder for chart rendering -->
-<p>Chart Type: @ChartType</p>
-<p>Data items: @_data.Count()</p>
-@if (_data.Any())
-{
-<p>First data item: @_data.First().ToString()</p>
-}
-@ChildContent
+    <h3 class="bcl-chart-title">@Title</h3>
+    <div class="bcl-chart-body">
+        <!-- Placeholder for chart rendering -->
+        <p>Chart Type: @ChartType</p>
+        <p>Data items: @_data.Count()</p>
+        @if (_data.Any())
+        {
+            <p>First data item: @_data.First().ToString()</p>
+        }
+        @ChildContent
 
-@if (Annotations.Any())
-{
-<div class="bcl-chart-annotations">
-@foreach (var annotation in Annotations)
-{
-@if (annotation.Type == ChartAnnotationType.ThresholdLine)
-{
-<div class="bcl-annotation bcl-annotation-threshold"
-style="border-top: 2px dashed @annotation.Color;"
-title="@annotation.Tooltip">
-<span class="bcl-annotation-label" style="color: @annotation.Color;">
-@annotation.Label (@annotation.Value)
-</span>
-</div>
-}
-else if (annotation.Type == ChartAnnotationType.EventMarker)
-{
-<div class="bcl-annotation bcl-annotation-event"
-style="border-left: 2px solid @annotation.Color;"
-title="@annotation.Tooltip">
-<span class="bcl-annotation-label" style="color: @annotation.Color;">
-@annotation.Label
-</span>
-</div>
-}
-else if (annotation.Type == ChartAnnotationType.ReferenceBand)
-{
-<div class="bcl-annotation bcl-annotation-band"
-style="background-color: @annotation.Color; opacity: 0.15;"
-title="@annotation.Tooltip">
-<span class="bcl-annotation-label">
-@annotation.Label (@annotation.Value – @annotation.EndValue)
-</span>
-</div>
-}
-}
-</div>
-}
-</div>
+        @if (Annotations.Any())
+        {
+            <div class="bcl-chart-annotations">
+                @foreach (var annotation in Annotations)
+                {
+                    @if (annotation.Type == ChartAnnotationType.ThresholdLine)
+                    {
+                        <div class="bcl-annotation bcl-annotation-threshold"
+                             style="border-top: 2px dashed @annotation.Color;"
+                             title="@annotation.Tooltip">
+                            <span class="bcl-annotation-label" style="color: @annotation.Color;">
+                                @annotation.Label (@annotation.Value)
+                            </span>
+                        </div>
+                    }
+                    else if (annotation.Type == ChartAnnotationType.EventMarker)
+                    {
+                        <div class="bcl-annotation bcl-annotation-event"
+                             style="border-left: 2px solid @annotation.Color;"
+                             title="@annotation.Tooltip">
+                            <span class="bcl-annotation-label" style="color: @annotation.Color;">
+                                @annotation.Label
+                            </span>
+                        </div>
+                    }
+                    else if (annotation.Type == ChartAnnotationType.ReferenceBand)
+                    {
+                        <div class="bcl-annotation bcl-annotation-band"
+                             style="background-color: @annotation.Color; opacity: 0.15;"
+                             title="@annotation.Tooltip">
+                            <span class="bcl-annotation-label">
+                                @annotation.Label (@annotation.Value – @annotation.EndValue)
+                            </span>
+                        </div>
+                    }
+                }
+            </div>
+        }
+    </div>
 </div>
 
 @inject IJSRuntime JSRuntime
-
-@code {
-private ElementReference _chartElement;
-
-protected override async Task OnAfterRenderAsync(bool firstRender)
-{
-    if (firstRender)
-    {
-        await InitializeChartInterop();
-    }
-    await base.OnAfterRenderAsync(firstRender);
-}
-
-private async Task InitializeChartInterop()
-{
-    try
-    {
-        await JSRuntime.InvokeVoidAsync("blazorChartInterop.initialize", _chartElement);
-    }
-    catch (Exception ex)
-    {
-        // Ignore if JS interop fails (e.g., during unit tests)
-        Console.Error.WriteLine($"Failed to initialize chart interop: {ex.Message}");
-    }
-}
-
-}
