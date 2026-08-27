@@ -1,0 +1,7 @@
+<Solution>
+  <Folder Name="/Benchmarks/">
+    <Project Path="Benchmarks/BenchmarkRunner.csproj" />
+  </Folder>
+  <Project Path="BlazorComponentLibrary.csproj" />
+  <Project Path="BlazorComponentLibrary.Tests/BlazorComponentLibrary.Tests.csproj" />
+</Solution>

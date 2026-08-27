@@ -28,7 +28,7 @@ public sealed partial class ThemeSwitcher : ComponentBase, IThemeSwitcher, IDisp
     [Parameter]
     public string? CssClass { get; set; }
 
-    private string RootClass =>
+    internal string RootClass =>
         string.IsNullOrEmpty(CssClass)
             ? "bcl-theme-switcher"
             : $"bcl-theme-switcher {CssClass}";

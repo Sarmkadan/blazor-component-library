@@ -23,8 +23,8 @@ public sealed class ThemeSwitcherTests : TestContext
         mockThemeService.SetupGet(x => x.CurrentTheme).Returns(ThemeMode.System);
 
         // Act
-        var cut = RenderComponent<ThemeSwitcher>(services => services
-            .AddSingleton(mockThemeService.Object));
+        Services.AddSingleton(mockThemeService.Object);
+        var cut = RenderComponent<ThemeSwitcher>();
 
         // Assert
         var buttons = cut.FindAll("button");
@@ -46,9 +46,9 @@ public sealed class ThemeSwitcherTests : TestContext
         mockThemeService.SetupGet(x => x.CurrentTheme).Returns(ThemeMode.System);
 
         // Act
+        Services.AddSingleton(mockThemeService.Object);
         var cut = RenderComponent<ThemeSwitcher>(parameters => parameters
-            .Add(p => p.ShowLabel, false), services => services
-            .AddSingleton(mockThemeService.Object));
+            .Add(p => p.ShowLabel, false));
 
         // Assert
         var spans = cut.FindAll("span");
@@ -68,9 +68,9 @@ public sealed class ThemeSwitcherTests : TestContext
         mockThemeService.SetupGet(x => x.CurrentTheme).Returns(ThemeMode.System);
 
         // Act
+        Services.AddSingleton(mockThemeService.Object);
         var cut = RenderComponent<ThemeSwitcher>(parameters => parameters
-            .Add(p => p.CssClass, "custom-class"), services => services
-            .AddSingleton(mockThemeService.Object));
+            .Add(p => p.CssClass, "custom-class"));
 
         // Assert
         Assert.Equal("bcl-theme-switcher custom-class", cut.Instance.RootClass);
@@ -90,8 +90,8 @@ public sealed class ThemeSwitcherTests : TestContext
         mockThemeService.SetupGet(x => x.CurrentTheme).Returns(currentTheme);
 
         // Act
-        var cut = RenderComponent<ThemeSwitcher>(services => services
-            .AddSingleton(mockThemeService.Object));
+        Services.AddSingleton(mockThemeService.Object);
+        var cut = RenderComponent<ThemeSwitcher>();
 
         // Assert
         Assert.True(cut.Instance.IsActive(currentTheme));
@@ -114,8 +114,8 @@ public sealed class ThemeSwitcherTests : TestContext
         mockThemeService.SetupGet(x => x.CurrentTheme).Returns(currentTheme);
 
         // Act
-        var cut = RenderComponent<ThemeSwitcher>(services => services
-            .AddSingleton(mockThemeService.Object));
+        Services.AddSingleton(mockThemeService.Object);
+        var cut = RenderComponent<ThemeSwitcher>();
 
         // Assert
         Assert.False(cut.Instance.IsActive(testedTheme));
@@ -135,8 +135,8 @@ public sealed class ThemeSwitcherTests : TestContext
             .Callback<ThemeMode>(theme => capturedTheme = theme);
 
         // Act
-        var cut = RenderComponent<ThemeSwitcher>(services => services
-            .AddSingleton(mockThemeService.Object));
+        Services.AddSingleton(mockThemeService.Object);
+        var cut = RenderComponent<ThemeSwitcher>();
         var lightButton = cut.FindAll("button")[0];
         lightButton.Click();
 
@@ -159,8 +159,8 @@ public sealed class ThemeSwitcherTests : TestContext
             .Callback<ThemeMode>(theme => capturedTheme = theme);
 
         // Act
-        var cut = RenderComponent<ThemeSwitcher>(services => services
-            .AddSingleton(mockThemeService.Object));
+        Services.AddSingleton(mockThemeService.Object);
+        var cut = RenderComponent<ThemeSwitcher>();
         var systemButton = cut.FindAll("button")[1];
         systemButton.Click();
 
@@ -183,8 +183,8 @@ public sealed class ThemeSwitcherTests : TestContext
             .Callback<ThemeMode>(theme => capturedTheme = theme);
 
         // Act
-        var cut = RenderComponent<ThemeSwitcher>(services => services
-            .AddSingleton(mockThemeService.Object));
+        Services.AddSingleton(mockThemeService.Object);
+        var cut = RenderComponent<ThemeSwitcher>();
         var darkButton = cut.FindAll("button")[2];
         darkButton.Click();
 
@@ -204,8 +204,8 @@ public sealed class ThemeSwitcherTests : TestContext
         mockThemeService.SetupGet(x => x.CurrentTheme).Returns(ThemeMode.System);
 
         // Act
-        var cut = RenderComponent<ThemeSwitcher>(services => services
-            .AddSingleton(mockThemeService.Object));
+        Services.AddSingleton(mockThemeService.Object);
+        var cut = RenderComponent<ThemeSwitcher>();
 
         // Initially System should be active
         Assert.True(cut.Instance.IsActive(ThemeMode.System));
@@ -236,8 +236,8 @@ public sealed class ThemeSwitcherTests : TestContext
         mockThemeService.SetupGet(x => x.CurrentTheme).Returns(currentTheme);
 
         // Act
-        var cut = RenderComponent<ThemeSwitcher>(services => services
-            .AddSingleton(mockThemeService.Object));
+        Services.AddSingleton(mockThemeService.Object);
+        var cut = RenderComponent<ThemeSwitcher>();
 
         // Assert
         var buttons = cut.FindAll("button");
@@ -263,8 +263,8 @@ public sealed class ThemeSwitcherTests : TestContext
         mockThemeService.SetupGet(x => x.CurrentTheme).Returns(ThemeMode.System);
 
         // Act
-        var cut = RenderComponent<ThemeSwitcher>(services => services
-            .AddSingleton(mockThemeService.Object));
+        Services.AddSingleton(mockThemeService.Object);
+        var cut = RenderComponent<ThemeSwitcher>();
 
         // Assert
         var button = cut.FindAll("button")[buttonIndex];
@@ -285,8 +285,8 @@ public sealed class ThemeSwitcherTests : TestContext
         mockThemeService.SetupGet(x => x.CurrentTheme).Returns(ThemeMode.System);
 
         // Act
-        var cut = RenderComponent<ThemeSwitcher>(services => services
-            .AddSingleton(mockThemeService.Object));
+        Services.AddSingleton(mockThemeService.Object);
+        var cut = RenderComponent<ThemeSwitcher>();
 
         // Assert
         var button = cut.FindAll("button")[buttonIndex];
@@ -308,8 +308,8 @@ public sealed class ThemeSwitcherTests : TestContext
         mockThemeService.SetupGet(x => x.CurrentTheme).Returns(activeTheme);
 
         // Act
-        var cut = RenderComponent<ThemeSwitcher>(services => services
-            .AddSingleton(mockThemeService.Object));
+        Services.AddSingleton(mockThemeService.Object);
+        var cut = RenderComponent<ThemeSwitcher>();
 
         // Assert
         var buttons = cut.FindAll("button");
@@ -343,8 +343,8 @@ public sealed class ThemeSwitcherTests : TestContext
         mockThemeService.SetupGet(x => x.CurrentTheme).Returns(inactiveTheme);
 
         // Act
-        var cut = RenderComponent<ThemeSwitcher>(services => services
-            .AddSingleton(mockThemeService.Object));
+        Services.AddSingleton(mockThemeService.Object);
+        var cut = RenderComponent<ThemeSwitcher>();
 
         // Assert
         var buttons = cut.FindAll("button");
@@ -363,19 +363,13 @@ public sealed class ThemeSwitcherTests : TestContext
         var themeChangedTriggered = false;
 
         // Act
-        var cut = RenderComponent<ThemeSwitcher>(services => services
-            .AddSingleton(mockThemeService.Object));
+        Services.AddSingleton(mockThemeService.Object);
+        var cut = RenderComponent<ThemeSwitcher>();
 
-        // Subscribe to StateHasChanged to verify it's called
-        var originalStateHasChanged = cut.Instance.StateHasChanged;
-        cut.Instance.StateHasChanged = () =>
-        {
-            themeChangedTriggered = true;
-            originalStateHasChanged?.Invoke();
-        };
-
-        // Simulate theme change event
+        // Simulate theme change event and verify the component re-renders
+        var renderCountBefore = cut.RenderCount;
         mockThemeService.Raise(x => x.ThemeChanged += null, ThemeMode.Light);
+        themeChangedTriggered = cut.RenderCount > renderCountBefore;
 
         // Assert
         Assert.True(themeChangedTriggered);
@@ -392,11 +386,11 @@ public sealed class ThemeSwitcherTests : TestContext
         mockThemeService.SetupGet(x => x.CurrentTheme).Returns(ThemeMode.System);
 
         // Act
-        var cut = RenderComponent<ThemeSwitcher>(services => services
-            .AddSingleton(mockThemeService.Object));
+        Services.AddSingleton(mockThemeService.Object);
+        var cut = RenderComponent<ThemeSwitcher>();
 
         // Verify event is subscribed
-        Assert.Contains(cut.Instance, x => x is IDisposable);
+        Assert.IsAssignableFrom<IDisposable>(cut.Instance);
 
         // Dispose should not throw
         var exception = Record.Exception(() => cut.Dispose());
@@ -414,8 +408,8 @@ public sealed class ThemeSwitcherTests : TestContext
         mockThemeService.SetupGet(x => x.CurrentTheme).Returns(ThemeMode.System);
 
         // Act
-        var cut = RenderComponent<ThemeSwitcher>(services => services
-            .AddSingleton(mockThemeService.Object));
+        Services.AddSingleton(mockThemeService.Object);
+        var cut = RenderComponent<ThemeSwitcher>();
 
         // Initially
         Assert.True(cut.Instance.ShowLabel);
@@ -441,8 +435,8 @@ public sealed class ThemeSwitcherTests : TestContext
         mockThemeService.SetupGet(x => x.CurrentTheme).Returns(ThemeMode.System);
 
         // Act
-        var cut = RenderComponent<ThemeSwitcher>(services => services
-            .AddSingleton(mockThemeService.Object));
+        Services.AddSingleton(mockThemeService.Object);
+        var cut = RenderComponent<ThemeSwitcher>();
 
         // Assert
         var buttons = cut.FindAll("button");
@@ -460,8 +454,8 @@ public sealed class ThemeSwitcherTests : TestContext
         mockThemeService.SetupGet(x => x.CurrentTheme).Returns(ThemeMode.System);
 
         // Act
-        var cut = RenderComponent<ThemeSwitcher>(services => services
-            .AddSingleton(mockThemeService.Object));
+        Services.AddSingleton(mockThemeService.Object);
+        var cut = RenderComponent<ThemeSwitcher>();
 
         // Assert
         var div = cut.Find("div");
