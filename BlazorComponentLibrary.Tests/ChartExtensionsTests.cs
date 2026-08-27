@@ -30,9 +30,11 @@ public sealed class ChartExtensionsTests
             Data = data?.ToList() ?? new List<TData>();
         }
 
+        public bool RefreshCalled { get; private set; }
+
         public void Refresh()
         {
-            // No-op for testing
+            RefreshCalled = true;
         }
 
         public void SetSeriesVisibility(int seriesIndex, bool visible)
@@ -50,17 +52,15 @@ public sealed class ChartExtensionsTests
         // Arrange
         var chart = new TestChart<int>();
         var data = new List<int> { 1, 2, 3, 4, 5 };
-        var refreshCalled = false;
 
         // Mock refresh behavior
-        chart.Refresh = () => refreshCalled = true;
 
         // Act
         chart.SetDataAndRefresh(data);
 
         // Assert
         chart.Data.Should().BeEquivalentTo(data);
-        refreshCalled.Should().BeTrue();
+        chart.RefreshCalled.Should().BeTrue();
     }
 
     /// <summary>
@@ -71,17 +71,15 @@ public sealed class ChartExtensionsTests
     {
         // Arrange
         var chart = new TestChart<int>();
-        var refreshCalled = false;
 
         // Mock refresh behavior
-        chart.Refresh = () => refreshCalled = true;
 
         // Act
         chart.SetDataAndRefresh(null);
 
         // Assert
         chart.Data.Should().BeEmpty();
-        refreshCalled.Should().BeTrue();
+        chart.RefreshCalled.Should().BeTrue();
     }
 
     /// <summary>
@@ -92,17 +90,15 @@ public sealed class ChartExtensionsTests
     {
         // Arrange
         var chart = new TestChart<int>();
-        var refreshCalled = false;
 
         // Mock refresh behavior
-        chart.Refresh = () => refreshCalled = true;
 
         // Act
         chart.SetDataAndRefresh(Enumerable.Empty<int>());
 
         // Assert
         chart.Data.Should().BeEmpty();
-        refreshCalled.Should().BeTrue();
+        chart.RefreshCalled.Should().BeTrue();
     }
 
     /// <summary>
@@ -127,10 +123,8 @@ public sealed class ChartExtensionsTests
     {
         // Arrange
         var chart = new TestChart<double>();
-        var refreshCalled = false;
 
         // Mock refresh behavior
-        chart.Refresh = () => refreshCalled = true;
 
         // Act
         var annotation = chart.AddThresholdLine(75.5, "Warning Threshold", "#ff6384", "Warning at 75.5");
@@ -144,7 +138,7 @@ public sealed class ChartExtensionsTests
         annotation.Tooltip.Should().Be("Warning at 75.5");
 
         chart.Annotations.Should().HaveCount(1);
-        refreshCalled.Should().BeTrue();
+        chart.RefreshCalled.Should().BeTrue();
     }
 
     /// <summary>
@@ -155,10 +149,8 @@ public sealed class ChartExtensionsTests
     {
         // Arrange
         var chart = new TestChart<double>();
-        var refreshCalled = false;
 
         // Mock refresh behavior
-        chart.Refresh = () => refreshCalled = true;
 
         // Act
         var annotation = chart.AddThresholdLine(50.0);
@@ -172,7 +164,7 @@ public sealed class ChartExtensionsTests
         annotation.Tooltip.Should().Be("Threshold at 50"); // Default tooltip
 
         chart.Annotations.Should().HaveCount(1);
-        refreshCalled.Should().BeTrue();
+        chart.RefreshCalled.Should().BeTrue();
     }
 
     /// <summary>
@@ -196,10 +188,8 @@ public sealed class ChartExtensionsTests
     {
         // Arrange
         var chart = new TestChart<int>();
-        var refreshCalled = false;
 
         // Mock refresh behavior
-        chart.Refresh = () => refreshCalled = true;
 
         // Act
         var annotation = chart.AddEventMarker(25.7, "Important Event", "#36a2eb", "Event at position 25.7");
@@ -213,7 +203,7 @@ public sealed class ChartExtensionsTests
         annotation.Tooltip.Should().Be("Event at position 25.7");
 
         chart.Annotations.Should().HaveCount(1);
-        refreshCalled.Should().BeTrue();
+        chart.RefreshCalled.Should().BeTrue();
     }
 
     /// <summary>
@@ -224,10 +214,8 @@ public sealed class ChartExtensionsTests
     {
         // Arrange
         var chart = new TestChart<int>();
-        var refreshCalled = false;
 
         // Mock refresh behavior
-        chart.Refresh = () => refreshCalled = true;
 
         // Act
         var annotation = chart.AddEventMarker(100.0);
@@ -241,7 +229,7 @@ public sealed class ChartExtensionsTests
         annotation.Tooltip.Should().Be("Event at position 100"); // Default tooltip
 
         chart.Annotations.Should().HaveCount(1);
-        refreshCalled.Should().BeTrue();
+        chart.RefreshCalled.Should().BeTrue();
     }
 
     /// <summary>
@@ -265,10 +253,8 @@ public sealed class ChartExtensionsTests
     {
         // Arrange
         var chart = new TestChart<double>();
-        var refreshCalled = false;
 
         // Mock refresh behavior
-        chart.Refresh = () => refreshCalled = true;
 
         // Act
         var annotation = chart.AddReferenceBand(25.0, 75.0, "Acceptable Range", "#4bc0c080", "Range from 25 to 75");
@@ -283,7 +269,7 @@ public sealed class ChartExtensionsTests
         annotation.Tooltip.Should().Be("Range from 25 to 75");
 
         chart.Annotations.Should().HaveCount(1);
-        refreshCalled.Should().BeTrue();
+        chart.RefreshCalled.Should().BeTrue();
     }
 
     /// <summary>
@@ -294,10 +280,8 @@ public sealed class ChartExtensionsTests
     {
         // Arrange
         var chart = new TestChart<int>();
-        var refreshCalled = false;
 
         // Mock refresh behavior
-        chart.Refresh = () => refreshCalled = true;
 
         // Act
         var annotation = chart.AddReferenceBand(0.0, 100.0);
@@ -312,7 +296,7 @@ public sealed class ChartExtensionsTests
         annotation.Tooltip.Should().Be("Reference band from 0 to 100"); // Default tooltip
 
         chart.Annotations.Should().HaveCount(1);
-        refreshCalled.Should().BeTrue();
+        chart.RefreshCalled.Should().BeTrue();
     }
 
     /// <summary>
@@ -349,10 +333,8 @@ public sealed class ChartExtensionsTests
     {
         // Arrange
         var chart = new TestChart<int>();
-        var refreshCalled = false;
 
         // Mock refresh behavior
-        chart.Refresh = () => refreshCalled = true;
 
         // Add some annotations first
         chart.AddThresholdLine(50.0);
@@ -367,7 +349,7 @@ public sealed class ChartExtensionsTests
 
         // Assert
         chart.Annotations.Should().BeEmpty();
-        refreshCalled.Should().BeTrue();
+        chart.RefreshCalled.Should().BeTrue();
     }
 
     /// <summary>
@@ -391,17 +373,15 @@ public sealed class ChartExtensionsTests
     {
         // Arrange
         var chart = new TestChart<int>();
-        var refreshCalled = false;
 
         // Mock refresh behavior
-        chart.Refresh = () => refreshCalled = true;
 
         // Act
         chart.SetTitle("My Chart Title");
 
         // Assert
         chart.Title.Should().Be("My Chart Title");
-        refreshCalled.Should().BeTrue();
+        chart.RefreshCalled.Should().BeTrue();
     }
 
     /// <summary>
@@ -441,17 +421,15 @@ public sealed class ChartExtensionsTests
     {
         // Arrange
         var chart = new TestChart<int>();
-        var refreshCalled = false;
 
         // Mock refresh behavior
-        chart.Refresh = () => refreshCalled = true;
 
         // Act
         chart.SetChartType(ChartType.Pie);
 
         // Assert
         chart.ChartType.Should().Be(ChartType.Pie);
-        refreshCalled.Should().BeTrue();
+        chart.RefreshCalled.Should().BeTrue();
     }
 
     /// <summary>
@@ -475,17 +453,15 @@ public sealed class ChartExtensionsTests
     {
         // Arrange
         var chart = new TestChart<int>();
-        var refreshCalled = false;
 
         // Mock refresh behavior
-        chart.Refresh = () => refreshCalled = true;
 
         // Act
         chart.SetSeriesVisibility(0, true);
         chart.SetSeriesVisibility(1, false);
 
         // Assert - refresh should have been called
-        refreshCalled.Should().BeTrue();
+        chart.RefreshCalled.Should().BeTrue();
     }
 
     /// <summary>

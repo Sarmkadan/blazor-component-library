@@ -1,4 +1,6 @@
 using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Rendering;
+using Microsoft.AspNetCore.Components.Web;
 
 namespace BlazorComponentLibrary.Tests.Components.Accordion
 {
@@ -9,6 +11,9 @@ namespace BlazorComponentLibrary.Tests.Components.Accordion
 
         [Parameter]
         public EventCallback<MouseEventArgs> OnClick { get; set; }
+
+        [Parameter]
+        public RenderFragment? ChildContent { get; set; }
 
         public bool IsExpanded { get; private set; }
 

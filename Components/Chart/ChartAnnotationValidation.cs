@@ -111,7 +111,7 @@ public static class ChartAnnotationValidation
     /// <param name="value">The annotation instance to check.</param>
     /// <returns><see langword="true"/> if the annotation is valid; otherwise, <see langword="false"/>.</returns>
     /// <exception cref="ArgumentNullException"><paramref name="value"/> is <see langword="null"/>.</exception>
-    public static bool IsValid(this ChartAnnotation value) => Validate(value).Count == 0;
+    public static bool IsValidAnnotation(this ChartAnnotation value) => Validate(value).Count == 0;
 
     /// <summary>
     /// Ensures that a <see cref="ChartAnnotation"/> instance is valid, throwing an exception if it is not.
@@ -123,7 +123,7 @@ public static class ChartAnnotationValidation
     {
         ArgumentNullException.ThrowIfNull(value);
 
-        var problems = Validate(value);
+        var problems = value.Validate();
 
         if (problems.Count > 0)
         {
