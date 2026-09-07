@@ -8,13 +8,15 @@ namespace BlazorComponentLibrary.Components.ProgressBar;
 public sealed partial class ProgressBar : ComponentBase, IProgressBar
 {
     /// <summary>
-    /// Gets or sets the current value of the progress bar.
+    /// Gets or sets the current value of the progress bar. Values outside the
+    /// <c>[0, Max]</c> range are silently clamped when parameters are applied.
     /// </summary>
     [Parameter]
     public double Value { get; set; }
 
     /// <summary>
     /// Gets or sets the maximum value of the progress bar. Default is 100.
+    /// Non-positive or non-finite values are silently reset to the default.
     /// </summary>
     [Parameter]
     public double Max { get; set; } = 100;
@@ -43,6 +45,22 @@ public sealed partial class ProgressBar : ComponentBase, IProgressBar
     /// </summary>
     [Parameter]
     public string? Style { get; set; }
+
+    /// <inheritdoc />
+    protected override void OnParametersSet()
+    {
+        if (!double.IsFinite(Max) || Max <= 0)
+        {
+            Max = 100;
+        }
+
+        if (!double.IsFinite(Value))
+        {
+            Value = 0;
+        }
+
+        Value = Math.Clamp(Value, 0, Max);
+    }
 
     private string? GetProgressValue()
     {
