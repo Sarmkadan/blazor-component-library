@@ -14,7 +14,7 @@ public static class DragDropListValidation
     /// </summary>
     /// <typeparam name="TItem">The type of each list item.</typeparam>
     /// <param name="value">The <see cref="DragDropList{TItem}"/> instance to validate.</param>
-    /// <returns>An <see cref="IReadOnlyList{string}"/> of human-readable problems; empty if valid.</returns>
+    /// <returns>An <see cref="IReadOnlyList{T}"/> of human-readable problems; empty if valid.</returns>
     /// <exception cref="ArgumentNullException">Thrown when <paramref name="value"/> is null.</exception>
     public static IReadOnlyList<string> Validate<TItem>(this DragDropList<TItem> value)
     {
