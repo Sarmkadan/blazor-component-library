@@ -4,7 +4,6 @@ using BlazorComponentLibrary.Exceptions;
 using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
-using System.Collections.Concurrent;
 using System.Timers;
 
 /// <summary>
@@ -24,7 +23,7 @@ public sealed class ToastService : IToastService, IDisposable
     private readonly ILogger<ToastService> _logger;
     private readonly List<ToastMessage> _toasts = new();
     private readonly Dictionary<Guid, Timer> _timers = new();
-    private readonly ConcurrentDictionary<string, Guid> _dedupCache = new();
+    private readonly Dictionary<string, Guid> _dedupCache = new();
     private readonly object _lock = new();
     private readonly object _eventLock = new();
 
@@ -73,48 +72,14 @@ public sealed class ToastService : IToastService, IDisposable
         }
 
         Guid toastId;
-        ToastMessage? existingToast = null;
 
         lock (_lock)
         {
-            // Handle deduplication if enabled
             if (Dedup)
             {
-                var messageKey = message.Trim();
-                if (_dedupCache.TryGetValue(messageKey, out var cachedId))
-                {
-                    // Find the existing toast with this ID
-                    existingToast = _toasts.FirstOrDefault(t => t.Id == cachedId);
-                    if (existingToast != null)
-                    {
-                        // Update the existing toast's count and reset its timer
-                        var updatedToast = existingToast with { Count = existingToast.Count + 1 };
-                        _toasts.Remove(existingToast);
-                        _toasts.Add(updatedToast);
-                        toastId = updatedToast.Id;
-
-                        // Update the timer with the new duration
-                        if (durationMs > 0 && _timers.TryGetValue(toastId, out var existingTimer))
-                        {
-                            existingTimer.Stop();
-                            existingTimer.Interval = durationMs;
-                            existingTimer.Start();
-                        }
-                        else if (durationMs > 0)
-                        {
-                            ScheduleDismiss(toastId, durationMs);
-                        }
-
-                        _logger.LogInformation("Deduplicated toast updated with ID: {ToastId}, new count: {Count}", toastId, updatedToast.Count);
-                        InvokeToastsChanged();
-                        return;
-                    }
-                }
-                else
-                {
-                    // Add to cache for future deduplication
-                    _dedupCache[messageKey] = Guid.Empty; // Placeholder, will be updated below
-                }
+                var dedupKey = GetDedupKey(message);
+                if (TryUpdateExistingToast(dedupKey, durationMs))
+                    return;
             }
 
             // Create new toast
@@ -125,7 +90,7 @@ public sealed class ToastService : IToastService, IDisposable
             // Update cache with actual ID
             if (Dedup)
             {
-                _dedupCache[message.Trim()] = toastId;
+                _dedupCache[GetDedupKey(message)] = toastId;
             }
         }
 
@@ -142,34 +107,27 @@ public sealed class ToastService : IToastService, IDisposable
         _logger.LogDebug("Dismissing toast with ID: {ToastId}", id);
 
         bool removed;
-        string? dismissedMessage = null;
         lock (_lock)
         {
             var toastToRemove = _toasts.FirstOrDefault(t => t.Id == id);
-            if (toastToRemove != null)
-            {
-                dismissedMessage = toastToRemove.Message.Trim();
-            }
             removed = _toasts.RemoveAll(t => t.Id == id) > 0;
             if (_timers.Remove(id, out var timer))
                 timer.Dispose();
+
+            if (Dedup && toastToRemove != null)
+            {
+                var dedupKey = GetDedupKey(toastToRemove.Message);
+                if (_dedupCache.TryGetValue(dedupKey, out var cachedId)
+                    && cachedId == id
+                    && !_toasts.Any(t => GetDedupKey(t.Message) == dedupKey))
+                {
+                    _dedupCache.Remove(dedupKey);
+                }
+            }
         }
 
         if (!removed)
             return;
-
-        // Clean up deduplication cache if this was the last instance of a message
-        if (Dedup && dismissedMessage != null)
-        {
-            // Only remove from cache if no other toasts with this message exist
-            lock (_lock)
-            {
-                if (!_toasts.Any(t => t.Message.Trim() == dismissedMessage))
-                {
-                    _dedupCache.TryRemove(dismissedMessage, out _);
-                }
-            }
-        }
 
         _logger.LogInformation("Toast dismissed successfully with ID: {ToastId}", id);
         InvokeToastsChanged();
@@ -218,6 +176,37 @@ public sealed class ToastService : IToastService, IDisposable
         lock (_lock) { _timers[id] = timer; }
         timer.Start();
     }
+
+    private bool TryUpdateExistingToast(string dedupKey, int durationMs)
+    {
+        if (!_dedupCache.TryGetValue(dedupKey, out var cachedId))
+            return false;
+
+        var existingToast = _toasts.FirstOrDefault(t => t.Id == cachedId);
+        if (existingToast == null)
+            return false;
+
+        var updatedToast = existingToast with { Count = existingToast.Count + 1 };
+        _toasts.Remove(existingToast);
+        _toasts.Add(updatedToast);
+
+        if (durationMs > 0 && _timers.TryGetValue(updatedToast.Id, out var existingTimer))
+        {
+            existingTimer.Stop();
+            existingTimer.Interval = durationMs;
+            existingTimer.Start();
+        }
+        else if (durationMs > 0)
+        {
+            ScheduleDismiss(updatedToast.Id, durationMs);
+        }
+
+        _logger.LogInformation("Deduplicated toast updated with ID: {ToastId}, new count: {Count}", updatedToast.Id, updatedToast.Count);
+        InvokeToastsChanged();
+        return true;
+    }
+
+    private static string GetDedupKey(string message) => message.Trim();
 
     /// <summary>
     /// Pauses the auto-dismiss timer for a specific toast.
