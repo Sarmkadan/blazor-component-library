@@ -7,6 +7,7 @@ using BlazorComponentLibrary.Exceptions;
 using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
 using Moq;
+using static ModalRazorUnitTestsConstants;
 
 /// <summary>
 /// Comprehensive unit tests for the <see cref="Modal"/> component public API.
@@ -36,7 +37,7 @@ public sealed class ModalRazorUnitTests : TestContext
         Assert.Null(cut.Instance.FooterContent);
         Assert.True(cut.Instance.CloseOnOverlayClick);
         Assert.Equal(ModalSize.Medium, cut.Instance.Size);
-        Assert.Equal("modal-medium", cut.Instance.SizeClass);
+        Assert.Equal(MediumModalCssClass, cut.Instance.SizeClass);
         Assert.False(cut.Instance.IsVisible);
     }
 
@@ -203,17 +204,17 @@ public sealed class ModalRazorUnitTests : TestContext
 
         // Assert
         Assert.Equal(ModalSize.Medium, cut.Instance.Size);
-        Assert.Equal("modal-medium", cut.Instance.SizeClass);
+        Assert.Equal(MediumModalCssClass, cut.Instance.SizeClass);
     }
 
     /// <summary>
     /// Verifies that all <see cref="ModalSize"/> enum values render correct CSS classes.
     /// </summary>
     [Theory]
-    [InlineData(ModalSize.Small, "modal-small")]
-    [InlineData(ModalSize.Medium, "modal-medium")]
-    [InlineData(ModalSize.Large, "modal-large")]
-    [InlineData(ModalSize.FullScreen, "modal-fullscreen")]
+    [InlineData(ModalSize.Small, SmallModalCssClass)]
+    [InlineData(ModalSize.Medium, MediumModalCssClass)]
+    [InlineData(ModalSize.Large, LargeModalCssClass)]
+    [InlineData(ModalSize.FullScreen, FullScreenModalCssClass)]
     public void Size_AllEnumValues_RenderCorrectClasses(ModalSize size, string expectedClass)
     {
         // Arrange & Act
@@ -323,7 +324,7 @@ public sealed class ModalRazorUnitTests : TestContext
         Assert.False(cut.Instance.IsVisible);
 
         // Act & Assert - Multiple show/hide cycles
-        for (int i = 0; i < 3; i++)
+        for (int i = 0; i < ShowHideCycleCount; i++)
         {
             await cut.InvokeAsync(async () => await cut.Instance.Show());
             Assert.True(cut.Instance.IsVisible);
@@ -368,25 +369,25 @@ public sealed class ModalRazorUnitTests : TestContext
 
         // Act
         cut.SetParametersAndRender(parameters => parameters
-            .Add(p => p.Title, "New Title")
+            .Add(p => p.Title, NewTitle)
             .Add(p => p.CloseOnOverlayClick, false)
             .Add(p => p.Size, ModalSize.Small));
 
         // Assert
-        Assert.Equal("New Title", cut.Instance.Title);
+        Assert.Equal(NewTitle, cut.Instance.Title);
         Assert.False(cut.Instance.CloseOnOverlayClick);
         Assert.Equal(ModalSize.Small, cut.Instance.Size);
-        Assert.Equal("modal-small", cut.Instance.SizeClass);
+        Assert.Equal(SmallModalCssClass, cut.Instance.SizeClass);
     }
 
     /// <summary>
     /// Verifies that the SizeClass property returns correct values for all enum values.
     /// </summary>
     [Theory]
-    [InlineData(ModalSize.Small, "modal-small")]
-    [InlineData(ModalSize.Medium, "modal-medium")]
-    [InlineData(ModalSize.Large, "modal-large")]
-    [InlineData(ModalSize.FullScreen, "modal-fullscreen")]
+    [InlineData(ModalSize.Small, SmallModalCssClass)]
+    [InlineData(ModalSize.Medium, MediumModalCssClass)]
+    [InlineData(ModalSize.Large, LargeModalCssClass)]
+    [InlineData(ModalSize.FullScreen, FullScreenModalCssClass)]
     public void SizeClass_ReturnsCorrectClass(ModalSize size, string expectedClass)
     {
         // Arrange
@@ -412,7 +413,7 @@ public sealed class ModalRazorUnitTests : TestContext
         Assert.Null(cut.Instance.FooterContent);
         Assert.True(cut.Instance.CloseOnOverlayClick);
         Assert.Equal(ModalSize.Medium, cut.Instance.Size);
-        Assert.Equal("modal-medium", cut.Instance.SizeClass);
+        Assert.Equal(MediumModalCssClass, cut.Instance.SizeClass);
         Assert.False(cut.Instance.IsVisible);
     }
 
@@ -424,14 +425,14 @@ public sealed class ModalRazorUnitTests : TestContext
     {
         // Arrange
         var cut = RenderComponent<Modal>(parameters => parameters
-            .Add(p => p.Title, "Test Title")
+            .Add(p => p.Title, TestTitle)
             .Add(p => p.CloseOnOverlayClick, false)
             .Add(p => p.Size, ModalSize.Large));
 
         // Act - show and hide multiple times
         await cut.InvokeAsync(async () => await cut.Instance.Show());
         Assert.True(cut.Instance.IsVisible);
-        Assert.Equal("Test Title", cut.Instance.Title);
+        Assert.Equal(TestTitle, cut.Instance.Title);
         Assert.False(cut.Instance.CloseOnOverlayClick);
         Assert.Equal(ModalSize.Large, cut.Instance.Size);
 
@@ -440,7 +441,7 @@ public sealed class ModalRazorUnitTests : TestContext
 
         await cut.InvokeAsync(async () => await cut.Instance.Show());
         Assert.True(cut.Instance.IsVisible);
-        Assert.Equal("Test Title", cut.Instance.Title);
+        Assert.Equal(TestTitle, cut.Instance.Title);
         Assert.False(cut.Instance.CloseOnOverlayClick);
         Assert.Equal(ModalSize.Large, cut.Instance.Size);
     }
@@ -455,7 +456,7 @@ public sealed class ModalRazorUnitTests : TestContext
         var cut = RenderComponent<Modal>();
 
         // Act - rapid operations
-        for (int i = 0; i < 10; i++)
+        for (int i = 0; i < RapidShowHideCycleCount; i++)
         {
             await cut.InvokeAsync(async () => await cut.Instance.Show());
             Assert.True(cut.Instance.IsVisible);
