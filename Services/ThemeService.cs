@@ -2,6 +2,8 @@ namespace BlazorComponentLibrary.Services;
 
 using BlazorComponentLibrary.Exceptions;
 using Microsoft.AspNetCore.Components;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.JSInterop;
 
 /// <summary>
@@ -14,6 +16,7 @@ using Microsoft.JSInterop;
 public sealed class ThemeService : IThemeService
 {
     private readonly IJSRuntime _jsRuntime;
+    private readonly ILogger<ThemeService> _logger;
     private ThemeMode _currentTheme = ThemeMode.System;
     private readonly object _eventLock = new();
 
@@ -31,25 +34,31 @@ public sealed class ThemeService : IThemeService
 
     /// <summary>Initialises a new instance of <see cref="ThemeService"/>.</summary>
     /// <param name="jsRuntime">The JS interop runtime injected by the DI container.</param>
+    /// <param name="logger">Optional logger. When omitted a no-op logger is used.</param>
     /// <exception cref="ArgumentNullException">Thrown when <paramref name="jsRuntime"/> is null.</exception>
-    public ThemeService(IJSRuntime jsRuntime)
+    public ThemeService(IJSRuntime jsRuntime, ILogger<ThemeService>? logger = null)
     {
         _jsRuntime = jsRuntime ?? throw new ArgumentNullException(nameof(jsRuntime));
+        _logger = logger ?? NullLogger<ThemeService>.Instance;
     }
 
     /// <inheritdoc/>
     /// <exception cref="ThemeServiceException">Thrown when there is an error accessing local storage or applying theme.</exception>
     public async Task InitializeAsync()
     {
+        _logger.LogDebug("Initializing theme service");
+
         string? stored;
         try
         {
+            _logger.LogDebug("Starting JS interop call to load the persisted theme");
             stored = await _jsRuntime.InvokeAsync<string?>(
                 "eval", "localStorage.getItem('bcl-theme')")
                 .ConfigureAwait(false);
         }
         catch (Exception ex) when (ex is not ThemeServiceException)
         {
+            _logger.LogError(ex, "Failed to initialize theme service through JS interop");
             throw new ThemeServiceException("Failed to initialize theme service", ex);
         }
 
@@ -65,7 +74,11 @@ public sealed class ThemeService : IThemeService
     }
 
     /// <inheritdoc/>
-    public void SetTheme(ThemeMode theme) => ApplyTheme(theme, persist: true);
+    public void SetTheme(ThemeMode theme)
+    {
+        _logger.LogDebug("Theme change requested for {ThemeMode}", theme);
+        ApplyTheme(theme, persist: true);
+    }
 
     private void ApplyTheme(ThemeMode theme, bool persist)
     {
@@ -76,6 +89,7 @@ public sealed class ThemeService : IThemeService
         }
 
         _currentTheme = theme;
+        _logger.LogInformation("Theme applied with {ThemeMode}", theme);
 
         var attributeValue = theme switch
         {
@@ -98,24 +112,37 @@ public sealed class ThemeService : IThemeService
     {
         try
         {
+            _logger.LogDebug("Starting JS interop call to apply {ThemeMode}", persistAs ?? _currentTheme);
             await _jsRuntime.InvokeVoidAsync(
                 "eval",
                 $"document.documentElement.setAttribute('data-bcl-theme', '{attributeValue}')")
                 .ConfigureAwait(false);
 
             if (persistAs is { } theme)
+            {
+                _logger.LogDebug("Starting JS interop call to persist {ThemeMode}", theme);
                 await _jsRuntime.InvokeVoidAsync(
                     "eval",
                     $"localStorage.setItem('bcl-theme', '{theme}')")
                     .ConfigureAwait(false);
+
+                _logger.LogInformation("Theme persisted with {ThemeMode}", theme);
+            }
         }
-        catch (InvalidOperationException)
+        catch (InvalidOperationException ex)
         {
+            _logger.LogWarning(ex, "JS interop was unavailable while applying {ThemeMode}", persistAs ?? _currentTheme);
             // JS interop is unavailable during server-side pre-rendering; the theme
             // is re-applied once InitializeAsync runs after the first render.
         }
-        catch (JSException)
+        catch (JSDisconnectedException ex)
         {
+            _logger.LogWarning(ex, "JS runtime disconnected while applying {ThemeMode}", persistAs ?? _currentTheme);
+            // The browser circuit disconnected after the in-memory theme changed.
+        }
+        catch (JSException ex)
+        {
+            _logger.LogError(ex, "JS interop failed while applying {ThemeMode}", persistAs ?? _currentTheme);
             // Browser-side failure (e.g. localStorage blocked). The in-memory theme
             // has already been updated and the ThemeChanged event has been raised.
         }
