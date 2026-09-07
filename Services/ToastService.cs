@@ -19,13 +19,16 @@ public sealed class ToastService : IToastService, IDisposable
 
     private const string EmptyToastMessageExceptionMessage = "Toast message must not be empty.";
     private const string NegativeDurationExceptionMessage = "DurationMs cannot be negative.";
+    private const string NegativeMaxVisibleToastsExceptionMessage = "MaxVisibleToasts cannot be negative.";
 
     private readonly ILogger<ToastService> _logger;
     private readonly List<ToastMessage> _toasts = new();
+    private readonly Queue<ToastMessage> _pendingToasts = new();
     private readonly Dictionary<Guid, Timer> _timers = new();
     private readonly Dictionary<string, Guid> _dedupCache = new();
     private readonly object _lock = new();
     private readonly object _eventLock = new();
+    private int _maxVisibleToasts;
 
     /// <summary>Initialises a new instance of <see cref="ToastService"/>.</summary>
     /// <param name="logger">
@@ -52,6 +55,22 @@ public sealed class ToastService : IToastService, IDisposable
     /// </summary>
     public bool Dedup { get; set; } = false;
 
+    /// <summary>
+    /// Gets or sets the maximum number of visible toasts. A value of zero means unlimited.
+    /// </summary>
+    /// <exception cref="ToastServiceException">Thrown when the value is negative.</exception>
+    public int MaxVisibleToasts
+    {
+        get { lock (_lock) return _maxVisibleToasts; }
+        set
+        {
+            if (value < 0)
+                throw new ToastServiceException(NegativeMaxVisibleToastsExceptionMessage);
+
+            lock (_lock) _maxVisibleToasts = value;
+        }
+    }
+
     /// <inheritdoc/>
     /// <exception cref="ToastServiceException">Thrown when the message is null or whitespace,
     /// or when <paramref name="durationMs"/> is negative.</exception>
@@ -72,6 +91,7 @@ public sealed class ToastService : IToastService, IDisposable
         }
 
         Guid toastId;
+        bool queued;
 
         lock (_lock)
         {
@@ -85,18 +105,31 @@ public sealed class ToastService : IToastService, IDisposable
             // Create new toast
             toastId = Guid.NewGuid();
             var toast = new ToastMessage(toastId, message, type, durationMs, icon);
-            _toasts.Add(toast);
+            queued = _maxVisibleToasts > 0 && _toasts.Count >= _maxVisibleToasts;
+            if (queued)
+            {
+                _pendingToasts.Enqueue(toast);
+            }
+            else
+            {
+                _toasts.Add(toast);
+            }
 
             // Update cache with actual ID
-            if (Dedup)
+            if (Dedup && !queued)
             {
                 _dedupCache[GetDedupKey(message)] = toastId;
             }
         }
 
+        if (queued)
+        {
+            _logger.LogInformation("Toast queued successfully with ID: {ToastId}", toastId);
+            return;
+        }
+
         _logger.LogInformation("Toast added successfully with ID: {ToastId}", toastId);
         InvokeToastsChanged();
-
         if (durationMs > 0)
             ScheduleDismiss(toastId, durationMs);
     }
@@ -124,6 +157,16 @@ public sealed class ToastService : IToastService, IDisposable
                     _dedupCache.Remove(dedupKey);
                 }
             }
+
+            if (removed && _pendingToasts.Count > 0)
+            {
+                var promotedToast = _pendingToasts.Dequeue();
+                _toasts.Add(promotedToast);
+                if (Dedup)
+                    _dedupCache[GetDedupKey(promotedToast.Message)] = promotedToast.Id;
+                if (promotedToast.DurationMs > 0)
+                    ScheduleDismiss(promotedToast.Id, promotedToast.DurationMs);
+            }
         }
 
         if (!removed)
@@ -141,6 +184,7 @@ public sealed class ToastService : IToastService, IDisposable
         lock (_lock)
         {
             _toasts.Clear();
+            _pendingToasts.Clear();
             DisposeTimers();
             if (Dedup)
             {
