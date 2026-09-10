@@ -56,36 +56,49 @@ public sealed partial class Pagination : ComponentBase
         get
         {
             var items = new List<PageItem>();
+            int effectiveTotalPages = Math.Max(1, TotalPages);
+            int effectiveCurrentPage = Math.Clamp(CurrentPage, 1, effectiveTotalPages);
 
-            // Always show first page
-            items.Add(new PageItem(1, PageItemType.Page));
-
-            // Calculate range around current page
-            var leftBound = Math.Max(2, CurrentPage - SiblingCount);
-            var rightBound = Math.Min(TotalPages - 1, CurrentPage + SiblingCount);
-
-            // Add left ellipsis if needed
-            if (leftBound > 2)
+            if (effectiveTotalPages <= MaxVisiblePages)
             {
-                items.Add(new PageItem(0, PageItemType.Ellipsis));
+                // Show all pages when within max visible limit
+                for (int i = 1; i <= effectiveTotalPages; i++)
+                {
+                    items.Add(new PageItem(i, PageItemType.Page));
+                }
             }
-
-            // Add pages in range
-            for (int i = leftBound; i <= rightBound; i++)
+            else
             {
-                items.Add(new PageItem(i, PageItemType.Page));
-            }
+                // Always show first page
+                items.Add(new PageItem(1, PageItemType.Page));
 
-            // Add right ellipsis if needed
-            if (rightBound < TotalPages - 1)
-            {
-                items.Add(new PageItem(0, PageItemType.Ellipsis));
-            }
+                // Calculate range around current page
+                var leftBound = Math.Max(2, effectiveCurrentPage - SiblingCount);
+                var rightBound = Math.Min(effectiveTotalPages - 1, effectiveCurrentPage + SiblingCount);
 
-            // Always show last page if more than one page
-            if (TotalPages > 1)
-            {
-                items.Add(new PageItem(TotalPages, PageItemType.Page));
+                // Add left ellipsis if needed
+                if (leftBound > 2)
+                {
+                    items.Add(new PageItem(0, PageItemType.Ellipsis));
+                }
+
+                // Add pages in range
+                for (int i = leftBound; i <= rightBound; i++)
+                {
+                    items.Add(new PageItem(i, PageItemType.Page));
+                }
+
+                // Add right ellipsis if needed
+                if (rightBound < effectiveTotalPages - 1)
+                {
+                    items.Add(new PageItem(0, PageItemType.Ellipsis));
+                }
+
+                // Always show last page if more than one page
+                if (effectiveTotalPages > 1)
+                {
+                    items.Add(new PageItem(effectiveTotalPages, PageItemType.Page));
+                }
             }
 
             return items;
@@ -99,7 +112,10 @@ public sealed partial class Pagination : ComponentBase
 
     private async Task NavigateToPage(int pageNumber)
     {
-        if (pageNumber >= 1 && pageNumber <= TotalPages && pageNumber != CurrentPage)
+        int effectiveTotalPages = Math.Max(1, TotalPages);
+        int effectiveCurrentPage = Math.Clamp(CurrentPage, 1, effectiveTotalPages);
+
+        if (pageNumber >= 1 && pageNumber <= effectiveTotalPages && pageNumber != effectiveCurrentPage)
         {
             CurrentPage = pageNumber;
             await PageChanged.InvokeAsync(CurrentPage);
