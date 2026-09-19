@@ -1,11 +1,15 @@
 namespace BlazorComponentLibrary.Tests;
 
 using Bunit;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.JSInterop;
+using Moq;
+using System.Collections.Generic;
+using System.Threading;
+using System.Threading.Tasks;
 using Xunit;
 using BlazorComponentLibrary.Components.ThemeSwitcher;
 using BlazorComponentLibrary.Services;
-using Microsoft.Extensions.DependencyInjection;
-using Moq;
 
 /// <summary>
 /// Tests for the <see cref="ThemeSwitcher"/> component.
@@ -461,5 +465,137 @@ public sealed class ThemeSwitcherTests : TestContext
         var div = cut.Find("div");
         Assert.Equal("group", div.GetAttribute("role"));
         Assert.Equal("Theme selector", div.GetAttribute("aria-label"));
+    }
+
+    /// <summary>
+    /// Verifies that switching theme calls the JS interop persistence layer with the exact expected theme key string.
+    /// </summary>
+    [Fact]
+    public void SwitchTheme_CallsLocalStorageSetItemWithCorrectKey()
+    {
+        // Arrange
+        var mockThemeService = new Mock<IThemeService>();
+        mockThemeService.SetupGet(x => x.CurrentTheme).Returns(ThemeMode.System);
+
+        var mockJsRuntime = new Mock<IJSRuntime>();
+        mockJsRuntime.Setup(x => x.InvokeVoidAsync(
+            "localStorage.setItem",
+            It.IsAny<CancellationToken>(),
+            It.Is<object?[]>(a => a != null && a.Length == 2 && a[0].ToString() == "bcl-theme" && a[1].ToString() == "Dark")))
+            .Returns(ValueTask.CompletedTask);
+
+        // Act
+        Services.AddSingleton(mockThemeService.Object);
+        Services.AddSingleton(mockJsRuntime.Object);
+        var cut = RenderComponent<ThemeSwitcher>();
+        var darkButton = cut.FindAll("button")[2];
+        darkButton.Click();
+
+        // Assert
+        mockJsRuntime.Verify(
+            x => x.InvokeVoidAsync(
+                "localStorage.setItem",
+                It.IsAny<CancellationToken>(),
+                It.Is<object?[]>(a => a != null && a.Length == 2 && a[0].ToString() == "bcl-theme" && a[1].ToString() == "Dark")),
+            Times.Once);
+    }
+
+    /// <summary>
+    /// Verifies that on component initialization, an invalid or unrecognized persisted theme value falls back to a documented default.
+    /// </summary>
+    [Fact]
+    public void LoadAndApplyThemeAsync_InvalidStoredValue_FallsBackToDefault()
+    {
+        // Arrange
+        var mockThemeService = new Mock<IThemeService>();
+        mockThemeService.SetupGet(x => x.CurrentTheme).Returns(ThemeMode.System);
+        ThemeMode? capturedTheme = null;
+        mockThemeService.Setup(x => x.SetTheme(It.IsAny<ThemeMode>()))
+            .Callback<ThemeMode>(theme => capturedTheme = theme);
+
+        var mockJsRuntime = new Mock<IJSRuntime>();
+        mockJsRuntime.Setup(x => x.InvokeAsync<string?>(
+            "localStorage.getItem",
+            It.IsAny<CancellationToken>(),
+            It.Is<object?[]>(a => a != null && a.Length == 1 && a[0].ToString() == "bcl-theme")))
+            .ReturnsAsync("purple"); // Invalid theme
+        mockJsRuntime.Setup(x => x.InvokeAsync<bool>(
+            "eval",
+            It.IsAny<CancellationToken>(),
+            It.Is<object?[]>(a => a != null && a.Length == 1 && a[0].ToString().Contains("prefers-color-scheme"))))
+            .ReturnsAsync(false); // Fallback to Light
+
+        // Act
+        Services.AddSingleton(mockThemeService.Object);
+        Services.AddSingleton(mockJsRuntime.Object);
+        var cut = RenderComponent<ThemeSwitcher>();
+
+        // Assert
+        Assert.Equal(ThemeMode.Light, capturedTheme);
+    }
+
+    /// <summary>
+    /// Verifies that the system theme option correctly reflects prefers-color-scheme media query changes.
+    /// </summary>
+    [Fact]
+    public void SystemTheme_ReflectsPrefersColorScheme()
+    {
+        // Arrange
+        var mockThemeService = new Mock<IThemeService>();
+        mockThemeService.SetupGet(x => x.CurrentTheme).Returns(ThemeMode.System);
+
+        var mockJsRuntime = new Mock<IJSRuntime>();
+        mockJsRuntime.Setup(x => x.InvokeAsync<string?>(
+            "localStorage.getItem",
+            It.IsAny<CancellationToken>(),
+            It.Is<object?[]>(a => a != null && a.Length == 1 && a[0].ToString() == "bcl-theme")))
+            .ReturnsAsync((string?)null); // No stored value
+        mockJsRuntime.Setup(x => x.InvokeAsync<bool>(
+            "eval",
+            It.IsAny<CancellationToken>(),
+            It.Is<object?[]>(a => a != null && a.Length == 1 && a[0].ToString().Contains("prefers-color-scheme"))))
+            .ReturnsAsync(true); // System prefers Dark
+
+        // Act
+        Services.AddSingleton(mockThemeService.Object);
+        Services.AddSingleton(mockJsRuntime.Object);
+        var cut = RenderComponent<ThemeSwitcher>();
+
+        // Assert
+        Assert.Equal(ThemeMode.Dark, mockThemeService.Object.CurrentTheme);
+    }
+
+    /// <summary>
+    /// Verifies that rapid repeated toggling doesn't leave the component and the persisted value out of sync.
+    /// </summary>
+    [Fact]
+    public void RapidToggling_LastWriteWins()
+    {
+        // Arrange
+        var mockThemeService = new Mock<IThemeService>();
+        mockThemeService.SetupGet(x => x.CurrentTheme).Returns(ThemeMode.System);
+        var capturedThemes = new List<string>();
+        var mockJsRuntime = new Mock<IJSRuntime>();
+        mockJsRuntime.Setup(x => x.InvokeVoidAsync(
+            "localStorage.setItem",
+            It.IsAny<CancellationToken>(),
+            It.Is<object?[]>(a => a != null && a.Length == 2 && a[0].ToString() == "bcl-theme")))
+            .Callback<object?[]>(a => capturedThemes.Add(a[1].ToString()))
+            .Returns(ValueTask.CompletedTask);
+
+        // Act
+        Services.AddSingleton(mockThemeService.Object);
+        Services.AddSingleton(mockJsRuntime.Object);
+        var cut = RenderComponent<ThemeSwitcher>();
+
+        // Rapidly click buttons
+        cut.FindAll("button")[0].Click(); // Light
+        cut.FindAll("button")[2].Click(); // Dark
+        cut.FindAll("button")[1].Click(); // System
+
+        // Assert
+        Assert.Equal(3, capturedThemes.Count);
+        Assert.Equal("System", capturedThemes.Last());
+        Assert.True(cut.Instance.IsActive(ThemeMode.System));
     }
 }
