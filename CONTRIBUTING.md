@@ -8,6 +8,13 @@ Contributions are welcome! Please follow these guidelines:
 - Build: `dotnet build`
 - Tests: `dotnet test`
 
+## Exception Handling Convention
+- Use `ArgumentNullException.ThrowIfNull(x)` for parameters that cannot be null.
+- Use `ArgumentException.ThrowIfNullOrWhiteSpace(s)` for string parameters that must contain content.
+- Use `ArgumentOutOfRangeException` for numeric or enum parameters that fall outside valid ranges.
+- Always document throws in XML comments using `<exception cref="...">Thrown when ...</exception>`.
+- Avoid generic `Exception` or `InvalidOperationException` for invalid caller arguments; reserve those for internal state or framework-level issues.
+
 ## Adding a New Component
 - Use the `Bcl` prefix.
 - Add code-behind `.razor.cs` and documentation.
