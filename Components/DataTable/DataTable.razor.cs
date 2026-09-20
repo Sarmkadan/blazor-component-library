@@ -233,8 +233,10 @@ public sealed partial class DataTable<TItem> : ComponentBase, IDataTable<TItem>,
     /// </summary>
     /// <param name="keySelector">A function that extracts the sort key from a row item.</param>
     /// <param name="direction">The sort direction.</param>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="keySelector"/> is null.</exception>
     public void SortBy(Func<TItem, object?> keySelector, SortDirection direction = SortDirection.Ascending)
     {
+        ArgumentNullException.ThrowIfNull(keySelector);
         _sortState.SortBy(keySelector, direction);
         _sortVersion++;
         ApplyView();
@@ -246,8 +248,10 @@ public sealed partial class DataTable<TItem> : ComponentBase, IDataTable<TItem>,
     /// </summary>
     /// <param name="keySelector">A function that extracts the sort key from a row item.</param>
     /// <param name="direction">The sort direction.</param>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="keySelector"/> is null.</exception>
     public void AddSortKey(Func<TItem, object?> keySelector, SortDirection direction = SortDirection.Ascending)
     {
+        ArgumentNullException.ThrowIfNull(keySelector);
         _sortState.AddSortKey(keySelector, direction);
         _sortVersion++;
         ApplyView();
@@ -270,6 +274,7 @@ public sealed partial class DataTable<TItem> : ComponentBase, IDataTable<TItem>,
     /// If the column is currently hidden, it will be shown. If it is currently shown, it will be hidden.
     /// </summary>
     /// <param name="columnName">The name of the column to toggle.</param>
+    /// <exception cref="ArgumentException">Thrown when <paramref name="columnName"/> is null or whitespace.</exception>
     public void ToggleColumn(string columnName)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(columnName);
