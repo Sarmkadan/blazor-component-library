@@ -22,6 +22,12 @@ public sealed class NullSafeComparer : IComparer<object?>
 {
     public static readonly NullSafeComparer Instance = new();
 
+    /// <summary>
+    /// Compares two objects, treating nulls as greater than any non-null value.
+    /// </summary>
+    /// <param name="x">The first object to compare.</param>
+    /// <param name="y">The second object to compare.</param>
+    /// <returns>A signed integer indicating the relative order of the two objects.</returns>
     public int Compare(object? x, object? y)
     {
         if (x is null && y is null) return 0;
@@ -45,6 +51,8 @@ public sealed partial class DataTable<TItem> : ComponentBase, IDataTable<TItem>,
     private int _sortVersion = 0;
     private int _pageVersion = 0;
     private int _selectionVersion = 0;
+    private int _filterVersion = 0;
+    private Func<TItem, bool>? _filterPredicate;
     private bool _disposed;
 
     // Cache for compiled property accessors to avoid reflection per cell render
@@ -77,6 +85,9 @@ public sealed partial class DataTable<TItem> : ComponentBase, IDataTable<TItem>,
     /// <summary>
     /// Creates a compiled delegate to access a property value.
     /// </summary>
+    /// <param name="itemType">The type of the item.</param>
+    /// <param name="propertyName">The name of the property to access.</param>
+    /// <returns>A compiled delegate to retrieve the property value.</returns>
     private static Func<object, object?> CreatePropertyAccessor(Type itemType, string propertyName)
     {
         var propertyInfo = itemType.GetProperty(propertyName, BindingFlags.Instance | BindingFlags.Public | BindingFlags.IgnoreCase);
@@ -120,6 +131,9 @@ public sealed partial class DataTable<TItem> : ComponentBase, IDataTable<TItem>,
     /// <summary>
     /// Creates a compiled delegate to set a property value.
     /// </summary>
+    /// <param name="itemType">The type of the item.</param>
+    /// <param name="propertyName">The name of the property to set.</param>
+    /// <returns>A compiled delegate to set the property value.</returns>
     private static Action<object, object?> CreatePropertySetter(Type itemType, string propertyName)
     {
         var propertyInfo = itemType.GetProperty(propertyName, BindingFlags.Instance | BindingFlags.Public | BindingFlags.IgnoreCase);
@@ -138,24 +152,45 @@ public sealed partial class DataTable<TItem> : ComponentBase, IDataTable<TItem>,
         return lambda.Compile();
     }
 
+    /// <summary>
+    /// Gets or sets the custom header content for the table.
+    /// </summary>
     [Parameter]
     public RenderFragment TableHeader { get; set; } = null!;
 
+    /// <summary>
+    /// Gets or sets the template used to render each row.
+    /// </summary>
     [Parameter]
     public RenderFragment<TItem> RowTemplate { get; set; } = null!;
 
+    /// <summary>
+    /// Gets or sets the callback invoked when a row is clicked.
+    /// </summary>
     [Parameter]
     public EventCallback<TItem> OnRowClick { get; set; }
 
+    /// <summary>
+    /// Gets or sets the template displayed when the table has no data.
+    /// </summary>
     [Parameter]
     public RenderFragment? EmptyTemplate { get; set; } = EmptyContent;
 
+    /// <summary>
+    /// Gets or sets a value indicating whether column sorting is enabled.
+    /// </summary>
     [Parameter]
     public bool IsSortable { get; set; } = false;
 
+    /// <summary>
+    /// Gets or sets a value indicating whether row filtering is enabled.
+    /// </summary>
     [Parameter]
     public bool IsFilterable { get; set; } = false;
 
+    /// <summary>
+    /// Gets or sets the number of items displayed per page when virtualization is disabled.
+    /// </summary>
     [Parameter]
     public int PageSize { get; set; } = 10;
 
@@ -311,17 +346,32 @@ public sealed partial class DataTable<TItem> : ComponentBase, IDataTable<TItem>,
     protected override void OnParametersSet()
     {
         base.OnParametersSet();
-        _pageVersion++;
-        ApplyView();
+        
+        // Only trigger pagination update when PageSize actually changes
+        if (PageSize != _lastPageSize)
+        {
+            _lastPageSize = PageSize;
+            _pageVersion++;
+            ApplyView();
+        }
     }
 
+    private int _lastPageSize = 10;
+
+    /// <summary>
+    /// Determines whether the component should re-render based on internal state version stamps.
+    /// Prevents unnecessary renders by caching the projected view and only invalidating when
+    /// data, sort, filter, or selection state changes.
+    /// </summary>
+    /// <returns><see langword="true"/> if the component should render; otherwise, <see langword="false"/>.</returns>
     protected override bool ShouldRender()
     {
         // Track the version stamps at the time of last successful render
         if (_lastRenderDataVersion == _dataVersion &&
             _lastRenderSortVersion == _sortVersion &&
             _lastRenderPageVersion == _pageVersion &&
-            _lastRenderSelectionVersion == _selectionVersion)
+            _lastRenderSelectionVersion == _selectionVersion &&
+            _lastRenderFilterVersion == _filterVersion)
         {
             return false;
         }
@@ -331,6 +381,7 @@ public sealed partial class DataTable<TItem> : ComponentBase, IDataTable<TItem>,
         _lastRenderSortVersion = _sortVersion;
         _lastRenderPageVersion = _pageVersion;
         _lastRenderSelectionVersion = _selectionVersion;
+        _lastRenderFilterVersion = _filterVersion;
 
         return true;
     }
@@ -339,6 +390,7 @@ public sealed partial class DataTable<TItem> : ComponentBase, IDataTable<TItem>,
     private int _lastRenderSortVersion = -1;
     private int _lastRenderPageVersion = -1;
     private int _lastRenderSelectionVersion = -1;
+    private int _lastRenderFilterVersion = -1;
     private IDisposable? _virtualizeRegistration;
 
     /// <inheritdoc/>
@@ -371,16 +423,29 @@ public sealed partial class DataTable<TItem> : ComponentBase, IDataTable<TItem>,
         await ValueTask.CompletedTask;
     }
 
+    /// <summary>
+    /// Applies sorting, filtering, and pagination to the underlying data source,
+    /// caching the result in <see cref="_currentViewData"/> to avoid recomputation on every render.
+    /// </summary>
     private void ApplyView()
     {
         // Apply sorting if any sort keys are set
         IEnumerable<TItem> sortedData = _sortState.ApplySort();
 
+        // Apply filtering if a predicate is defined
+        IEnumerable<TItem> filteredData = _filterPredicate != null 
+            ? sortedData.Where(_filterPredicate) 
+            : sortedData;
+
         // When virtualization is enabled, expose all rows — the Virtualize component
         // handles windowing. Pagination only applies in non-virtualized mode.
-        _currentViewData = EnableVirtualization ? sortedData : sortedData.Take(PageSize);
+        _currentViewData = EnableVirtualization ? filteredData : filteredData.Take(PageSize);
     }
 
+    /// <summary>
+    /// Handles row click events, managing selection state and invoking the <see cref="OnRowClick"/> callback.
+    /// </summary>
+    /// <param name="item">The item associated with the clicked row.</param>
     protected async Task OnRowClickHandler(TItem item)
     {
         if (EnableSelection)
@@ -506,6 +571,10 @@ public sealed partial class DataTable<TItem> : ComponentBase, IDataTable<TItem>,
         }
     }
 
+    /// <summary>
+    /// Handles key down events to track Shift key state for range selection.
+    /// </summary>
+    /// <param name="args">The keyboard event arguments.</param>
     protected void OnKeyDown(KeyboardEventArgs args)
     {
         if (args.Key == "Shift")
@@ -514,6 +583,10 @@ public sealed partial class DataTable<TItem> : ComponentBase, IDataTable<TItem>,
         }
     }
 
+    /// <summary>
+    /// Handles key up events to reset Shift key state.
+    /// </summary>
+    /// <param name="args">The keyboard event arguments.</param>
     protected void OnKeyUp(KeyboardEventArgs args)
     {
         if (args.Key == "Shift")
