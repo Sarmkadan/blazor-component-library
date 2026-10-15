@@ -960,6 +960,104 @@ var readOnlyItems = dragDropList.AsReadOnly();
 - `AsReadOnly<TItem>()` – Gets a read-only view of the items in the list
 
 
+## Modal and Toast
+
+Common patterns for opening a dialog and showing notifications. Both examples assume
+`builder.Services.AddBlazorComponentLibrary();` is registered in `Program.cs`.
+
+### Open a Modal from a button
+
+`Modal.IsVisible` is read-only, so the modal is opened and closed through its `Show()` and
+`Hide()` methods via a `@ref`. `OnClose` runs whenever the modal is hidden: the X button,
+the overlay (if `CloseOnOverlayClick` is enabled), the Escape key, or a call to `Hide()`.
+
+```razor
+@* Home.razor *@
+<button class="btn-primary" @onclick="() => _modal.Show()">Delete project</button>
+
+<Modal @ref="_modal" Title="Delete project" OnClose="HandleModalClosed">
+    <p>This action cannot be undone.</p>
+    <FooterContent>
+        <button class="btn-danger" @onclick="ConfirmDelete">Delete</button>
+    </FooterContent>
+</Modal>
+
+@code {
+    private Modal _modal = default!;
+
+    private void HandleModalClosed() => Console.WriteLine($"Modal closed. Visible: {_modal.IsVisible}");
+
+    private async Task ConfirmDelete()
+    {
+        // ... perform the delete
+        await _modal.Hide();
+    }
+}
+```
+
+### Show success and error toasts
+
+Place `<ToastContainer />` once in your root layout (see [ToastContainer / IToastService](#toastcontainer--itoastservice)),
+then inject `IToastService` into any component.
+
+```razor
+@* Home.razor *@
+@using BlazorComponentLibrary.Services
+@inject IToastService Toast
+
+<button class="btn-primary" @onclick="SaveChanges">Save</button>
+
+@code {
+    private void SaveChanges()
+    {
+        try
+        {
+            // ... save
+            Toast.Show("Changes saved.", ToastType.Success);
+        }
+        catch (Exception)
+        {
+            // durationMs: 0 keeps the error on screen until the user dismisses it
+            Toast.Show("Could not save changes.", ToastType.Error, durationMs: 0);
+        }
+    }
+}
+```
+
+### Switch between light and dark theme
+
+The library has no provider component. Initialize the theme once in your root layout, then
+switch it with `IThemeService`. `InitializeAsync()` restores the value persisted in `localStorage`.
+
+```razor
+@* MainLayout.razor *@
+@inherits LayoutComponentBase
+@using BlazorComponentLibrary.Services
+@inject IThemeService ThemeService
+
+<ToastContainer />
+
+<div class="app-header">
+    <button @onclick="() => ThemeService.SetTheme(ThemeMode.Light)">Light</button>
+    <button @onclick="() => ThemeService.SetTheme(ThemeMode.Dark)">Dark</button>
+</div>
+
+@Body
+
+@code {
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await ThemeService.InitializeAsync();
+        }
+
+        await base.OnAfterRenderAsync(firstRender);
+    }
+}
+```
+
+
 ## Examples
 
 Check out the [examples/](examples/) directory for complete, runnable snippets:
