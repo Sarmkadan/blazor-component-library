@@ -47,10 +47,10 @@ public interface IToastService
     /// <param name="message">The message text to display. Must not be empty.</param>
     /// <param name="type">The toast type. Defaults to <see cref="ToastType.Info"/>.</param>
     /// <param name="durationMs">
-    /// Auto-dismiss delay in milliseconds. Defaults to 4 000 ms. Use <c>0</c> to
-    /// require the user to manually dismiss the notification.
+    /// Auto-dismiss delay in milliseconds. When <c>null</c>, uses <see cref="ToastOptions.DefaultDuration"/>
+    /// (4 000 ms unless configured). Use <c>0</c> to require the user to manually dismiss the notification.
     /// </param>
-    void Show(string message, ToastType type = ToastType.Info, int durationMs = 4000, string? icon = null);
+    void Show(string message, ToastType type = ToastType.Info, int? durationMs = null, string? icon = null);
 
     /// <summary>Removes the toast with the specified identifier.</summary>
     /// <param name="id">The unique identifier of the toast to dismiss.</param>

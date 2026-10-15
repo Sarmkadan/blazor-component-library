@@ -31,16 +31,36 @@ public static class ServiceCollectionExtensions
     /// An optional delegate to configure <see cref="BlazorComponentLibraryOptions"/>.
     /// If <c>null</c>, default options are used.
     /// </param>
+    /// <param name="configureToast">
+    /// An optional delegate to configure <see cref="ToastOptions"/>. The result is validated by
+    /// <see cref="ToastOptionsValidator"/> when the host starts.
+    /// </param>
     /// <returns>The same <paramref name="services"/> instance for chaining.</returns>
     /// <exception cref="ArgumentNullException">Thrown when <paramref name="services"/> is <c>null</c>.</exception>
+    /// <exception cref="Microsoft.Extensions.Options.OptionsValidationException">
+    /// Thrown when the host starts with an invalid <see cref="ToastOptions"/> configuration.
+    /// </exception>
     public static IServiceCollection AddBlazorComponentLibrary(
         this IServiceCollection services,
-        Action<BlazorComponentLibraryOptions>? configure)
+        Action<BlazorComponentLibraryOptions>? configure,
+        Action<ToastOptions>? configureToast = null)
     {
         ArgumentNullException.ThrowIfNull(services);
 
         var options = new BlazorComponentLibraryOptions();
         configure?.Invoke(options);
+
+        var toastOptionsBuilder = services.AddOptions<ToastOptions>();
+
+        if (configureToast is not null)
+        {
+            toastOptionsBuilder.Configure(configureToast);
+        }
+
+        toastOptionsBuilder.ValidateOnStart();
+
+        // TryAddEnumerable keeps the validator to a single registration when this method is called twice.
+        services.TryAddEnumerable(ServiceDescriptor.Singleton<IValidateOptions<ToastOptions>, ToastOptionsValidator>());
 
         // TryAdd so an application can register its own IThemeService/IToastService
         // implementation before calling this and the library will pick it up.

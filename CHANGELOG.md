@@ -5,6 +5,21 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Added
+- `ToastOptions` (`DefaultDuration`, `MaxVisibleToasts`, `Position`, `PauseOnHover`), configured through
+  `AddBlazorComponentLibrary(configure, configureToast)` and validated at host start with `ValidateOnStart`
+
+### Changed
+- `IToastService.Show` and the `ToastContainer` extension methods take `int? durationMs = null`; `null` uses `ToastOptions.DefaultDuration`
+- `ToastContainer` parameters `Position`, `MaxVisible` and `PauseOnHover` fall back to `ToastOptions` when not supplied
+- Removed the public `ToastService.DefaultDurationMs` constant
+
+### Fixed
+- `PauseOnHover` had no effect because its conditional attribute was not emitted as Razor control flow
+- Restored `ToastContainer.razor` markup, which had been truncated to a stray `RenderFragment` line
+
 ## [2.0.0] - 2026-03-28
 
 ### Added
