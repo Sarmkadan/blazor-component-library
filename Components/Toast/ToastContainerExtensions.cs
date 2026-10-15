@@ -14,11 +14,11 @@ public static class ToastContainerExtensions
     /// <param name="message">The success message to display. Must not be empty.</param>
     /// <param name="durationMs">
     /// Auto-dismiss delay in milliseconds. Set to <c>0</c> to require manual dismissal.
-    /// Defaults to 4000 ms.
+    /// When <c>null</c>, uses <see cref="ToastOptions.DefaultDuration"/>.
     /// </param>
     /// <exception cref="ArgumentNullException"><paramref name="container"/> is <see langword="null"/>.</exception>
     /// <exception cref="ArgumentException"><paramref name="message"/> is <see langword="null"/> or empty.</exception>
-    public static void ShowSuccess(this ToastContainer container, string message, int durationMs = 4000)
+    public static void ShowSuccess(this ToastContainer container, string message, int? durationMs = null)
         => container.ToastService.Show(message, ToastType.Success, durationMs);
 
     /// <summary>
@@ -28,11 +28,11 @@ public static class ToastContainerExtensions
     /// <param name="message">The warning message to display. Must not be empty.</param>
     /// <param name="durationMs">
     /// Auto-dismiss delay in milliseconds. Set to <c>0</c> to require manual dismissal.
-    /// Defaults to 4000 ms.
+    /// When <c>null</c>, uses <see cref="ToastOptions.DefaultDuration"/>.
     /// </param>
     /// <exception cref="ArgumentNullException"><paramref name="container"/> is <see langword="null"/>.</exception>
     /// <exception cref="ArgumentException"><paramref name="message"/> is <see langword="null"/> or empty.</exception>
-    public static void ShowWarning(this ToastContainer container, string message, int durationMs = 4000)
+    public static void ShowWarning(this ToastContainer container, string message, int? durationMs = null)
         => container.ToastService.Show(message, ToastType.Warning, durationMs);
 
     /// <summary>
@@ -42,11 +42,11 @@ public static class ToastContainerExtensions
     /// <param name="message">The error message to display. Must not be empty.</param>
     /// <param name="durationMs">
     /// Auto-dismiss delay in milliseconds. Set to <c>0</c> to require manual dismissal.
-    /// Defaults to 4000 ms.
+    /// When <c>null</c>, uses <see cref="ToastOptions.DefaultDuration"/>.
     /// </param>
     /// <exception cref="ArgumentNullException"><paramref name="container"/> is <see langword="null"/>.</exception>
     /// <exception cref="ArgumentException"><paramref name="message"/> is <see langword="null"/> or empty.</exception>
-    public static void ShowError(this ToastContainer container, string message, int durationMs = 4000)
+    public static void ShowError(this ToastContainer container, string message, int? durationMs = null)
         => container.ToastService.Show(message, ToastType.Error, durationMs);
 
     /// <summary>

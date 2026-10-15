@@ -4,6 +4,7 @@ using BlazorComponentLibrary.Exceptions;
 using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
+using Microsoft.Extensions.Options;
 using System.Timers;
 
 /// <summary>
@@ -14,14 +15,12 @@ using System.Timers;
 /// </summary>
 public sealed class ToastService : IToastService, IDisposable
 {
-    /// <summary>Default duration, in milliseconds, for a toast notification.</summary>
-    public const int DefaultDurationMs = 4000;
-
     private const string EmptyToastMessageExceptionMessage = "Toast message must not be empty.";
     private const string NegativeDurationExceptionMessage = "DurationMs cannot be negative.";
     private const string NegativeMaxVisibleToastsExceptionMessage = "MaxVisibleToasts cannot be negative.";
 
     private readonly ILogger<ToastService> _logger;
+    private readonly int _defaultDurationMs;
     private readonly List<ToastMessage> _toasts = new();
     private readonly Queue<ToastMessage> _pendingToasts = new();
     private readonly Dictionary<Guid, Timer> _timers = new();
@@ -34,9 +33,14 @@ public sealed class ToastService : IToastService, IDisposable
     /// <param name="logger">
     /// Optional logger. When omitted (e.g. in unit tests) a no-op logger is used.
     /// </param>
-    public ToastService(ILogger<ToastService>? logger = null)
+    /// <param name="options">
+    /// Optional toast options. The <see cref="ToastOptions.DefaultDuration"/> is used for
+    /// <see cref="Show"/> calls that do not specify a duration. When omitted, <see cref="ToastOptions"/> defaults apply.
+    /// </param>
+    public ToastService(ILogger<ToastService>? logger = null, IOptions<ToastOptions>? options = null)
     {
         _logger = logger ?? NullLogger<ToastService>.Instance;
+        _defaultDurationMs = (int)(options?.Value ?? new ToastOptions()).DefaultDuration.TotalMilliseconds;
     }
 
     /// <inheritdoc/>
@@ -74,9 +78,11 @@ public sealed class ToastService : IToastService, IDisposable
     /// <inheritdoc/>
     /// <exception cref="ToastServiceException">Thrown when the message is null or whitespace,
     /// or when <paramref name="durationMs"/> is negative.</exception>
-    public void Show(string message, ToastType type = ToastType.Info, int durationMs = DefaultDurationMs, string? icon = null)
+    public void Show(string message, ToastType type = ToastType.Info, int? durationMs = null, string? icon = null)
     {
-        _logger.LogDebug("Showing toast with message: '{Message}', type: {ToastType}, duration: {DurationMs}ms", message, type, durationMs);
+        var effectiveDurationMs = durationMs ?? _defaultDurationMs;
+
+        _logger.LogDebug("Showing toast with message: '{Message}', type: {ToastType}, duration: {DurationMs}ms", message, type, effectiveDurationMs);
 
         if (string.IsNullOrWhiteSpace(message))
         {
@@ -84,9 +90,9 @@ public sealed class ToastService : IToastService, IDisposable
             throw new ToastServiceException(EmptyToastMessageExceptionMessage);
         }
 
-        if (durationMs < 0)
+        if (effectiveDurationMs < 0)
         {
-            _logger.LogWarning("Toast duration cannot be negative: {DurationMs}", durationMs);
+            _logger.LogWarning("Toast duration cannot be negative: {DurationMs}", effectiveDurationMs);
             throw new ToastServiceException(NegativeDurationExceptionMessage);
         }
 
@@ -98,13 +104,13 @@ public sealed class ToastService : IToastService, IDisposable
             if (Dedup)
             {
                 var dedupKey = GetDedupKey(message);
-                if (TryUpdateExistingToast(dedupKey, durationMs))
+                if (TryUpdateExistingToast(dedupKey, effectiveDurationMs))
                     return;
             }
 
             // Create new toast
             toastId = Guid.NewGuid();
-            var toast = new ToastMessage(toastId, message, type, durationMs, icon);
+            var toast = new ToastMessage(toastId, message, type, effectiveDurationMs, icon);
             queued = _maxVisibleToasts > 0 && _toasts.Count >= _maxVisibleToasts;
             if (queued)
             {
@@ -130,8 +136,8 @@ public sealed class ToastService : IToastService, IDisposable
 
         _logger.LogInformation("Toast added successfully with ID: {ToastId}", toastId);
         InvokeToastsChanged();
-        if (durationMs > 0)
-            ScheduleDismiss(toastId, durationMs);
+        if (effectiveDurationMs > 0)
+            ScheduleDismiss(toastId, effectiveDurationMs);
     }
 
     /// <inheritdoc/>

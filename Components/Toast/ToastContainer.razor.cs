@@ -2,6 +2,7 @@ namespace BlazorComponentLibrary.Components.Toast;
 
 using BlazorComponentLibrary.Services;
 using Microsoft.AspNetCore.Components;
+using Microsoft.Extensions.Options;
 using System;
 
 /// <summary>
@@ -11,20 +12,42 @@ using System;
 /// </summary>
 public sealed partial class ToastContainer : ComponentBase, IToastContainer, IDisposable, IAsyncDisposable
 {
+    private ToastPosition? _position;
+    private int? _maxVisible;
+    private bool? _pauseOnHover;
+
     [Inject]
     internal IToastService ToastService { get; set; } = default!;
 
-    /// <inheritdoc/>
-    [Parameter]
-    public ToastPosition Position { get; set; } = ToastPosition.BottomRight;
+    [Inject]
+    internal IOptions<ToastOptions> Options { get; set; } = default!;
 
     /// <inheritdoc/>
+    /// <remarks>When not supplied, falls back to <see cref="ToastOptions.Position"/>.</remarks>
     [Parameter]
-    public int MaxVisible { get; set; } = 5;
+    public ToastPosition Position
+    {
+        get => _position ?? Options.Value.Position;
+        set => _position = value;
+    }
 
     /// <inheritdoc/>
+    /// <remarks>When not supplied, falls back to <see cref="ToastOptions.MaxVisibleToasts"/>.</remarks>
     [Parameter]
-    public bool PauseOnHover { get; set; } = true;
+    public int MaxVisible
+    {
+        get => _maxVisible ?? Options.Value.MaxVisibleToasts;
+        set => _maxVisible = value;
+    }
+
+    /// <inheritdoc/>
+    /// <remarks>When not supplied, falls back to <see cref="ToastOptions.PauseOnHover"/>.</remarks>
+    [Parameter]
+    public bool PauseOnHover
+    {
+        get => _pauseOnHover ?? Options.Value.PauseOnHover;
+        set => _pauseOnHover = value;
+    }
 
     /// <inheritdoc/>
     [Parameter]
@@ -42,6 +65,24 @@ public sealed partial class ToastContainer : ComponentBase, IToastContainer, IDi
     }
 
     private void OnToastsChanged() => InvokeAsync(StateHasChanged);
+
+    // Hover handlers are always bound and check PauseOnHover here, because a conditional
+    // attribute inside the element's start tag is not emitted as Razor control flow.
+    private void PauseOnHoverStart(Guid toastId)
+    {
+        if (PauseOnHover)
+        {
+            ToastService.PauseTimer(toastId);
+        }
+    }
+
+    private void PauseOnHoverEnd(Guid toastId, int durationMs)
+    {
+        if (PauseOnHover)
+        {
+            ToastService.ResumeTimer(toastId, durationMs);
+        }
+    }
 
     /// <summary>Returns the icon character for the given toast type.</summary>
     public static string IconFor(ToastType type) => type switch

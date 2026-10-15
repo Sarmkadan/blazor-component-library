@@ -43,6 +43,31 @@ Releases unmanaged resources and unsubscribes from internal events to prevent me
 *   **Return Value**: `void`.
 *   **Exceptions**: This method is idempotent; calling it multiple times does not throw exceptions. It should be called when the service is no longer needed, typically by the dependency injection container or a owning component implementing `IDisposable`.
 
+## Configuration
+
+Toast defaults are supplied through `ToastOptions` when you register the library:
+
+```csharp
+builder.Services.AddBlazorComponentLibrary(
+    configureToast: options =>
+    {
+        options.DefaultDuration = TimeSpan.FromSeconds(6); // 500 ms to 60 s
+        options.MaxVisibleToasts = 3;                      // 1 to 20
+        options.Position = ToastPosition.TopRight;         // must be a defined ToastPosition
+        options.PauseOnHover = true;
+    });
+```
+
+| Option | Default | Used by |
+|--------|---------|---------|
+| `DefaultDuration` | `4 s` | `IToastService.Show` when `durationMs` is `null` |
+| `MaxVisibleToasts` | `5` | `ToastContainer` when `MaxVisible` is not set |
+| `Position` | `BottomRight` | `ToastContainer` when `Position` is not set |
+| `PauseOnHover` | `true` | `ToastContainer` when `PauseOnHover` is not set |
+
+The options are validated when the host starts. An out-of-range `DefaultDuration` or `MaxVisibleToasts`,
+or an undefined `Position`, throws an `OptionsValidationException` listing every problem.
+
 ## Usage
 
 ### Basic Notification Trigger
