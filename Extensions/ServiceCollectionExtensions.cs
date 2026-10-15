@@ -3,6 +3,7 @@ using BlazorComponentLibrary.Services;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 
 namespace BlazorComponentLibrary.Extensions;
 
@@ -50,6 +51,53 @@ public static class ServiceCollectionExtensions
         {
             services.AddLogging();
         }
+
+        return services;
+    }
+
+    /// <summary>
+    /// Registers <see cref="ThemeOptions"/> with the <see cref="IServiceCollection"/> using default values.
+    /// The options are validated when the host starts; an invalid configuration throws an
+    /// <see cref="Microsoft.Extensions.Options.OptionsValidationException"/>.
+    /// </summary>
+    /// <param name="services">The service collection to configure.</param>
+    /// <returns>The same <paramref name="services"/> instance for chaining.</returns>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="services"/> is <c>null</c>.</exception>
+    public static IServiceCollection AddBlazorComponentLibraryTheme(this IServiceCollection services) =>
+        services.AddBlazorComponentLibraryTheme(null);
+
+    /// <summary>
+    /// Registers <see cref="ThemeOptions"/> with the <see cref="IServiceCollection"/>, applies the optional
+    /// <paramref name="configure"/> delegate, and validates the result with <see cref="ThemeOptionsValidator"/>
+    /// when the host starts (<see cref="OptionsBuilderExtensions.ValidateOnStart{TOptions}"/>).
+    /// </summary>
+    /// <param name="services">The service collection to configure.</param>
+    /// <param name="configure">
+    /// An optional delegate to configure <see cref="ThemeOptions"/>.
+    /// If <c>null</c>, default options are used.
+    /// </param>
+    /// <returns>The same <paramref name="services"/> instance for chaining.</returns>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="services"/> is <c>null</c>.</exception>
+    /// <exception cref="Microsoft.Extensions.Options.OptionsValidationException">
+    /// Thrown when the host starts with an invalid <see cref="ThemeOptions"/> configuration.
+    /// </exception>
+    public static IServiceCollection AddBlazorComponentLibraryTheme(
+        this IServiceCollection services,
+        Action<ThemeOptions>? configure)
+    {
+        ArgumentNullException.ThrowIfNull(services);
+
+        var optionsBuilder = services.AddOptions<ThemeOptions>();
+
+        if (configure is not null)
+        {
+            optionsBuilder.Configure(configure);
+        }
+
+        optionsBuilder.ValidateOnStart();
+
+        // TryAddEnumerable keeps the validator to a single registration when this method is called twice.
+        services.TryAddEnumerable(ServiceDescriptor.Singleton<IValidateOptions<ThemeOptions>, ThemeOptionsValidator>());
 
         return services;
     }
