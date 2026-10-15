@@ -162,4 +162,16 @@ public sealed partial class Modal : ComponentBase, IModal, IDisposable, IAsyncDi
         _disposed = true;
         await ValueTask.CompletedTask;
     }
+
+    /// <summary>
+    /// Handles keydown events to close the modal when Escape is pressed.
+    /// </summary>
+    /// <param name="args">The keyboard event arguments.</param>
+    private void HandleKeyDown(Microsoft.AspNetCore.Components.Web.KeyboardEventArgs args)
+    {
+        if (args.Key == "Escape")
+        {
+            Hide().ConfigureAwait(false);
+        }
+    }
 }
