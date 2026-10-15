@@ -6,16 +6,20 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <PackageId>BlazorComponentLibrary</PackageId>
-    <Version>1.0.0</Version>
+    <Version>2.0.0</Version>
     <Authors>Vladyslav Zaiets</Authors>
-    <Description>A set of reusable UI components for Blazor applications.</Description>
-    <PackageTags>Blazor;Components;UI</PackageTags>
+    <Description>Reusable Blazor components for modern web apps, including a DataGrid, Modal, Toast notifications, and theme support (ThemeService and ThemeSwitcher).</Description>
+    <PackageTags>blazor;components;datagrid;modal;toast;theme</PackageTags>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageProjectUrl>https://github.com/sarmkadan/blazor-component-library</PackageProjectUrl>
     <RepositoryUrl>https://github.com/sarmkadan/blazor-component-library</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
+    <PublishRepositoryUrl>true</PublishRepositoryUrl>
+    <EmbedUntrackedSources>true</EmbedUntrackedSources>
+    <Deterministic>true</Deterministic>
   </PropertyGroup>
 
   <ItemGroup>
