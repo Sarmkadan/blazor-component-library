@@ -23,6 +23,85 @@ Provides production-ready UI components with consistent theming, accessibility s
 - .NET 10.0 SDK or later
 - Docker (for containerized deployment)
 
+## Getting Started
+
+```bash
+dotnet add package BlazorComponentLibrary
+```
+
+```csharp
+using BlazorComponentLibrary.Extensions; // top of Program.cs
+builder.Services.AddBlazorComponentLibrary();
+```
+
+```razor
+@* Components/_Imports.razor *@
+@using BlazorComponentLibrary.Components.DataTable
+@using BlazorComponentLibrary.Components.Pagination
+```
+
+```html
+<link rel="stylesheet" href="_content/BlazorComponentLibrary/BlazorComponentLibrary.bundle.scp.css" />
+```
+
+Add the stylesheet to the `<head>` of `App.razor` or `index.html`. The Chart JS loads itself on demand, so it needs no script tag.
+
+### DataGrid example
+
+`DataTable<TItem>` has no built-in filter or pager, so this page filters, sorts and pages the data and passes each page to `SetData`. Click a header to sort; click again to reverse.
+
+```razor
+@page "/people"
+@using BlazorComponentLibrary.Components.DataTable
+@using BlazorComponentLibrary.Components.Pagination
+
+<input placeholder="Filter by name" @oninput="e => Filter(e.Value?.ToString())" />
+<DataTable TItem="Person" @ref="_grid" PageSize="PageSize">
+    <TableHeader>
+        <th @onclick="() => SortBy(nameof(Person.Name))">Name</th>
+        <th @onclick="() => SortBy(nameof(Person.Age))">Age</th>
+        <th @onclick="() => SortBy(nameof(Person.City))">City</th>
+    </TableHeader>
+    <RowTemplate Context="p"><td>@p.Name</td><td>@p.Age</td><td>@p.City</td></RowTemplate>
+</DataTable>
+<Pagination CurrentPage="_page" TotalPages="_pageCount" PageChanged="p => { _page = p; Apply(); }" />
+
+@code {
+    public sealed record Person(string Name, int Age, string City);
+
+    private const int PageSize = 3;
+    private static readonly Person[] Source =
+    [
+        new("Ada Lovelace", 36, "London"),
+        new("Alan Turing", 41, "Wilmslow"),
+        new("Grace Hopper", 85, "New York"),
+        new("Linus Torvalds", 55, "Portland"),
+        new("Margaret Hamilton", 87, "Cambridge"),
+    ];
+
+    private DataTable<Person>? _grid;
+    private string _filter = "", _sortBy = nameof(Person.Name);
+    private bool _desc;
+    private int _page = 1, _pageCount = 1;
+
+    protected override void OnInitialized() => Apply();
+    protected override void OnAfterRender(bool firstRender) { if (firstRender) Apply(); }
+    private void Filter(string? text) { _filter = text ?? ""; _page = 1; Apply(); }
+    private void SortBy(string column) { _desc = _sortBy == column && !_desc; _sortBy = column; Apply(); }
+
+    private void Apply()
+    {
+        var query = Source.Where(p => p.Name.Contains(_filter, StringComparison.OrdinalIgnoreCase));
+        var sorted = (_desc ? query.OrderByDescending(Key) : query.OrderBy(Key)).ToList();
+        _pageCount = Math.Max(1, (int)Math.Ceiling(sorted.Count / (double)PageSize));
+        _page = Math.Clamp(_page, 1, _pageCount);
+        _grid?.SetData(sorted.Skip((_page - 1) * PageSize).Take(PageSize));
+    }
+
+    private object Key(Person p) => _sortBy switch { "Age" => p.Age, "City" => p.City, _ => p.Name };
+}
+```
+
 ## Quick Start
 
 ### Install via NuGet
