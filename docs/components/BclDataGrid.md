@@ -66,6 +66,16 @@ A feature-rich data grid component with sorting, filtering, pagination, and opti
 </BclDataGrid>
 ```
 
+## Cell content and HTML safety
+
+The grid never renders cell values as HTML itself. Each cell is produced by your `<RowTemplate>`, so values are HTML-encoded by Razor's default `@` rendering:
+
+```razor
+<td>@item.Name</td>  @* encoded: "<b>x</b>" is shown as text *@
+```
+
+Do not wrap untrusted data in `(MarkupString)` or `new MarkupString(...)` inside a row template. Doing so lets any HTML or script in the data run in the page (cross-site scripting). If a cell genuinely needs markup, build it from trusted parts or sanitise it with an HTML allow-list before it reaches the template.
+
 ## Accessibility
 
 - Wrap `<TableHeader>` content in `<thead>` and row templates in `<tbody>` so screen readers identify header cells correctly.
