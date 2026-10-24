@@ -41,7 +41,7 @@ public sealed class NullSafeComparer : IComparer<object?>
 public sealed partial class DataTable<TItem> : LibraryComponentBase, IDataTable<TItem>, IDisposable, IAsyncDisposable
 {
     private IEnumerable<TItem> _data = Enumerable.Empty<TItem>();
-    private IEnumerable<TItem> _currentViewData = Enumerable.Empty<TItem>();
+    private List<TItem> _currentViewData = new();
     private readonly SortState<TItem> _sortState = new();
     private bool _isShiftKeyPressed = false;
     private ISet<string> _hiddenColumns = new HashSet<string>();
@@ -53,6 +53,10 @@ public sealed partial class DataTable<TItem> : LibraryComponentBase, IDataTable<
     private int _selectionVersion = 0;
     private int _filterVersion = 0;
     private bool _disposed;
+    private int _maxRows = 5000;
+    private int _virtualizationThreshold = 500;
+    private bool _useVirtualization;
+    private (int PageSize, bool EnableVirtualization, int VirtualizationThreshold, int MaxRows) _lastViewInputs = (10, false, 500, 5000);
 
     // Cache for compiled property accessors to avoid reflection per cell render
     private static readonly ConcurrentDictionary<(Type ItemType, string PropertyName), Func<object, object?>> _propertyAccessorCache = new();
@@ -202,6 +206,41 @@ public sealed partial class DataTable<TItem> : LibraryComponentBase, IDataTable<
     public bool EnableVirtualization { get; set; } = false;
 
     /// <summary>
+    /// Gets or sets the maximum number of rows the table accepts. <see cref="SetData"/> and
+    /// <see cref="Refresh"/> throw a <see cref="DataTableException"/> when the source holds more,
+    /// instead of silently truncating it or rendering an unbounded DOM. Defaults to 5000.
+    /// </summary>
+    /// <exception cref="ArgumentOutOfRangeException">Thrown when the value is zero or negative.</exception>
+    [Parameter]
+    public int MaxRows
+    {
+        get => _maxRows;
+        set
+        {
+            ArgumentOutOfRangeException.ThrowIfNegativeOrZero(value);
+            _maxRows = value;
+        }
+    }
+
+    /// <summary>
+    /// Gets or sets the number of rows above which the table renders through Blazor's Virtualize
+    /// component even when <see cref="EnableVirtualization"/> is false. It applies when a single
+    /// non-virtualized page would render more rows than this value, so a large <see cref="PageSize"/>
+    /// cannot put thousands of rows into the DOM at once. Defaults to 500.
+    /// </summary>
+    /// <exception cref="ArgumentOutOfRangeException">Thrown when the value is negative.</exception>
+    [Parameter]
+    public int VirtualizationThreshold
+    {
+        get => _virtualizationThreshold;
+        set
+        {
+            ArgumentOutOfRangeException.ThrowIfNegative(value);
+            _virtualizationThreshold = value;
+        }
+    }
+
+    /// <summary>
     /// Gets or sets the names of columns that should be hidden.
     /// </summary>
     [Parameter]
@@ -242,9 +281,11 @@ public sealed partial class DataTable<TItem> : LibraryComponentBase, IDataTable<
     /// </summary>
     /// <param name="data">The enumerable collection of data items.</param>
     /// <exception cref="ArgumentNullException">Thrown when <paramref name="data"/> is null.</exception>
+    /// <exception cref="DataTableException">Thrown when <paramref name="data"/> holds more than <see cref="MaxRows"/> items. The previous data is kept.</exception>
     public void SetData(IEnumerable<TItem> data)
     {
         ArgumentNullException.ThrowIfNull(data);
+        DataTableValidation.EnsureWithinMaxRows(data, MaxRows);
         _data = data;
         _dataVersion++;
         _sortState.SetData(data);
@@ -253,10 +294,13 @@ public sealed partial class DataTable<TItem> : LibraryComponentBase, IDataTable<
     }
 
     /// <summary>
-    /// Refreshes the data table, re-rendering its content.
+    /// Refreshes the data table, re-rendering its content. Re-checks the bound source against
+    /// <see cref="MaxRows"/>, since a live collection may have grown since <see cref="SetData"/>.
     /// </summary>
+    /// <exception cref="DataTableException">Thrown when the bound source holds more than <see cref="MaxRows"/> items.</exception>
     public void Refresh()
     {
+        DataTableValidation.EnsureWithinMaxRows(_data, MaxRows);
         ApplyView();
         NotifyStateChanged();
     }
@@ -346,16 +390,20 @@ public sealed partial class DataTable<TItem> : LibraryComponentBase, IDataTable<
     {
         base.OnParametersSet();
         
-        // Only trigger pagination update when PageSize actually changes
-        if (PageSize != _lastPageSize)
+        // Only re-project the view when an input that shapes it actually changes
+        var viewInputs = (PageSize, EnableVirtualization, VirtualizationThreshold, MaxRows);
+        if (viewInputs != _lastViewInputs)
         {
-            _lastPageSize = PageSize;
+            if (MaxRows != _lastViewInputs.MaxRows)
+            {
+                DataTableValidation.EnsureWithinMaxRows(_data, MaxRows);
+            }
+
+            _lastViewInputs = viewInputs;
             _pageVersion++;
             ApplyView();
         }
     }
-
-    private int _lastPageSize = 10;
 
     /// <summary>
     /// Determines whether the component should re-render based on internal state version stamps.
@@ -428,12 +476,16 @@ public sealed partial class DataTable<TItem> : LibraryComponentBase, IDataTable<
     /// </summary>
     private void ApplyView()
     {
-        // Apply sorting if any sort keys are set
-        IEnumerable<TItem> sortedData = _sortState.ApplySort();
+        // Materialize once: the view is enumerated on every render and by selection logic.
+        var sortedData = _sortState.ApplySort().ToList();
 
-        // When virtualization is enabled, expose all rows — the Virtualize component
-        // handles windowing. Pagination only applies in non-virtualized mode.
-        _currentViewData = EnableVirtualization ? sortedData : sortedData.Take(PageSize);
+        // Virtualization is used when requested, or when a single non-virtualized page would
+        // render more rows than VirtualizationThreshold allows. In that case the full sorted set is
+        // exposed and the Virtualize component windows it. Pagination only applies otherwise.
+        _useVirtualization = EnableVirtualization
+            || (PageSize > VirtualizationThreshold && sortedData.Count > VirtualizationThreshold);
+
+        _currentViewData = _useVirtualization ? sortedData : sortedData.Take(PageSize).ToList();
     }
 
     /// <summary>
