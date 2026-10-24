@@ -23,7 +23,7 @@ public sealed class SpinnerTests : TestContext
         Assert.Contains("medium", div.ClassList);
         Assert.DoesNotContain("small", div.ClassList);
         Assert.DoesNotContain("large", div.ClassList);
-        Assert.Equal("currentColor", div.GetAttribute("style").Replace(" ", "").Replace(";", ""));
+        Assert.Equal("currentColor", div.GetAttribute("style")!.Replace(" ", "").Replace(";", ""));
         Assert.False(div.HasAttribute("aria-label"));
     }
 

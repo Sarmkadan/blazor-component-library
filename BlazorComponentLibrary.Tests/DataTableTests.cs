@@ -98,14 +98,15 @@ public class DataTableTests
         viewData = (IEnumerable<Person>)field!.GetValue(table)!;
         sortedList = viewData.ToList();
 
-        sortedList.Select(p => new { p.LastName, p.Age }).Should().Equal(new[]
+        var expected = new (string? LastName, int Age)[]
         {
-            new { LastName = "Doe", Age = 25 },
-            new { LastName = "Doe", Age = 25 },
-            new { LastName = "Doe", Age = 30 },
-            new { LastName = "Smith", Age = 30 },
-            new { LastName = "Smith", Age = 35 }
-        });
+            ("Doe", 25),
+            ("Doe", 25),
+            ("Doe", 30),
+            ("Smith", 30),
+            ("Smith", 35)
+        };
+        sortedList.Select(p => (p.LastName, p.Age)).Should().Equal(expected);
 
         // Act - Add tertiary sort by FirstName ascending
         table.AddSortKey(p => p.FirstName, SortDirection.Ascending);
@@ -114,14 +115,15 @@ public class DataTableTests
         viewData = (IEnumerable<Person>)field!.GetValue(table)!;
         sortedList = viewData.ToList();
 
-        sortedList.Select(p => new { p.LastName, p.Age, p.FirstName }).Should().Equal(new[]
+        var expectedWithFirstName = new (string? LastName, int Age, string? FirstName)[]
         {
-            new { LastName = "Doe", Age = 25, FirstName = "Alice" },
-            new { LastName = "Doe", Age = 25, FirstName = "Jane" },
-            new { LastName = "Doe", Age = 30, FirstName = "John" },
-            new { LastName = "Smith", Age = 30, FirstName = "John" },
-            new { LastName = "Smith", Age = 35, FirstName = "Bob" }
-        });
+            ("Doe", 25, "Alice"),
+            ("Doe", 25, "Jane"),
+            ("Doe", 30, "John"),
+            ("Smith", 30, "John"),
+            ("Smith", 35, "Bob")
+        };
+        sortedList.Select(p => (p.LastName, p.Age, p.FirstName)).Should().Equal(expectedWithFirstName);
     }
 
     /// <summary>

@@ -1,5 +1,6 @@
 namespace BlazorComponentLibrary.Components.Modal;
 
+using BlazorComponentLibrary.Exceptions;
 using Microsoft.AspNetCore.Components;
 
 /// <summary>

@@ -30,12 +30,12 @@ public interface IModal
     /// <summary>
     /// Gets or sets the content for the modal's body.
     /// </summary>
-    RenderFragment ChildContent { get; set; }
+    RenderFragment? ChildContent { get; set; }
 
     /// <summary>
     /// Gets or sets the content for the modal's footer.
     /// </summary>
-    RenderFragment FooterContent { get; set; }
+    RenderFragment? FooterContent { get; set; }
 
     /// <summary>
     /// Event callback for when the modal is closed.

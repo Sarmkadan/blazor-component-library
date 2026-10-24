@@ -392,9 +392,9 @@ public sealed class NullSafeComparerExtensionsUnitTests
 
         // Assert
         result.Should().HaveCount(3);
-        result[0].Name.Should().Be("Item1");
-        result[1].Name.Should().Be("Item2");
-        result[2].Name.Should().Be("Item3");
+        result[0]!.Name.Should().Be("Item1");
+        result[1]!.Name.Should().Be("Item2");
+        result[2]!.Name.Should().Be("Item3");
     }
 
     /// <summary>

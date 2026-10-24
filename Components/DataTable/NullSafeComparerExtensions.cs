@@ -37,7 +37,7 @@ public static class NullSafeComparerExtensions
     /// <typeparam name="TKey">The type of the key returned by <paramref name="keySelector"/>.</typeparam>
     /// <param name="source">A sequence of values to order.</param>
     /// <param name="keySelector">A function to extract a key from an element.</param>
-    /// <returns>An <see cref="IOrderedEnumerable<TSource>"/> whose elements are sorted according to a key.</returns>
+    /// <returns>An <see cref="System.Linq.IOrderedEnumerable{TSource}"/> whose elements are sorted according to a key.</returns>
     /// <exception cref="ArgumentNullException">Thrown when <paramref name="source"/> or <paramref name="keySelector"/> is null.</exception>
     public static IOrderedEnumerable<TSource> OrderByNullSafe<TSource, TKey>(
         this IEnumerable<TSource> source,
@@ -56,7 +56,7 @@ public static class NullSafeComparerExtensions
     /// <typeparam name="TKey">The type of the key returned by <paramref name="keySelector"/>.</typeparam>
     /// <param name="source">A sequence of values to order.</param>
     /// <param name="keySelector">A function to extract a key from an element.</param>
-    /// <returns>An <see cref="IOrderedEnumerable<TSource>"/> whose elements are sorted in descending order according to a key.</returns>
+    /// <returns>An <see cref="System.Linq.IOrderedEnumerable{TSource}"/> whose elements are sorted in descending order according to a key.</returns>
     /// <exception cref="ArgumentNullException">Thrown when <paramref name="source"/> or <paramref name="keySelector"/> is null.</exception>
     public static IOrderedEnumerable<TSource> OrderByDescendingNullSafe<TSource, TKey>(
         this IEnumerable<TSource> source,

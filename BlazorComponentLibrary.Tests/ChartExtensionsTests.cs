@@ -75,7 +75,7 @@ public sealed class ChartExtensionsTests
         // Mock refresh behavior
 
         // Act
-        chart.SetDataAndRefresh(null);
+        chart.SetDataAndRefresh(null!);
 
         // Assert
         chart.Data.Should().BeEmpty();

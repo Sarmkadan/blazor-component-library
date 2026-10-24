@@ -128,7 +128,7 @@ public sealed partial class Modal : ComponentBase, IModal, IDisposable, IAsyncDi
         }
     }
 
-    protected Task HandleOverlayClick()
+    private Task HandleOverlayClick()
     {
         if (CloseOnOverlayClick)
         {

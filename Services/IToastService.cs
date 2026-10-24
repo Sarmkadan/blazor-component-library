@@ -50,6 +50,7 @@ public interface IToastService
     /// Auto-dismiss delay in milliseconds. When <c>null</c>, uses <see cref="ToastOptions.DefaultDuration"/>
     /// (4 000 ms unless configured). Use <c>0</c> to require the user to manually dismiss the notification.
     /// </param>
+    /// <param name="icon">Optional icon shown in place of the default icon for <paramref name="type"/>. <c>null</c> uses the default.</param>
     void Show(string message, ToastType type = ToastType.Info, int? durationMs = null, string? icon = null);
 
     /// <summary>Removes the toast with the specified identifier.</summary>

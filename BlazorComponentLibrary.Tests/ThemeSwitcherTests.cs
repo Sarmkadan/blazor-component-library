@@ -481,7 +481,7 @@ public sealed class ThemeSwitcherTests : TestContext
         mockJsRuntime.Setup(x => x.InvokeVoidAsync(
             "localStorage.setItem",
             It.IsAny<CancellationToken>(),
-            It.Is<object?[]>(a => a != null && a.Length == 2 && a[0].ToString() == "bcl-theme" && a[1].ToString() == "Dark")))
+            It.Is<object?[]>(a => a != null && a.Length == 2 && a[0]!.ToString() == "bcl-theme" && a[1]!.ToString() == "Dark")))
             .Returns(ValueTask.CompletedTask);
 
         // Act
@@ -496,7 +496,7 @@ public sealed class ThemeSwitcherTests : TestContext
             x => x.InvokeVoidAsync(
                 "localStorage.setItem",
                 It.IsAny<CancellationToken>(),
-                It.Is<object?[]>(a => a != null && a.Length == 2 && a[0].ToString() == "bcl-theme" && a[1].ToString() == "Dark")),
+                It.Is<object?[]>(a => a != null && a.Length == 2 && a[0]!.ToString() == "bcl-theme" && a[1]!.ToString() == "Dark")),
             Times.Once);
     }
 
@@ -517,12 +517,12 @@ public sealed class ThemeSwitcherTests : TestContext
         mockJsRuntime.Setup(x => x.InvokeAsync<string?>(
             "localStorage.getItem",
             It.IsAny<CancellationToken>(),
-            It.Is<object?[]>(a => a != null && a.Length == 1 && a[0].ToString() == "bcl-theme")))
+            It.Is<object?[]>(a => a != null && a.Length == 1 && a[0]!.ToString() == "bcl-theme")))
             .ReturnsAsync("purple"); // Invalid theme
         mockJsRuntime.Setup(x => x.InvokeAsync<bool>(
             "eval",
             It.IsAny<CancellationToken>(),
-            It.Is<object?[]>(a => a != null && a.Length == 1 && a[0].ToString().Contains("prefers-color-scheme"))))
+            It.Is<object?[]>(a => a != null && a.Length == 1 && a[0]!.ToString()!.Contains("prefers-color-scheme"))))
             .ReturnsAsync(false); // Fallback to Light
 
         // Act
@@ -548,12 +548,12 @@ public sealed class ThemeSwitcherTests : TestContext
         mockJsRuntime.Setup(x => x.InvokeAsync<string?>(
             "localStorage.getItem",
             It.IsAny<CancellationToken>(),
-            It.Is<object?[]>(a => a != null && a.Length == 1 && a[0].ToString() == "bcl-theme")))
+            It.Is<object?[]>(a => a != null && a.Length == 1 && a[0]!.ToString() == "bcl-theme")))
             .ReturnsAsync((string?)null); // No stored value
         mockJsRuntime.Setup(x => x.InvokeAsync<bool>(
             "eval",
             It.IsAny<CancellationToken>(),
-            It.Is<object?[]>(a => a != null && a.Length == 1 && a[0].ToString().Contains("prefers-color-scheme"))))
+            It.Is<object?[]>(a => a != null && a.Length == 1 && a[0]!.ToString()!.Contains("prefers-color-scheme"))))
             .ReturnsAsync(true); // System prefers Dark
 
         // Act
@@ -579,8 +579,8 @@ public sealed class ThemeSwitcherTests : TestContext
         mockJsRuntime.Setup(x => x.InvokeVoidAsync(
             "localStorage.setItem",
             It.IsAny<CancellationToken>(),
-            It.Is<object?[]>(a => a != null && a.Length == 2 && a[0].ToString() == "bcl-theme")))
-            .Callback<object?[]>(a => capturedThemes.Add(a[1].ToString()))
+            It.Is<object?[]>(a => a != null && a.Length == 2 && a[0]!.ToString() == "bcl-theme")))
+            .Callback<object?[]>(a => capturedThemes.Add(a[1]!.ToString()!))
             .Returns(ValueTask.CompletedTask);
 
         // Act

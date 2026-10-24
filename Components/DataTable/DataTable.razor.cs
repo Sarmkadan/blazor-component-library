@@ -52,7 +52,6 @@ public sealed partial class DataTable<TItem> : ComponentBase, IDataTable<TItem>,
     private int _pageVersion = 0;
     private int _selectionVersion = 0;
     private int _filterVersion = 0;
-    private Func<TItem, bool>? _filterPredicate;
     private bool _disposed;
 
     // Cache for compiled property accessors to avoid reflection per cell render
@@ -432,21 +431,16 @@ public sealed partial class DataTable<TItem> : ComponentBase, IDataTable<TItem>,
         // Apply sorting if any sort keys are set
         IEnumerable<TItem> sortedData = _sortState.ApplySort();
 
-        // Apply filtering if a predicate is defined
-        IEnumerable<TItem> filteredData = _filterPredicate != null 
-            ? sortedData.Where(_filterPredicate) 
-            : sortedData;
-
         // When virtualization is enabled, expose all rows — the Virtualize component
         // handles windowing. Pagination only applies in non-virtualized mode.
-        _currentViewData = EnableVirtualization ? filteredData : filteredData.Take(PageSize);
+        _currentViewData = EnableVirtualization ? sortedData : sortedData.Take(PageSize);
     }
 
     /// <summary>
     /// Handles row click events, managing selection state and invoking the <see cref="OnRowClick"/> callback.
     /// </summary>
     /// <param name="item">The item associated with the clicked row.</param>
-    protected async Task OnRowClickHandler(TItem item)
+    private async Task OnRowClickHandler(TItem item)
     {
         if (EnableSelection)
         {
@@ -464,7 +458,7 @@ public sealed partial class DataTable<TItem> : ComponentBase, IDataTable<TItem>,
     /// </summary>
     /// <param name="item">The item to check.</param>
     /// <returns><see langword="true"/> if <paramref name="item"/> is in <see cref="SelectedItems"/>; otherwise <see langword="false"/>.</returns>
-    protected bool IsItemSelected(TItem item) => _selectedItems.Contains(item);
+    private bool IsItemSelected(TItem item) => _selectedItems.Contains(item);
 
     /// <summary>
     /// Toggles the selection state of <paramref name="item"/>. If the Shift key is currently held
@@ -575,7 +569,7 @@ public sealed partial class DataTable<TItem> : ComponentBase, IDataTable<TItem>,
     /// Handles key down events to track Shift key state for range selection.
     /// </summary>
     /// <param name="args">The keyboard event arguments.</param>
-    protected void OnKeyDown(KeyboardEventArgs args)
+    private void OnKeyDown(KeyboardEventArgs args)
     {
         if (args.Key == "Shift")
         {
@@ -587,7 +581,7 @@ public sealed partial class DataTable<TItem> : ComponentBase, IDataTable<TItem>,
     /// Handles key up events to reset Shift key state.
     /// </summary>
     /// <param name="args">The keyboard event arguments.</param>
-    protected void OnKeyUp(KeyboardEventArgs args)
+    private void OnKeyUp(KeyboardEventArgs args)
     {
         if (args.Key == "Shift")
         {

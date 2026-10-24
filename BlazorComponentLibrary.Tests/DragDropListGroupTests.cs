@@ -13,7 +13,7 @@ public sealed class DragDropListGroupTests
     /// Tests that items can be reordered within the same group.
     /// </summary>
     [Fact]
-    public void HandleDrop_WithinSameGroup_AllowsDrop()
+    public async Task HandleDrop_WithinSameGroup_AllowsDrop()
     {
         // Arrange
         var list = new DragDropList<string> { Group = "test-group" };
@@ -26,7 +26,7 @@ public sealed class DragDropListGroupTests
         list.HandleDragOver(2, "test-group");
 
         // Act - should not throw and should allow the drop
-        list.HandleDrop().Wait();
+        await list.HandleDrop();
 
         // Assert - items should be reordered
         Assert.Equal(new[] { "B", "C", "A" }, list.Items);
@@ -36,7 +36,7 @@ public sealed class DragDropListGroupTests
     /// Tests that items cannot be dropped into a different group.
     /// </summary>
     [Fact]
-    public void HandleDrop_ToDifferentGroup_RejectsDrop()
+    public async Task HandleDrop_ToDifferentGroup_RejectsDrop()
     {
         // Arrange
         var list = new DragDropList<string> { Group = "group-a" };
@@ -49,7 +49,7 @@ public sealed class DragDropListGroupTests
         list.HandleDragOver(2, "group-b");
 
         // Act - drop should be rejected
-        list.HandleDrop().Wait();
+        await list.HandleDrop();
 
         // Assert - items should remain unchanged
         Assert.Equal(new[] { "A", "B", "C" }, list.Items);
@@ -59,7 +59,7 @@ public sealed class DragDropListGroupTests
     /// Tests that items can be dropped when no group is specified (backward compatibility).
     /// </summary>
     [Fact]
-    public void HandleDrop_NoGroupSpecified_AllowsDrop()
+    public async Task HandleDrop_NoGroupSpecified_AllowsDrop()
     {
         // Arrange
         var list = new DragDropList<string>(); // No group specified
@@ -72,7 +72,7 @@ public sealed class DragDropListGroupTests
         list.HandleDragOver(2, null);
 
         // Act - should allow the drop
-        list.HandleDrop().Wait();
+        await list.HandleDrop();
 
         // Assert - items should be reordered
         Assert.Equal(new[] { "B", "C", "A" }, list.Items);
@@ -82,7 +82,7 @@ public sealed class DragDropListGroupTests
     /// Tests that items can be dropped when target has no group but source does (backward compatibility).
     /// </summary>
     [Fact]
-    public void HandleDrop_SourceHasGroupTargetDoesNot_AllowsDrop()
+    public async Task HandleDrop_SourceHasGroupTargetDoesNot_AllowsDrop()
     {
         // Arrange
         var list = new DragDropList<string> { Group = "test-group" };
@@ -95,7 +95,7 @@ public sealed class DragDropListGroupTests
         list.HandleDragOver(2, null);
 
         // Act - should allow the drop (backward compatibility)
-        list.HandleDrop().Wait();
+        await list.HandleDrop();
 
         // Assert - items should be reordered
         Assert.Equal(new[] { "B", "C", "A" }, list.Items);
@@ -105,7 +105,7 @@ public sealed class DragDropListGroupTests
     /// Tests that items can be dropped when both have no group (backward compatibility).
     /// </summary>
     [Fact]
-    public void HandleDrop_BothNoGroup_AllowsDrop()
+    public async Task HandleDrop_BothNoGroup_AllowsDrop()
     {
         // Arrange
         var list = new DragDropList<string>(); // No group on source
@@ -118,7 +118,7 @@ public sealed class DragDropListGroupTests
         list.HandleDragOver(2, null);
 
         // Act - should allow the drop
-        list.HandleDrop().Wait();
+        await list.HandleDrop();
 
         // Assert - items should be reordered
         Assert.Equal(new[] { "B", "C", "A" }, list.Items);

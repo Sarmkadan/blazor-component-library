@@ -12,7 +12,7 @@
         <p>Data items: @_data.Count()</p>
         @if (_data.Any())
         {
-            <p>First data item: @_data.First().ToString()</p>
+            <p>First data item: @_data.First()?.ToString()</p>
         }
         @ChildContent
 

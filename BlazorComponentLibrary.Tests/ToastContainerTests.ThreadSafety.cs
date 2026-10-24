@@ -72,7 +72,7 @@ public sealed class ToastContainerThreadSafetyTests : TestContext
     }
 
     [Fact]
-    public void HandlesMultipleBackgroundEvents_WithoutInvalidOperationException()
+    public async Task HandlesMultipleBackgroundEvents_WithoutInvalidOperationException()
     {
         // Arrange
         var service = new ToastService();
@@ -95,7 +95,7 @@ public sealed class ToastContainerThreadSafetyTests : TestContext
             });
         }
 
-        Task.WhenAll(tasks).Wait(TimeSpan.FromSeconds(5));
+        await Task.WhenAll(tasks).WaitAsync(TimeSpan.FromSeconds(5));
 
         // Wait for all toasts to be processed and rendered
         cut.WaitForAssertion(() =>
