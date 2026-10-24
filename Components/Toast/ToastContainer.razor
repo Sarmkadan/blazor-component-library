@@ -1,6 +1,7 @@
+@inherits BlazorComponentLibrary.Components.LibraryComponentBase
 @using BlazorComponentLibrary.Services
 
-<div class="@ContainerClass" role="status" aria-live="polite" aria-atomic="false">
+<div @attributes="RootAttributes" class="@ContainerClass" role="status" aria-live="polite" aria-atomic="false">
 @foreach (var toast in VisibleToasts)
 {
     var toastId = toast.Id;

@@ -35,8 +35,8 @@ public static class DragDropListExtensions
         var reordered = DragDropList<TItem>.Reorder(list.Items, fromIndex, toIndex);
         list.Items = reordered;
 
-        if (list.OnOrderChanged.HasDelegate)
-            _ = list.OnOrderChanged.InvokeAsync(reordered);
+        if (list.ItemsChanged.HasDelegate)
+            _ = list.ItemsChanged.InvokeAsync(reordered);
     }
 
     /// <summary>
@@ -106,8 +106,8 @@ public static class DragDropListExtensions
         var reordered = DragDropList<TItem>.Reorder(list.Items, index1, index2);
         list.Items = reordered;
 
-        if (list.OnOrderChanged.HasDelegate)
-            _ = list.OnOrderChanged.InvokeAsync(reordered);
+        if (list.ItemsChanged.HasDelegate)
+            _ = list.ItemsChanged.InvokeAsync(reordered);
     }
 
     /// <summary>

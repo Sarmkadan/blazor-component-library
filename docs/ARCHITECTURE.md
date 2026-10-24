@@ -129,7 +129,7 @@ localStorage are swallowed with comments explaining why.
   `Virtualize` and disables pagination; the two modes are mutually exclusive by
   design because paginating a virtualized window is meaningless.
 - **DragDropList** reorders via HTML5 drag events and reports the *entire*
-  reordered list through `OnOrderChanged`, so the parent persists order without
+  reordered list through `ItemsChanged`, so the parent persists order without
   diffing. Costs an allocation per drop (~8 KB in benchmarks), buys a trivially
   correct consumer contract.
 - **Form\<TModel\>** validates with `System.ComponentModel.DataAnnotations`

@@ -38,7 +38,7 @@ public sealed class NullSafeComparer : IComparer<object?>
     }
 }
 
-public sealed partial class DataTable<TItem> : ComponentBase, IDataTable<TItem>, IDisposable, IAsyncDisposable
+public sealed partial class DataTable<TItem> : LibraryComponentBase, IDataTable<TItem>, IDisposable, IAsyncDisposable
 {
     private IEnumerable<TItem> _data = Enumerable.Empty<TItem>();
     private IEnumerable<TItem> _currentViewData = Enumerable.Empty<TItem>();

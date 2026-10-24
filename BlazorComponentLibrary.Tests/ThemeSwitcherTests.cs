@@ -36,7 +36,7 @@ public sealed class ThemeSwitcherTests : TestContext
 
         Assert.Equal("bcl-theme-switcher", cut.Instance.RootClass);
         Assert.True(cut.Instance.ShowLabel);
-        Assert.Null(cut.Instance.CssClass);
+        Assert.Null(cut.Instance.Class);
     }
 
     /// <summary>
@@ -74,7 +74,7 @@ public sealed class ThemeSwitcherTests : TestContext
         // Act
         Services.AddSingleton(mockThemeService.Object);
         var cut = RenderComponent<ThemeSwitcher>(parameters => parameters
-            .Add(p => p.CssClass, "custom-class"));
+            .Add(p => p.Class, "custom-class"));
 
         // Assert
         Assert.Equal("bcl-theme-switcher custom-class", cut.Instance.RootClass);
@@ -421,7 +421,7 @@ public sealed class ThemeSwitcherTests : TestContext
         // Update parameters
         cut.SetParametersAndRender(parameters => parameters
             .Add(p => p.ShowLabel, false)
-            .Add(p => p.CssClass, "updated-class"));
+            .Add(p => p.Class, "updated-class"));
 
         // Assert
         Assert.False(cut.Instance.ShowLabel);

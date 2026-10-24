@@ -2,7 +2,7 @@ namespace BlazorComponentLibrary.Components.Skeleton;
 
 using Microsoft.AspNetCore.Components;
 
-public sealed partial class Skeleton : ComponentBase, ISkeleton
+public sealed partial class Skeleton : LibraryComponentBase, ISkeleton
 {
 	[Parameter]
 	public SkeletonType Type { get; set; } = SkeletonType.Text;
@@ -43,7 +43,7 @@ public sealed partial class Skeleton : ComponentBase, ISkeleton
 	[Parameter]
 	public bool ShowLoadingLabel { get; set; }
 
-	private string CssClass => Animated ? "bcl-skeleton bcl-skeleton--animated" : "bcl-skeleton";
+	private string? RootClass => BuildCssClass("bcl-skeleton", Animated ? "bcl-skeleton--animated" : null, ShapeClass);
 
 	private string GetAriaBusyAttribute()
 	{

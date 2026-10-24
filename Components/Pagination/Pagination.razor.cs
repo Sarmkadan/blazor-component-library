@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Components;
 /// <summary>
 /// A pagination component that displays page numbers with ellipsis logic and supports keyboard navigation.
 /// </summary>
-public sealed partial class Pagination : ComponentBase
+public sealed partial class Pagination : LibraryComponentBase
 {
     /// <summary>
     /// Gets or sets the current page number (1-based).
@@ -33,11 +33,6 @@ public sealed partial class Pagination : ComponentBase
     [Parameter]
     public int MaxVisiblePages { get; set; } = 7;
 
-    /// <summary>
-    /// Gets or sets the CSS class for the pagination container.
-    /// </summary>
-    [Parameter]
-    public string? Class { get; set; }
 
     /// <summary>
     /// Gets or sets the inline style for the pagination container.
@@ -49,7 +44,7 @@ public sealed partial class Pagination : ComponentBase
     /// Event callback that fires when the page changes.
     /// </summary>
     [Parameter]
-    public EventCallback<int> PageChanged { get; set; }
+    public EventCallback<int> CurrentPageChanged { get; set; }
 
     internal IEnumerable<PageItem> PageItems
     {
@@ -118,7 +113,7 @@ public sealed partial class Pagination : ComponentBase
         if (pageNumber >= 1 && pageNumber <= effectiveTotalPages && pageNumber != effectiveCurrentPage)
         {
             CurrentPage = pageNumber;
-            await PageChanged.InvokeAsync(CurrentPage);
+            await CurrentPageChanged.InvokeAsync(CurrentPage);
         }
     }
 

@@ -5,7 +5,7 @@ namespace BlazorComponentLibrary.Components.Breadcrumbs;
 /// <summary>
 /// A breadcrumb navigation component that displays a hierarchy of links.
 /// </summary>
-public sealed partial class Breadcrumbs : ComponentBase, IBreadcrumbs
+public sealed partial class Breadcrumbs : LibraryComponentBase, IBreadcrumbs
 {
     /// <summary>
     /// Gets or sets the collection of breadcrumb items to display.
@@ -20,11 +20,6 @@ public sealed partial class Breadcrumbs : ComponentBase, IBreadcrumbs
     [Parameter]
     public RenderFragment? SeparatorTemplate { get; set; } = builder => builder.AddContent(0, "/");
 
-    /// <summary>
-    /// Gets or sets the CSS class for the breadcrumbs container.
-    /// </summary>
-    [Parameter]
-    public string? Class { get; set; }
 
     /// <summary>
     /// Gets or sets the CSS style for the breadcrumbs container.

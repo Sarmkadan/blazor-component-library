@@ -1,6 +1,7 @@
+@inherits BlazorComponentLibrary.Components.LibraryComponentBase
 @if (Items != null && Items.Any())
 {
-    <nav class="@Class" style="@Style" aria-label="Breadcrumb">
+    <nav @attributes="RootAttributes" class="@(BuildCssClass())" style="@Style" aria-label="Breadcrumb">
         <ol class="bcl-breadcrumbs">
             @for (int i = 0; i < Items.Count; i++)
             {

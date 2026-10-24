@@ -11,7 +11,7 @@ using System.Text;
 using System.Text.Json;
 using System.Threading;
 
-public sealed partial class Chart<TData> : ComponentBase, IChart<TData>, IDisposable, IAsyncDisposable
+public sealed partial class Chart<TData> : LibraryComponentBase, IChart<TData>, IDisposable, IAsyncDisposable
 {
     private IEnumerable<TData> _data = Enumerable.Empty<TData>();
     private string? _dataHash;

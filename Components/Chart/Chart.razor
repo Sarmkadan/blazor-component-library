@@ -1,10 +1,11 @@
+@inherits BlazorComponentLibrary.Components.LibraryComponentBase
 @typeparam TData
 
 @* Include JavaScript interop file *@
 @using Microsoft.JSInterop
 <script src="_content/BlazorComponentLibrary/js/blazor-chart-interop.js"></script>
 
-<div class="bcl-chart" @ref="_chartElement">
+<div @attributes="RootAttributes" class="@(BuildCssClass("bcl-chart"))" @ref="_chartElement">
     <h3 class="bcl-chart-title">@Title</h3>
     <div class="bcl-chart-body">
         <!-- Placeholder for chart rendering -->

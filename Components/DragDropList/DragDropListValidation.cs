@@ -38,12 +38,12 @@ public static class DragDropListValidation
             problems.Add("ItemTemplate cannot be null.");
         }
 
-        // Validate OnOrderChanged
+        // Validate ItemsChanged
         // Note: EventCallback can be null/empty delegate, which is valid
 
         // Validate Enabled (no validation needed - can be true or false)
 
-        // Validate CssClass (can be null or empty string, both are valid)
+        // Validate Class (can be null or empty string, both are valid)
 
         return problems.AsReadOnly();
     }

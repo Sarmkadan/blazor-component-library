@@ -1,7 +1,8 @@
+@inherits BlazorComponentLibrary.Components.LibraryComponentBase
 @using Microsoft.AspNetCore.Components
 @typeparam TItem
 
-<tr @onclick="HandleClickAsync" class="@(IsSelected ? "bcl-row-selected" : null)">
+<tr @attributes="RootAttributes" @onclick="HandleClickAsync" class="@(BuildCssClass(IsSelected ? "bcl-row-selected" : null))">
 @RowTemplate(Item)
 </tr>
 
