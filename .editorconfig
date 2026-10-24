@@ -1,11 +1,16 @@
+# EditorConfig: https://editorconfig.org
 root = true
 
 [*]
-indent_style = space
-end_of_line = lf
 charset = utf-8
-trim_trailing_whitespace = true
+end_of_line = lf
 insert_final_newline = true
+trim_trailing_whitespace = true
+indent_style = space
+
+# Markdown uses trailing double spaces for hard line breaks
+[*.md]
+trim_trailing_whitespace = false
 
 [*.{cs,razor}]
 indent_size = 4
@@ -16,5 +21,46 @@ indent_size = 2
 [*.{json,yml,yaml}]
 indent_size = 2
 
-[*.md]
-trim_trailing_whitespace = false
+[*.cs]
+# Organization
+csharp_style_namespace_declarations = file_scoped:suggestion
+csharp_using_directive_placement = outside_namespace:warning
+dotnet_sort_system_directives_first = true
+
+# Language conventions
+csharp_style_var_for_built_in_types = true:suggestion
+csharp_style_var_when_type_is_apparent = true:suggestion
+csharp_style_var_elsewhere = true:suggestion
+csharp_prefer_braces = true:warning
+
+# Naming: types and members are PascalCase
+dotnet_naming_symbols.types.applicable_kinds = class,struct,interface,enum,delegate
+dotnet_naming_symbols.types.applicable_accessibilities = *
+dotnet_naming_style.pascal_case.capitalization = pascal_case
+dotnet_naming_rule.types_pascal_case.symbols = types
+dotnet_naming_rule.types_pascal_case.style = pascal_case
+dotnet_naming_rule.types_pascal_case.severity = warning
+
+dotnet_naming_symbols.members.applicable_kinds = property,method,event
+dotnet_naming_symbols.members.applicable_accessibilities = *
+dotnet_naming_rule.members_pascal_case.symbols = members
+dotnet_naming_rule.members_pascal_case.style = pascal_case
+dotnet_naming_rule.members_pascal_case.severity = warning
+
+# Naming: interfaces start with I
+dotnet_naming_symbols.interfaces.applicable_kinds = interface
+dotnet_naming_symbols.interfaces.applicable_accessibilities = *
+dotnet_naming_style.interface_prefix.required_prefix = I
+dotnet_naming_style.interface_prefix.capitalization = pascal_case
+dotnet_naming_rule.interfaces_prefixed.symbols = interfaces
+dotnet_naming_rule.interfaces_prefixed.style = interface_prefix
+dotnet_naming_rule.interfaces_prefixed.severity = warning
+
+# Naming: private fields are _camelCase
+dotnet_naming_symbols.private_fields.applicable_kinds = field
+dotnet_naming_symbols.private_fields.applicable_accessibilities = private
+dotnet_naming_style.camel_case_underscore.required_prefix = _
+dotnet_naming_style.camel_case_underscore.capitalization = camel_case
+dotnet_naming_rule.private_fields_camel_case.symbols = private_fields
+dotnet_naming_rule.private_fields_camel_case.style = camel_case_underscore
+dotnet_naming_rule.private_fields_camel_case.severity = warning
