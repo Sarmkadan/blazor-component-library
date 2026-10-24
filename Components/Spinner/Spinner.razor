@@ -1,6 +1,7 @@
 @using Microsoft.AspNetCore.Components
+@inherits BlazorComponentLibrary.Components.LibraryComponentBase
 
-<div class="spinner @SizeClass"
+<div @attributes="RootAttributes" class="@(BuildCssClass("spinner", SizeClass))"
      style="color:@Color"
      role="status"
      aria-label="@Label">

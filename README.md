@@ -64,7 +64,7 @@ Add the stylesheet to the `<head>` of `App.razor` or `index.html`. The Chart JS 
     </TableHeader>
     <RowTemplate Context="p"><td>@p.Name</td><td>@p.Age</td><td>@p.City</td></RowTemplate>
 </DataTable>
-<Pagination CurrentPage="_page" TotalPages="_pageCount" PageChanged="p => { _page = p; Apply(); }" />
+<Pagination CurrentPage="_page" TotalPages="_pageCount" CurrentPageChanged="p => { _page = p; Apply(); }" />
 
 @code {
     public sealed record Person(string Name, int Age, string City);
@@ -179,7 +179,7 @@ properties update without a page reload.
 | Parameter  | Type     | Default | Description                                 |
 |------------|----------|---------|---------------------------------------------|
 | ShowLabel  | `bool`   | `true`  | Render text label beside each icon           |
-| CssClass   | `string?`| `null`  | Extra CSS class(es) for the root element     |
+| Class      | `string?`| `null`  | Extra CSS class(es) for the root element     |
 
 **Service** — inject `IThemeService` anywhere to read or change the theme
 programmatically and subscribe to the `ThemeChanged` event.
@@ -327,16 +327,16 @@ public async Task Validate_InvalidModel_ReturnsFalseAndExposesErrors()
 ## DragDropList
 
 
-A drag-and-drop reorderable list component that enables users to reorder items using the HTML5 Drag and Drop API. The component maintains the order of items and fires the `OnOrderChanged` event whenever the list is reordered through drag-and-drop interactions.
+A drag-and-drop reorderable list component that enables users to reorder items using the HTML5 Drag and Drop API. The component maintains the order of items and fires the `ItemsChanged` event whenever the list is reordered through drag-and-drop interactions.
 
 
 
 ```razor
 <DragDropList Items="@tasks"
               ItemTemplate="@(task => RenderTask(task))"
-              OnOrderChanged="HandleTasksReordered"
+              ItemsChanged="HandleTasksReordered"
               Enabled="true"
-              CssClass="my-custom-list">
+              Class="my-custom-list">
 </DragDropList>
 
 @code {
@@ -363,9 +363,9 @@ A drag-and-drop reorderable list component that enables users to reorder items u
 |-----------------|----------------------------|---------|------------------------------------------------|
 | Items | `IList<TItem>` | `[]` | Ordered collection of items to render |
 | ItemTemplate | `RenderFragment<TItem>` | — | Template for each row |
-| OnOrderChanged | `EventCallback<IList<TItem>>` | — | Fires with the reordered list after a drop |
+| ItemsChanged | `EventCallback<IList<TItem>>` | — | Fires with the reordered list after a drop |
 | Enabled | `bool` | `true` | Enable/disable drag interaction |
-| CssClass | `string?` | `null` | Extra CSS class(es) for the root `<ul>` |
+| Class | `string?` | `null` | Extra CSS class(es) for the root `<ul>` |
 
 ---
 

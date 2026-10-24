@@ -1,6 +1,7 @@
+@inherits BlazorComponentLibrary.Components.LibraryComponentBase
 @if (Type == SkeletonType.Text)
 {
-<div class="@CssClass @ShapeClass" style="width: @Width;" role="status" @((MarkupString)GetAriaBusyAttribute()) aria-label="@GetLoadingLabel()">
+<div @attributes="RootAttributes" class="@RootClass" style="width: @Width;" role="status" @((MarkupString)GetAriaBusyAttribute()) aria-label="@GetLoadingLabel()">
 	@if (ShowLoadingLabel)
 	{
 		<span class="bcl-visually-hidden">@GetLoadingLabel()</span>
@@ -14,7 +15,7 @@
 }
 else if (Type == SkeletonType.Circle)
 {
-<div class="@CssClass @ShapeClass"
+<div @attributes="RootAttributes" class="@RootClass"
 	style="width: @Width; height: @(Height == "auto" ? Width : Height);"
 	role="status" @((MarkupString)GetAriaBusyAttribute()) aria-label="@GetLoadingLabel()">
 	@if (ShowLoadingLabel)
@@ -25,7 +26,7 @@ else if (Type == SkeletonType.Circle)
 }
 else if (Type == SkeletonType.Rectangle)
 {
-<div class="@CssClass @ShapeClass"
+<div @attributes="RootAttributes" class="@RootClass"
 	style="width: @Width; height: @(Height == "auto" ? "1.5rem" : Height);"
 	role="status" @((MarkupString)GetAriaBusyAttribute()) aria-label="@GetLoadingLabel()">
 	@if (ShowLoadingLabel)
@@ -36,7 +37,7 @@ else if (Type == SkeletonType.Rectangle)
 }
 else
 {
-<div class="@CssClass @ShapeClass"
+<div @attributes="RootAttributes" class="@RootClass"
 	style="width: @Width; height: @(Height == "auto" ? "1.5rem" : Height);"
 	role="status" @((MarkupString)GetAriaBusyAttribute()) aria-label="@GetLoadingLabel()">
 	@if (ShowLoadingLabel)

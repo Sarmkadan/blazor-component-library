@@ -1,9 +1,10 @@
 @using Microsoft.AspNetCore.Components
 @using System.Collections.Generic
 @using System.Linq
+@inherits BlazorComponentLibrary.Components.LibraryComponentBase
 
 <CascadingValue Value="this">
-    <div class="accordion">
+    <div @attributes="RootAttributes" class="@(BuildCssClass("accordion"))">
         @ChildContent
     </div>
 </CascadingValue>

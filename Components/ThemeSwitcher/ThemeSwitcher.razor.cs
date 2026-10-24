@@ -12,7 +12,7 @@ using Microsoft.JSInterop;
 /// survives page reloads. Subscribe to <see cref="IThemeService.ThemeChanged"/> to
 /// react to theme changes elsewhere in the application.
 /// </summary>
-public sealed partial class ThemeSwitcher : ComponentBase, IThemeSwitcher, IDisposable, IAsyncDisposable
+public sealed partial class ThemeSwitcher : LibraryComponentBase, IThemeSwitcher, IDisposable, IAsyncDisposable
 {
     [Inject]
     private IThemeService ThemeService { get; set; } = default!;
@@ -24,14 +24,8 @@ public sealed partial class ThemeSwitcher : ComponentBase, IThemeSwitcher, IDisp
     [Parameter]
     public bool ShowLabel { get; set; } = true;
 
-    /// <inheritdoc/>
-    [Parameter]
-    public string? CssClass { get; set; }
 
-    internal string RootClass =>
-        string.IsNullOrEmpty(CssClass)
-            ? "bcl-theme-switcher"
-            : $"bcl-theme-switcher {CssClass}";
+    internal string? RootClass => BuildCssClass("bcl-theme-switcher");
 
     /// <summary>
     /// Subscribes to the <see cref="IThemeService.ThemeChanged"/> event.

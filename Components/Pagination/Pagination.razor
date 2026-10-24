@@ -1,8 +1,9 @@
+@inherits BlazorComponentLibrary.Components.LibraryComponentBase
 @* Pagination component with ellipsis logic and keyboard navigation *@
 
 @if (TotalPages > 1)
 {
-    <nav class="bcl-pagination @Class" style="@Style" aria-label="Pagination">
+    <nav @attributes="RootAttributes" class="@(BuildCssClass("bcl-pagination"))" style="@Style" aria-label="Pagination">
         <ul class="bcl-pagination__list">
             @if (ShowFirstPage)
             {

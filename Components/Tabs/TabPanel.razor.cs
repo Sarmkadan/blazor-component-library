@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Components;
 /// <summary>
 /// A single tab panel that displays content when active.
 /// </summary>
-public sealed partial class TabPanel : ComponentBase, IDisposable, IAsyncDisposable
+public sealed partial class TabPanel : LibraryComponentBase, IDisposable, IAsyncDisposable
 {
     private bool _disposed;
 

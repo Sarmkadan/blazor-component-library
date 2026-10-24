@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 /// <see cref="System.ComponentModel.DataAnnotations"/> attributes on submit.
 /// </summary>
 /// <typeparam name="TModel">The model type bound to the form.</typeparam>
-public sealed partial class Form<TModel> : ComponentBase, IForm<TModel>, IDisposable, IAsyncDisposable where TModel : new()
+public sealed partial class Form<TModel> : LibraryComponentBase, IForm<TModel>, IDisposable, IAsyncDisposable where TModel : new()
 {
     private TModel _model = new();
     private IReadOnlyList<ValidationResult> _validationErrors = Array.Empty<ValidationResult>();

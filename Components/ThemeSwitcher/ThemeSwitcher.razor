@@ -1,6 +1,7 @@
+@inherits BlazorComponentLibrary.Components.LibraryComponentBase
 @using BlazorComponentLibrary.Services
 
-<div class="@RootClass" role="group" aria-label="Theme selector">
+<div @attributes="RootAttributes" class="@RootClass" role="group" aria-label="Theme selector">
     <button type="button"
             class="bcl-theme-switcher__btn @(IsActive(ThemeMode.Light) ? "bcl-theme-switcher__btn--active" : "")"
             title="Light theme"

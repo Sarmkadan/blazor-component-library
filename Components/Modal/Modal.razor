@@ -1,8 +1,9 @@
+@inherits BlazorComponentLibrary.Components.LibraryComponentBase
 @if (IsVisible)
 {
 <div class="bcl-modal-overlay" @onclick="HandleOverlayClick"></div>
 
-<div class="bcl-modal @SizeClass" @ref="_dialogElement" tabindex="-1" @onkeydown="HandleKeyDown">
+<div @attributes="RootAttributes" class="@(BuildCssClass("bcl-modal", SizeClass))" @ref="_dialogElement" tabindex="-1" @onkeydown="HandleKeyDown">
     <div class="bcl-modal-header">
         <h5 class="bcl-modal-title">@Title</h5>
         <button type="button" class="bcl-modal-close" @onclick="Hide">X</button>

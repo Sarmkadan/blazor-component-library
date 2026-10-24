@@ -1,7 +1,8 @@
+@inherits BlazorComponentLibrary.Components.LibraryComponentBase
 @using Microsoft.AspNetCore.Components
 
 <CascadingValue Value="this">
-    <div class="tabs" @ref="_element" tabindex="0" @onkeydown="HandleKeyDown">
+    <div @attributes="RootAttributes" class="@(BuildCssClass("tabs"))" @ref="_element" tabindex="0" @onkeydown="HandleKeyDown">
         <div class="tab-header">
             @foreach (var tab in _tabPanels)
             {
@@ -41,12 +42,6 @@
     [Parameter]
     public RenderFragment? ChildContent { get; set; }
 
-    /// <summary>
-    /// Fires when the active tab changes.
-    /// </summary>
-    [Parameter]
-    public EventCallback<int> OnActiveIndexChanged { get; set; }
-
     internal void RegisterTabPanel(TabPanel tabPanel)
     {
         if (!_tabPanels.Contains(tabPanel))
@@ -68,7 +63,6 @@
         {
             ActiveIndex = index;
             await ActiveIndexChanged.InvokeAsync(ActiveIndex);
-            await OnActiveIndexChanged.InvokeAsync(ActiveIndex);
             StateHasChanged();
         }
     }

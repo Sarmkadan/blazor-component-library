@@ -10,15 +10,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - `ToastOptions` (`DefaultDuration`, `MaxVisibleToasts`, `Position`, `PauseOnHover`), configured through
   `AddBlazorComponentLibrary(configure, configureToast)` and validated at host start with `ValidateOnStart`
+- `LibraryComponentBase`, the shared base for every component. It provides `Class` (extra CSS classes on the root element)
+  and `AdditionalAttributes` (unmatched attributes such as `aria-label` or `data-*` are splatted onto the root element)
+- `ComponentConventionTests` enforce the shared parameter conventions over every public component
 
 ### Changed
 - `IToastService.Show` and the `ToastContainer` extension methods take `int? durationMs = null`; `null` uses `ToastOptions.DefaultDuration`
 - `ToastContainer` parameters `Position`, `MaxVisible` and `PauseOnHover` fall back to `ToastOptions` when not supplied
 - Removed the public `ToastService.DefaultDurationMs` constant
+- **Breaking:** `ThemeSwitcher` and `DragDropList` parameter `CssClass` is renamed to `Class`
+- **Breaking:** `Pagination.PageChanged` is renamed to `CurrentPageChanged` so `@bind-CurrentPage` works
+- **Breaking:** `DragDropList.OnOrderChanged` is renamed to `ItemsChanged` so `@bind-Items` works
+- **Breaking:** `Tabs.OnActiveIndexChanged` is removed; `ActiveIndexChanged` already fires for the same event
 
 ### Fixed
 - `PauseOnHover` had no effect because its conditional attribute was not emitted as Razor control flow
 - Restored `ToastContainer.razor` markup, which had been truncated to a stray `RenderFragment` line
+- `TabPanel` inline style had a stray `>` after the `display` value, so the browser ignored it and inactive panels stayed visible
 
 ## [2.0.0] - 2026-03-28
 

@@ -7,11 +7,11 @@ using System.Linq;
 /// <summary>
 /// A reorderable list component that uses the HTML5 Drag and Drop API.
 /// Users grab any row by its handle and drop it at the desired position.
-/// The <see cref="OnOrderChanged"/> callback fires with the fully reordered list so the
+/// The <see cref="ItemsChanged"/> callback fires with the fully reordered list so the
 /// parent component can persist the new order without computing a diff.
 /// </summary>
 /// <typeparam name="TItem">The type of each list item.</typeparam>
-public sealed partial class DragDropList<TItem> : ComponentBase, IDragDropList<TItem>
+public sealed partial class DragDropList<TItem> : LibraryComponentBase, IDragDropList<TItem>
 {
     internal int _draggingIndex = -1;
     internal int _dragOverIndex = -1;
@@ -34,18 +34,13 @@ public sealed partial class DragDropList<TItem> : ComponentBase, IDragDropList<T
 
     /// <inheritdoc/>
     [Parameter]
-    public EventCallback<IList<TItem>> OnOrderChanged { get; set; }
+    public EventCallback<IList<TItem>> ItemsChanged { get; set; }
 
     /// <inheritdoc/>
     [Parameter]
     public bool Enabled { get; set; } = true;
 
-    /// <summary>Optional CSS class(es) appended to the root <c>&lt;ul&gt;</c> element.</summary>
-    [Parameter]
-    public string? CssClass { get; set; }
-
-    private string RootClass =>
-        string.IsNullOrEmpty(CssClass) ? "bcl-dnd-list" : $"bcl-dnd-list {CssClass}";
+    private string? RootClass => BuildCssClass("bcl-dnd-list");
 
     internal IEnumerable<(TItem item, int index)> IndexedItems =>
         Items.Select((item, i) => (item, i));
@@ -85,8 +80,8 @@ public sealed partial class DragDropList<TItem> : ComponentBase, IDragDropList<T
         Items = reordered;
         StateHasChanged();
 
-        if (OnOrderChanged.HasDelegate)
-            await OnOrderChanged.InvokeAsync(reordered);
+        if (ItemsChanged.HasDelegate)
+            await ItemsChanged.InvokeAsync(reordered);
     }
 
     internal void HandleDragEnd() => ResetDragState();

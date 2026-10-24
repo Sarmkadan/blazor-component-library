@@ -1,9 +1,11 @@
 @using Microsoft.AspNetCore.Components
 @using System
 
+@inherits BlazorComponentLibrary.Components.LibraryComponentBase
+
 @implements IDisposable
 
-<div class="accordion-item">
+<div @attributes="RootAttributes" class="@(BuildCssClass("accordion-item"))">
     <div class="accordion-header" @onclick="Toggle">
         @Header
     </div>

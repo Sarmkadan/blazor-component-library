@@ -13,7 +13,7 @@ public enum ModalSize
     FullScreen
 }
 
-public sealed partial class Modal : ComponentBase, IModal, IDisposable, IAsyncDisposable
+public sealed partial class Modal : LibraryComponentBase, IModal, IDisposable, IAsyncDisposable
 {
     private bool _isVisible = false;
     private ElementReference _dialogElement;

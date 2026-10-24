@@ -1,10 +1,11 @@
+@inherits BlazorComponentLibrary.Components.LibraryComponentBase
 @using Microsoft.AspNetCore.Components
 
 @using BlazorComponentLibrary.Components.Tabs
 
 @implements IDisposable
 
-<div class="tab-panel" style="display: @(IsActive ? "block" : "none")>">
+<div @attributes="RootAttributes" class="@(BuildCssClass("tab-panel"))" style="display: @(IsActive ? "block" : "none");">
     @ChildContent
 </div>
 

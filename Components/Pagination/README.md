@@ -6,7 +6,7 @@ A pagination component that displays page numbers with ellipsis logic and suppor
 
 - **Ellipsis Logic**: Shows first and last pages with ellipsis for large page ranges
 - **Keyboard Accessible**: Supports arrow keys, Home, and End navigation
-- **Event Callbacks**: `PageChanged` event for handling page navigation
+- **Event Callbacks**: `CurrentPageChanged` event for handling page navigation
 - **Accessibility**: Proper ARIA labels and aria-current attributes
 - **Customizable**: CSS classes and styles can be applied
 - **Responsive**: Uses CSS variables for theming
@@ -17,7 +17,7 @@ A pagination component that displays page numbers with ellipsis logic and suppor
 <Pagination 
     TotalPages="10" 
     CurrentPage="@currentPage" 
-    PageChanged="@(page => currentPage = page)" />
+    CurrentPageChanged="@(page => currentPage = page)" />
 ```
 
 ## Parameters
@@ -31,7 +31,7 @@ A pagination component that displays page numbers with ellipsis logic and suppor
 | `MaxVisiblePages` | `int` | `7` | Maximum number of pages to display |
 | `Class` | `string` | `null` | CSS class for the pagination container |
 | `Style` | `string` | `null` | Inline style for the pagination container |
-| `PageChanged` | `EventCallback<int>` | `null` | Event callback when page changes |
+| `CurrentPageChanged` | `EventCallback<int>` | `null` | Event callback when page changes |
 
 ## Example
 
@@ -44,7 +44,7 @@ A pagination component that displays page numbers with ellipsis logic and suppor
     TotalPages="20" 
     CurrentPage="@currentPage"
     SiblingCount="2"
-    PageChanged="HandlePageChanged" />
+    CurrentPageChanged="HandlePageChanged" />
 
 @code {
     private int currentPage = 1;

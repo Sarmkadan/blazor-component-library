@@ -40,7 +40,7 @@ A Blazor component that renders a paginated control, allowing users to navigate 
 - **Default**: `null`
 - **Remarks**: Applied in addition to any built-in styles. No sanitization is performed.
 
-### `PageChanged`
+### `CurrentPageChanged`
 - **Purpose**: An `EventCallback<int>` triggered when the active page changes.
 - **Type**: `EventCallback<int>`
 - **Parameters**: The new page index (1-based).

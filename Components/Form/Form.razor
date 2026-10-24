@@ -1,6 +1,7 @@
+@inherits BlazorComponentLibrary.Components.LibraryComponentBase
 @typeparam TModel
 
-<form class="bcl-form" @onsubmit="HandleSubmit">
+<form @attributes="RootAttributes" class="@(BuildCssClass("bcl-form"))" @onsubmit="HandleSubmit">
     @ChildContent
     <button type="submit">Submit</button>
 </form>

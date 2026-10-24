@@ -10,7 +10,7 @@ using System;
 /// Place a single <c>&lt;ToastContainer /&gt;</c> in your root layout component so it is
 /// always present regardless of the current route.
 /// </summary>
-public sealed partial class ToastContainer : ComponentBase, IToastContainer, IDisposable, IAsyncDisposable
+public sealed partial class ToastContainer : LibraryComponentBase, IToastContainer, IDisposable, IAsyncDisposable
 {
     private ToastPosition? _position;
     private int? _maxVisible;
@@ -56,8 +56,8 @@ public sealed partial class ToastContainer : ComponentBase, IToastContainer, IDi
     internal IEnumerable<ToastMessage> VisibleToasts =>
         ToastService.ActiveToasts.TakeLast(MaxVisible);
 
-    private string ContainerClass =>
-        $"bcl-toast-container bcl-toast-container--{PositionCss(Position)}";
+    private string? ContainerClass =>
+        BuildCssClass("bcl-toast-container", $"bcl-toast-container--{PositionCss(Position)}");
 
     protected override void OnInitialized()
     {

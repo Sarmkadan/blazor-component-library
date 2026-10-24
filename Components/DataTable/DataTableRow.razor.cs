@@ -11,7 +11,7 @@ using Microsoft.AspNetCore.Components;
 /// table to be diffed and re-rendered.
 /// </summary>
 /// <typeparam name="TItem">The type of the row model.</typeparam>
-public sealed partial class DataTableRow<TItem> : ComponentBase
+public sealed partial class DataTableRow<TItem> : LibraryComponentBase
 {
     private TItem? _lastRenderedItem;
     private bool _lastRenderedIsSelected;

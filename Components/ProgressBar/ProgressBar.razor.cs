@@ -5,7 +5,7 @@ namespace BlazorComponentLibrary.Components.ProgressBar;
 /// <summary>
 /// A progress bar component that displays progress with configurable value, max, and display options.
 /// </summary>
-public sealed partial class ProgressBar : ComponentBase, IProgressBar
+public sealed partial class ProgressBar : LibraryComponentBase, IProgressBar
 {
     /// <summary>
     /// Gets or sets the current value of the progress bar. Values outside the
@@ -34,11 +34,6 @@ public sealed partial class ProgressBar : ComponentBase, IProgressBar
     [Parameter]
     public bool Indeterminate { get; set; }
 
-    /// <summary>
-    /// Gets or sets the CSS class for the progress bar.
-    /// </summary>
-    [Parameter]
-    public string? Class { get; set; }
 
     /// <summary>
     /// Gets or sets the CSS style for the progress bar.
@@ -105,10 +100,5 @@ public sealed partial class ProgressBar : ComponentBase, IProgressBar
         return Max <= 0 ? "100" : Max.ToString();
     }
 
-    private string GetCssClasses()
-    {
-        return Class == null
-            ? "bcl-progress-bar"
-            : $"bcl-progress-bar {Class}";
-    }
+    private string? GetCssClasses() => BuildCssClass("bcl-progress-bar");
 }

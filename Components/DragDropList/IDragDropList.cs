@@ -19,7 +19,7 @@ public interface IDragDropList<TItem>
     /// The argument is the fully reordered list so the parent component can
     /// persist the new order without computing a diff.
     /// </summary>
-    EventCallback<IList<TItem>> OnOrderChanged { get; set; }
+    EventCallback<IList<TItem>> ItemsChanged { get; set; }
 
     /// <summary>
     /// Gets or sets whether drag-and-drop reordering is currently enabled.

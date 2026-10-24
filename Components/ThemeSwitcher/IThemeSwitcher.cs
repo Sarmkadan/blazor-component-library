@@ -13,5 +13,5 @@ public interface IThemeSwitcher
     /// Gets or sets optional CSS class(es) to append to the root element,
     /// allowing consumers to customise layout without overriding library styles.
     /// </summary>
-    string? CssClass { get; set; }
+    string? Class { get; set; }
 }
