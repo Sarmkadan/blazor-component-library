@@ -1,6 +1,7 @@
 @inherits BlazorComponentLibrary.Components.LibraryComponentBase
 @using Microsoft.AspNetCore.Components
 @using Microsoft.AspNetCore.Components.Web
+@using Microsoft.AspNetCore.Components.Web.Virtualization
 @typeparam TItem
 
 <div @attributes="RootAttributes" class="@(BuildCssClass())" @onkeydown="OnKeyDown" @onkeyup="OnKeyUp" tabindex="0" style="outline: none;">
@@ -13,9 +14,18 @@
 </tr>
 </thead>
 <tbody>
+@if (_useVirtualization)
+{
+<Virtualize TItem="TItem" Items="_currentViewData" Context="item">
+<DataTableRow TItem="TItem" @key="item" Item="item" IsSelected="IsItemSelected(item)" RowTemplate="RowTemplate" OnRowClick="OnRowClickHandler" />
+</Virtualize>
+}
+else
+{
 @foreach (var item in _currentViewData)
 {
 <DataTableRow TItem="TItem" @key="item" Item="item" IsSelected="IsItemSelected(item)" RowTemplate="RowTemplate" OnRowClick="OnRowClickHandler" />
+}
 }
 </tbody>
 </table>

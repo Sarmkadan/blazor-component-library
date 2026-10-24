@@ -60,12 +60,26 @@ The `NullSafeComparer` is a utility component within the Blazor Component Librar
 *   **Return Value:** Returns the virtualization state.
 *   **Throws:** Does not throw.
 
+### `MaxRows`
+*   **Type:** `public int MaxRows` (default `5000`)
+*   **Purpose:** Upper bound on the rows the table accepts. `SetData` and `Refresh` throw rather than truncate, so an oversized API response or upload fails loudly instead of freezing the client.
+*   **Parameters:** Positive integer.
+*   **Return Value:** Returns the configured limit.
+*   **Throws:** `ArgumentOutOfRangeException` for zero or negative values. `DataTableException` from `SetData`/`Refresh` when the source holds more than `MaxRows` items.
+
+### `VirtualizationThreshold`
+*   **Type:** `public int VirtualizationThreshold` (default `500`)
+*   **Purpose:** When a non-virtualized page would render more rows than this value (`PageSize` above the threshold and more rows than the threshold in the view), the table switches to Blazor's `Virtualize` component even if `EnableVirtualization` is `false`. This keeps a large `PageSize` from rendering the whole set into the DOM.
+*   **Parameters:** Non-negative integer.
+*   **Return Value:** Returns the configured threshold.
+*   **Throws:** `ArgumentOutOfRangeException` for negative values.
+
 ### `SetData`
 *   **Type:** `public void SetData`
 *   **Purpose:** Initializes or updates the internal data source that the comparer and grid will operate upon.
 *   **Parameters:** Accepts the data collection (signature implies method overload or context-based injection).
 *   **Return Value:** `void`.
-*   **Throws:** Throws `ArgumentNullException` if the provided data collection is null, enforced by guard clauses.
+*   **Throws:** Throws `ArgumentNullException` if the provided data collection is null, and `DataTableException` if it holds more than `MaxRows` items (the previous data is kept).
 
 ### `Refresh`
 *   **Type:** `public void Refresh`
