@@ -47,7 +47,7 @@ public static class FormExtensions
 
         return form.ValidationErrors
             .Where(v => v.MemberNames.Contains(propertyName, StringComparer.Ordinal))
-            .Select(v => v.ErrorMessage)
+            .Select(v => v.ErrorMessage ?? string.Empty)
             .ToList();
     }
 

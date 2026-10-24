@@ -2,10 +2,9 @@
 
 <PropertyGroup>
 	<TargetFramework>net10.0</TargetFramework>
-	<LangVersion>latest</LangVersion>
-	<Nullable>enable</Nullable>
-	<ImplicitUsings>enable</ImplicitUsings>
 	<IsPackable>false</IsPackable>
+	<!-- NU1902: bunit 1.36 pins AngleSharp 1.1.2 (GHSA-pgww-w46g-26qg, fixed in 1.5.0). Test-only dependency; 1.5.x breaks bunit's binary API, so keep it as a visible warning. -->
+	<WarningsNotAsErrors>$(WarningsNotAsErrors);NU1902</WarningsNotAsErrors>
 </PropertyGroup>
 
 <ItemGroup>

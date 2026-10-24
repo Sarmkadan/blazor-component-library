@@ -12,7 +12,6 @@ public sealed class ModalIntegrationTests : TestContext
     /// </summary>
     private class ModalHost : ComponentBase
     {
-        private bool _isVisible;
         private int _onCloseCallCount;
         private Modal? _modal;
 

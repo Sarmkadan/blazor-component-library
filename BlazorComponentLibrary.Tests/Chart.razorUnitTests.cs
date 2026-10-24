@@ -302,7 +302,7 @@ public sealed class ChartRazorUnitTests : TestContext
         var cut = RenderComponent<Chart<int>>();
 
         // Act & Assert - should not throw
-        cut.InvokeAsync(() => cut.Instance.SetData(null));
+        cut.InvokeAsync(() => cut.Instance.SetData(null!));
     }
 
     /// <summary>

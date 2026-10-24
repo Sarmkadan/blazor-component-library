@@ -517,7 +517,7 @@ public sealed class ChartAnnotationExtensionsTests
         var annotation = new ChartAnnotation();
 
         // Act
-        annotation.SetTooltip(null);
+        annotation.SetTooltip(null!);
 
         // Assert
         annotation.Tooltip.Should().BeEmpty();

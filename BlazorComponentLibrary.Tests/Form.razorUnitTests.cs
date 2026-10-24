@@ -123,7 +123,7 @@ public sealed class FormRazorUnitTests : TestContext
         cut.Instance.SetModel(new SimpleModel { Name = "Original" });
 
         // Act
-        cut.Instance.SetModel(null);
+        cut.Instance.SetModel(null!);
 
         // Assert
         cut.Instance.Model.Should().NotBeNull();
@@ -184,9 +184,9 @@ public sealed class FormRazorUnitTests : TestContext
         result.Should().BeFalse();
         cut.Instance.IsValid.Should().BeFalse();
         cut.Instance.ValidationErrors.Should().HaveCount(3);
-        cut.Instance.ValidationErrors.Should().Contain(e => e.ErrorMessage.Contains("Name is required"));
-        cut.Instance.ValidationErrors.Should().Contain(e => e.ErrorMessage.Contains("Count must be between 0 and 1000"));
-        cut.Instance.ValidationErrors.Should().Contain(e => e.ErrorMessage.Contains("Age must be between 18 and 120"));
+        cut.Instance.ValidationErrors.Should().Contain(e => e.ErrorMessage!.Contains("Name is required"));
+        cut.Instance.ValidationErrors.Should().Contain(e => e.ErrorMessage!.Contains("Count must be between 0 and 1000"));
+        cut.Instance.ValidationErrors.Should().Contain(e => e.ErrorMessage!.Contains("Age must be between 18 and 120"));
     }
 
     /// <summary>
@@ -386,7 +386,7 @@ public sealed class FormRazorUnitTests : TestContext
         // Assert - custom validation should catch long name
         result.Should().BeFalse();
         cut.Instance.IsValid.Should().BeFalse();
-        cut.Instance.ValidationErrors.Should().Contain(e => e.ErrorMessage.Contains("less than 50 characters"));
+        cut.Instance.ValidationErrors.Should().Contain(e => e.ErrorMessage!.Contains("less than 50 characters"));
     }
 
     /// <summary>

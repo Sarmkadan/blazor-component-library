@@ -120,7 +120,7 @@ public sealed partial class Form<TModel> : ComponentBase, IForm<TModel>, IDispos
 
         if (_editContext == null || !object.Equals(_model, _editContext.Model))
         {
-            _editContext = new EditContext(_model);
+            _editContext = new EditContext(_model!);
             _editContext.OnFieldChanged += HandleFieldChanged;
         }
     }
@@ -147,7 +147,7 @@ public sealed partial class Form<TModel> : ComponentBase, IForm<TModel>, IDispos
     /// Handles form submission: validates the model and invokes
     /// <see cref="OnSubmit"/> only when validation succeeds.
     /// </summary>
-    protected async Task HandleSubmit()
+    private async Task HandleSubmit()
     {
         if (await Validate())
         {

@@ -22,7 +22,6 @@ public sealed partial class Chart<TData> : ComponentBase, IChart<TData>, IDispos
     private bool _renderPending;
     private readonly object _renderLock = new object();
     private int _renderQueueId;
-    private RenderQueueEntry? _pendingRender;
     private readonly SemaphoreSlim _jsModuleLoadLock = new SemaphoreSlim(1, 1);
     private IJSObjectReference? _jsModule;
     private ElementReference _chartElement;
@@ -56,7 +55,7 @@ public sealed partial class Chart<TData> : ComponentBase, IChart<TData>, IDispos
     /// <summary>
     /// Gets the cached geometry/path data for the current data set.
     /// </summary>
-    protected Dictionary<string, object> GeometryCache
+    private Dictionary<string, object> GeometryCache
     {
         get
         {
@@ -71,7 +70,7 @@ public sealed partial class Chart<TData> : ComponentBase, IChart<TData>, IDispos
     /// <summary>
     /// Gets the hash of the current data set.
     /// </summary>
-    protected string? DataHash => _dataHash;
+    private string? DataHash => _dataHash;
 
     /// <summary>
     /// Sets the data source for the chart.
@@ -401,7 +400,7 @@ public sealed partial class Chart<TData> : ComponentBase, IChart<TData>, IDispos
     /// <param name="seriesKey">The key identifying the series.</param>
     /// <param name="createFunc">A function that computes the geometry if not cached.</param>
     /// <returns>The cached or newly computed geometry data.</returns>
-    protected object GetOrCreateGeometry(string seriesKey, Func<object> createFunc)
+    internal object GetOrCreateGeometry(string seriesKey, Func<object> createFunc)
     {
         // If data hash is null (empty data) or cache is null, compute fresh
         if (_dataHash == null || _geometryCache == null)
